@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
-    <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -48,7 +46,21 @@
             transition: var(--transition);
         }
 
-        /* ===== HEADER ===== */
+        /* ===== MODO SOLO LECTURA ===== */
+        body.read-only-mode input:not(.search-input) {
+            pointer-events: none;
+            background-color: #f0f2f5 !important;
+            color: #888 !important;
+            cursor: not-allowed;
+            border: 1px solid transparent !important;
+        }
+        
+        body.read-only-mode .editable-cell {
+            background-color: #f8f9fa !important;
+            cursor: not-allowed !important;
+        }
+
+        /* ===== TOP BAR ===== */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -71,12 +83,27 @@
             color: var(--primary);
         }
 
-        .logo-icon {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, var(--accent), var(--primary));
-            padding: 8px 12px;
-            border-radius: 12px;
-            color: white;
+        .logo img {
+            height: 45px;
+            width: auto;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logo-main {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .logo-sub {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
         }
 
         .controls {
@@ -498,6 +525,164 @@
         .toast.error { background: var(--danger); }
         .toast.warning { background: var(--warning); color: #1e2a3e; }
 
+        /* ===== MODAL DE SEGURIDAD ===== */
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .security-overlay.show {
+            display: flex;
+        }
+
+        .security-modal {
+            background: white;
+            padding: 32px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .security-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .security-modal h2 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.5rem;
+        }
+
+        .security-modal p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .security-modal input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .security-modal input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .security-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .security-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .security-btn-primary {
+            background: var(--success);
+            color: white;
+        }
+
+        .security-btn-secondary {
+            background: var(--border);
+            color: var(--text-primary);
+        }
+
+        .security-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== BOTÓN FLOTANTE DE SEGURIDAD ===== */
+        #unlock-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            border: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+        }
+
+        #unlock-btn:hover {
+            background: var(--accent);
+            transform: scale(1.05);
+        }
+
+        body.editing-mode #unlock-btn {
+            display: none;
+        }
+
+        /* ===== INDICADOR DE EDICIÓN ===== */
+        #edit-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(90deg, var(--success), #2ecc71);
+            color: white;
+            text-align: center;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: none;
+            z-index: 10000;
+            box-shadow: var(--shadow);
+        }
+
+        body.editing-mode #edit-indicator {
+            display: block;
+        }
+
+        .lock-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: 10px;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
         /* ===== PRINT STYLES ===== */
         @media print {
             @page {
@@ -511,7 +696,8 @@
                 color: #000 !important;
             }
             
-            .top-bar, .button-group, .table-filters, .theme-toggle, .charts-section, .alert {
+            .top-bar, .button-group, .table-filters, .theme-toggle, .charts-section, 
+            .alert, #unlock-btn, #edit-indicator, .security-overlay {
                 display: none !important;
             }
             
@@ -627,13 +813,21 @@
         ::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
     </style>
 </head>
-<body>
+<body class="read-only-mode">
+
+<!-- Indicador de modo edición -->
+<div id="edit-indicator">
+    🟢 MODO EDICIÓN ACTIVADO - Bienvenido a consumos críticos camiones G500
+    <span class="lock-status">🔓 Editando</span>
+</div>
 
 <!-- Barra superior con controles -->
 <div class="top-bar">
     <div class="logo">
-        <span class="logo-icon">⛏️</span>
-        <span>MINERAR <small style="font-weight:400;color:var(--text-secondary)">| Scania G500</small></span>
+        <div class="logo-text">
+            <span class="logo-main">⛏️ MINERAR</span>
+            <span class="logo-sub">Scania G500</span>
+        </div>
     </div>
     <div class="controls">
         <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir PDF</button>
@@ -674,6 +868,7 @@
         <span>✏️</span>
         <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
         Los datos se guardan automáticamente cada 30 segundos.
+        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 600;">🔒 Solo lectura</span>
     </div>
 
     <!-- Tarjetas de resumen -->
@@ -857,6 +1052,25 @@
 
 </div>
 
+<!-- Botón flotante de desbloqueo -->
+<button id="unlock-btn" onclick="abrirModalSeguridad()">
+    🔒 Modo Edición
+</button>
+
+<!-- Modal de Seguridad -->
+<div class="security-overlay" id="securityModal">
+    <div class="security-modal">
+        <div class="security-icon">🔐</div>
+        <h2>Acceso Restringido</h2>
+        <p>Bienvenido a consumos críticos camiones G500<br>Ingrese contraseña para editar</p>
+        <input type="password" id="passwordInput" placeholder="Contraseña" onkeypress="if(event.key==='Enter')verificarPassword()">
+        <div class="security-btn-group">
+            <button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
+            <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
+        </div>
+    </div>
+</div>
+
 <!-- Toast de notificaciones -->
 <div id="toast" class="toast">✅ Listo</div>
 
@@ -865,16 +1079,17 @@
     const CONFIG = {
         equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
         meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-        passwordReset: "INSUMOS1234", // 🔐 Configurar contraseña aquí
-        autoSaveInterval: 30000, // 30 segundos
-        storageKey: "minerar_repuestos_v2"
+        passwordAdmin: "modMinerar", // 🔐 CONTRASEÑA DE EDICIÓN
+        autoSaveInterval: 30000,
+        storageKey: "minerar_repuestos_v3"
     };
 
     let añoActual = 2026;
     let datosPorAnio = {};
     let charts = {};
+    let modoEdicionActivo = false;
 
-    // ===== DATOS INICIALES (TUS DATOS ORIGINALES) =====
+    // ===== DATOS INICIALES =====
     const datosIncrustados = {
         elasticosO: {
             "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M444": [0,1,0,0,0,0,0,0,0,0,0,0],
@@ -922,7 +1137,6 @@
 
     // ===== INICIALIZACIÓN =====
     function init() {
-        // Cargar datos guardados o usar incrustados
         const guardado = localStorage.getItem(CONFIG.storageKey);
         if(guardado) {
             try {
@@ -930,23 +1144,19 @@
                 datosPorAnio = data.datosPorAnio || {};
                 añoActual = data.añoActual || 2026;
                 cargarValoresEconomicos(data);
-                mostrarToast("📂 Datos cargados", "#3498db");
             } catch(e) { console.error("Error cargando:", e); }
         }
         
-        // Inicializar años sin datos
         [2024,2025,2026,2027,2028].forEach(año => {
             if(!datosPorAnio[año]) {
                 datosPorAnio[año] = crearEstructuraVacia();
             }
         });
         
-        // Cargar datos 2026 si no existen
         if(!datosPorAnio[2026].elasticosO.M442) {
             datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
         }
         
-        // Configurar UI
         document.getElementById("yearSelect").value = añoActual;
         actualizarTodasLasTablas();
         actualizarGráficos();
@@ -954,16 +1164,14 @@
         calcularTotalesEconomicos();
         actualizarUltimaActualizacion();
         
-        // Event listeners para inputs económicos
         setupEconomicInputs();
-        
-        // Auto-guardado
         setInterval(guardarTodosLosDatos, CONFIG.autoSaveInterval);
-        
-        // Filtros de tabla
         setupTableFilters();
         
-        console.log("✅ Sistema inicializado - Minerar Repuestos v2");
+        // Verificar si ya está desbloqueado en esta sesión
+        if(sessionStorage.getItem('modoEdicion') === 'activo') {
+            activarModoEdicion();
+        }
     }
 
     function crearEstructuraVacia() {
@@ -976,6 +1184,46 @@
             tuercas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
             llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
         };
+    }
+
+    // ===== FUNCIONES DE SEGURIDAD =====
+    function abrirModalSeguridad() {
+        document.getElementById('securityModal').classList.add('show');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+    }
+
+    function cerrarModal() {
+        document.getElementById('securityModal').classList.remove('show');
+    }
+
+    function verificarPassword() {
+        const password = document.getElementById('passwordInput').value;
+        if(password === CONFIG.passwordAdmin) {
+            cerrarModal();
+            activarModoEdicion();
+            sessionStorage.setItem('modoEdicion', 'activo');
+            mostrarToast("🔓 Bienvenido a consumos críticos camiones G500", "#27ae60");
+        } else {
+            mostrarToast("❌ Contraseña incorrecta", "#e74c3c", true);
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+        }
+    }
+
+    function activarModoEdicion() {
+        modoEdicionActivo = true;
+        document.body.classList.remove('read-only-mode');
+        document.body.classList.add('editing-mode');
+        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
+        document.getElementById('lock-indicator').style.color = 'var(--success)';
+        
+        document.querySelectorAll('input').forEach(input => {
+            if(!input.readOnly) {
+                input.removeAttribute('readonly');
+                input.removeAttribute('disabled');
+            }
+        });
     }
 
     // ===== FUNCIONES PRINCIPALES =====
@@ -1006,14 +1254,13 @@
                 fila += `<td class="editable-cell">
                     <input type="number" min="0" value="${datos[eq][i]}" 
                            data-equipo="${eq}" data-mes="${i}" data-tipo="${tipo}" 
-                           class="cell-input">
+                           class="cell-input" ${!modoEdicionActivo ? 'readonly' : ''}>
                 </td>`;
             }
             fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
             tbody.insertAdjacentHTML("beforeend", fila);
         });
         
-        // Fila de totales por mes
         let totalPorMes = Array(12).fill(0);
         CONFIG.equipos.forEach(eq => {
             for(let i=0; i<12; i++) totalPorMes[i] += datos[eq][i];
@@ -1029,14 +1276,12 @@
     function actualizarTodasLasTablas() {
         const d = obtenerDatosActual();
         
-        // Actualizar encabezados
         ["theadElasticosO","theadElasticosF","theadMazasN","theadMazasR",
          "theadBulones","theadTuercas","theadLlantas"].forEach(id => {
             const el = document.getElementById(id);
             if(el) el.innerHTML = generarEncabezadosTabla();
         });
         
-        // Generar tablas
         generarTablaEditable(d.elasticosO, "tbodyElasticosO", "elastO");
         generarTablaEditable(d.elasticosF, "tbodyElasticosF", "elastF");
         generarTablaEditable(d.mazasN, "tbodyMazasN", "mazaN");
@@ -1045,7 +1290,6 @@
         generarTablaEditable(d.tuercas, "tbodyTuercas", "tuerca");
         generarTablaEditable(d.llantas, "tbodyLlantas", "llanta");
         
-        // Re-configurar eventos
         setupCellListeners();
         setupTableFilters();
     }
@@ -1058,6 +1302,8 @@
     }
 
     function handleCellChange(e) {
+        if(!modoEdicionActivo) return;
+        
         const input = e.target;
         const { equipo, mes, tipo } = input.dataset;
         let valor = parseInt(input.value) || 0;
@@ -1080,7 +1326,6 @@
         }
     }
 
-    // ===== TARJETAS DE RESUMEN =====
     function actualizarTotalesTarjetas() {
         const d = obtenerDatosActual();
         const calcular = (data) => {
@@ -1097,7 +1342,6 @@
             llantas: calcular(d.llantas)
         };
         
-        // Actualizar DOM
         Object.entries(totales).forEach(([key, value]) => {
             const idMap = {
                 "elastO": "totalElasticosO", "elastF": "totalElasticosF",
@@ -1108,13 +1352,11 @@
             const el = document.getElementById(idMap[key]);
             if(el) {
                 el.textContent = value;
-                // Animación de cambio
                 el.classList.add("pulse");
                 setTimeout(() => el.classList.remove("pulse"), 2000);
             }
         });
         
-        // Actualizar cantidades en sección económica
         document.getElementById("cantElasticosO").textContent = totales.elastO;
         document.getElementById("cantElasticosF").textContent = totales.elastF;
         document.getElementById("cantMazasN").textContent = totales.mazaN;
@@ -1124,7 +1366,6 @@
         document.getElementById("cantLlantas").textContent = totales.llantas;
     }
 
-    // ===== CÁLCULOS ECONÓMICOS =====
     function parseNumber(value) {
         if(!value) return 0;
         return parseFloat(value.toString().replace(/\./g,'').replace(',','.')) || 0;
@@ -1143,7 +1384,6 @@
     function calcularTotalesEconomicos() {
         const d = obtenerDatosActual();
         
-        // Calcular cantidades totales
         const calcTotal = (data) => Object.values(data).flat().reduce((a,b) => a+b, 0);
         const cantidades = {
             elastO: calcTotal(d.elasticosO),
@@ -1155,7 +1395,6 @@
             llantas: calcTotal(d.llantas)
         };
         
-        // Obtener precios
         const precios = {
             elastO: parseNumber(document.getElementById("precioElasticoO").value),
             elastF: parseNumber(document.getElementById("precioElasticoF").value),
@@ -1166,7 +1405,6 @@
             llanta: parseNumber(document.getElementById("precioLlanta").value)
         };
         
-        // Calcular totales repuestos
         const totalesRepuestos = {
             elastO: cantidades.elastO * precios.elastO,
             elastF: cantidades.elastF * precios.elastF,
@@ -1177,7 +1415,6 @@
             llanta: cantidades.llantas * precios.llanta
         };
         
-        // Horas hombre
         const horas = {
             propio: parseNumber(document.getElementById("horasPropio").value),
             vPropio: parseNumber(document.getElementById("valorHoraPropio").value),
@@ -1200,7 +1437,6 @@
         const totalRepuestos = Object.values(totalesRepuestos).reduce((a,b) => a+b, 0);
         const totalGeneral = totalRepuestos + totalManoObra;
         
-        // Actualizar UI
         const setValor = (id, valor) => {
             const el = document.getElementById(id);
             if(el) el.value = valor ? formatCurrency(valor) : "";
@@ -1221,7 +1457,6 @@
         setValor("totalManoObra", totalManoObra);
         setValor("totalGeneral", totalGeneral);
         
-        // Actualizar gráfico de costos
         actualizarGráficoCostos(totalesRepuestos, totalesMO);
     }
 
@@ -1267,16 +1502,14 @@
         }
     }
 
-    // ===== GRÁFICOS =====
     function actualizarGráficos() {
         actualizarGráficoConsumo();
-        calcularTotalesEconomicos(); // Esto llama a actualizarGráficoCostos
+        calcularTotalesEconomicos();
     }
 
     function actualizarGráficoConsumo() {
         const d = obtenerDatosActual();
         
-        // Calcular total por equipo
         const datosEquipos = {};
         CONFIG.equipos.forEach(eq => {
             const total = [
@@ -1286,7 +1519,6 @@
             datosEquipos[eq] = total;
         });
         
-        // Top 5 equipos
         const top5 = Object.entries(datosEquipos)
             .sort((a,b) => b[1] - a[1])
             .slice(0, 5);
@@ -1362,7 +1594,6 @@
         });
     }
 
-    // ===== FILTROS DE TABLA =====
     function setupTableFilters() {
         document.querySelectorAll('.filter-input').forEach(input => {
             input.oninput = function() {
@@ -1388,7 +1619,6 @@
         });
     }
 
-    // ===== GUARDAR / CARGAR DATOS =====
     function guardarTodosLosDatos() {
         const data = {
             añoActual,
@@ -1416,11 +1646,10 @@
         
         localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
         actualizarUltimaActualizacion();
-        // No mostrar toast en auto-guardado para no molestar
     }
 
     function exportarDatosCompletos() {
-        guardarTodosLosDatos(); // Asegurar que todo esté guardado
+        guardarTodosLosDatos();
         const data = localStorage.getItem(CONFIG.storageKey);
         
         const blob = new Blob([data], {type: "application/json"});
@@ -1431,7 +1660,7 @@
         a.click();
         URL.revokeObjectURL(url);
         
-        mostrarToast("📤 Exportado correctamente", "#3498db");
+        mostrarToast("📤 Datos exportados a JSON", "#3498db");
     }
 
     function importarDatosCompletos(event) {
@@ -1452,9 +1681,9 @@
                 actualizarTotalesTarjetas();
                 calcularTotalesEconomicos();
                 actualizarGráficos();
-                mostrarToast("📥 Importado correctamente", "#27ae60");
+                mostrarToast("📥 Datos importados correctamente", "#27ae60");
             } catch(err) {
-                mostrarToast("❌ Error en archivo", "#e74c3c", true);
+                mostrarToast("❌ Error al importar archivo", "#e74c3c", true);
                 console.error(err);
             }
         };
@@ -1463,11 +1692,10 @@
     }
 
     function resetearDatosCompletos() {
-        // Confirmación en 2 pasos
-        if(!confirm("⚠️ ¿Resetear TODOS los datos?\n\nEsto NO se puede deshacer.")) return;
+        if(!confirm("⚠️ ¿Resetear TODOS los datos?\n\nEsta acción no se puede deshacer.")) return;
         
         const password = prompt("🔒 Contraseña de administrador:");
-        if(password === CONFIG.passwordReset) {
+        if(password === CONFIG.passwordAdmin) {
             if(confirm("✅ ¿Confirmar reset completo?")) {
                 localStorage.removeItem(CONFIG.storageKey);
                 location.reload();
@@ -1477,7 +1705,6 @@
         }
     }
 
-    // ===== UTILIDADES =====
     function cambiarAnio() {
         añoActual = parseInt(document.getElementById("yearSelect").value);
         if(!datosPorAnio[añoActual]) {
@@ -1497,7 +1724,6 @@
         localStorage.setItem("minerar_theme", next);
     }
 
-    // Cargar tema guardado
     const savedTheme = localStorage.getItem("minerar_theme");
     if(savedTheme) document.body.setAttribute("data-theme", savedTheme);
 
@@ -1520,7 +1746,6 @@
             });
     }
 
-    // ===== INICIALIZAR =====
     document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
