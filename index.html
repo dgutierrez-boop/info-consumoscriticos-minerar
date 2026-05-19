@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
+    <title> Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -22,6 +22,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(--bg-light); color: var(--text-primary); padding: 16px; line-height: 1.5; transition: var(--transition); }
         
+        /* MODO SOLO LECTURA */
         body.read-only-mode .editable-cell input:not([type="password"]) { 
             pointer-events: none; 
             background-color: #f0f2f5 !important; 
@@ -116,9 +117,19 @@
         .security-btn-primary { background: var(--success); color: white; } .security-btn-secondary { background: var(--border); color: var(--text-primary); }
         .security-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
 
-        #unlock-btn { position: fixed; bottom: 20px; left: 20px; background: var(--primary); color: white; padding: 12px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; box-shadow: var(--shadow-lg); z-index: 9999; border: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+        /* BOTONES FLOTANTES DE CONTROL */
+        .floating-controls { position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px; align-items: center; }
+        
+        #unlock-btn { background: var(--primary); color: white; padding: 12px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; box-shadow: var(--shadow-lg); border: none; font-size: 14px; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
         #unlock-btn:hover { background: var(--accent); transform: scale(1.05); }
+        
+        #save-lock-btn { background: var(--success); color: white; padding: 12px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; box-shadow: var(--shadow-lg); border: none; font-size: 14px; display: none; align-items: center; gap: 8px; transition: var(--transition); animation: pulse 2s infinite; }
+        #save-lock-btn:hover { background: #219150; transform: scale(1.05); }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); } 100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); } }
+
         body.editing-mode #unlock-btn { display: none; }
+        body.editing-mode #save-lock-btn { display: flex; }
 
         #edit-indicator { position: fixed; top: 0; left: 0; right: 0; background: linear-gradient(90deg, var(--success), #2ecc71); color: white; text-align: center; padding: 10px; font-size: 14px; font-weight: 600; display: none; z-index: 10000; box-shadow: var(--shadow); transition: opacity 0.5s ease; }
         body.editing-mode #edit-indicator.show { display: block; opacity: 1; }
@@ -131,7 +142,7 @@
         @media print {
             @page { size: A4 landscape; margin: 1.5cm; }
             body { background: white !important; padding: 0 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .top-bar, .table-filters, .theme-toggle, .charts-section, .alert, #unlock-btn, #edit-indicator, .security-overlay, .btn { display: none !important; }
+            .top-bar, .table-filters, .theme-toggle, .charts-section, .alert, #unlock-btn, #edit-indicator, .security-overlay, .btn, .floating-controls { display: none !important; }
             .report-container { box-shadow: none !important; padding: 0 !important; max-width: 100% !important; }
             .report-header { border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 15px; }
             .report-title h1 { font-size: 18px !important; color: #000 !important; }
@@ -163,12 +174,14 @@
 </head>
 <body class="read-only-mode">
 
+<!-- Banner de Edición -->
 <div id="edit-indicator">
     🟢 MODO EDICIÓN ACTIVADO - Bienvenido a consumos críticos camiones G500
     <span class="lock-status">🔓 Editando</span>
     <span class="close-banner" onclick="cerrarBanner()"></span>
 </div>
 
+<!-- Barra superior -->
 <div class="top-bar">
     <div class="logo">
         <div class="logo-text">
@@ -177,11 +190,11 @@
         </div>
     </div>
     <div class="controls">
-        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir PDF</button>
+        <button class="btn btn-outline" onclick="window.print()">️ Imprimir PDF</button>
         <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
         <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar Excel</button>
-        <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔒 Reset</button>
+        <button class="btn btn-danger" onclick="resetearDatosCompletos()"> Reset</button>
         <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
     </div>
 </div>
@@ -207,18 +220,18 @@
     </div>
 
     <div class="alert alert-info">
-        <span>✏️</span>
+        <span>️</span>
         <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
         Los datos se guardan automáticamente cada 30 segundos.
-        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 600;">🔒 Solo lectura</span>
+        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 600;"> Solo lectura</span>
     </div>
 
     <div class="summary-grid">
-        <div class="stat-card elastic-o" onclick="filtrarGrafico('elasticosO')"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
+        <div class="stat-card elastic-o" onclick="filtrarGrafico('elasticosO')"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label"> Elásticos ORIG</div></div>
         <div class="stat-card elastic-f" onclick="filtrarGrafico('elasticosF')"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
         <div class="stat-card maza-n" onclick="filtrarGrafico('mazasN')"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
-        <div class="stat-card maza-r" onclick="filtrarGrafico('mazasR')"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
-        <div class="stat-card bulones" onclick="filtrarGrafico('bulones')"><div class="stat-value" id="totalBulones">0</div><div class="stat-label">🔩 Bulones</div></div>
+        <div class="stat-card maza-r" onclick="filtrarGrafico('mazasR')"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">️ Mazas REPAR</div></div>
+        <div class="stat-card bulones" onclick="filtrarGrafico('bulones')"><div class="stat-value" id="totalBulones">0</div><div class="stat-label"> Bulones</div></div>
         <div class="stat-card tuercas" onclick="filtrarGrafico('tuercas')"><div class="stat-value" id="totalTuercas">0</div><div class="stat-label">🔩 Tuercas</div></div>
         <div class="stat-card llantas" onclick="filtrarGrafico('llantas')"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
     </div>
@@ -269,7 +282,7 @@
             <table class="values-table">
                 <thead><tr><th style="width:35%">Concepto</th><th style="width:20%">Horas</th><th style="width:25%">Valor/Hora ($)</th><th style="width:20%">Total ($)</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>👨‍🔧 Personal Propio</strong></td><td><input type="text" id="horasPropio"></td><td><input type="text" id="valorHoraPropio"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                    <tr><td><strong>‍🔧 Personal Propio</strong></td><td><input type="text" id="horasPropio"></td><td><input type="text" id="valorHoraPropio"></td><td><input type="text" id="totalPropio" readonly></td></tr>
                     <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico"></td><td><input type="text" id="valorHoraCoriaMecanico"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
                     <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador"></td><td><input type="text" id="valorHoraCoriaSoldador"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
                     <tr><td><strong>👥 PATIÑO</strong></td><td><input type="text" id="horasPatino"></td><td><input type="text" id="valorHoraPatino"></td><td><input type="text" id="totalPatino" readonly></td></tr>
@@ -281,18 +294,23 @@
     </div>
 
     <div class="print-footer">
-        📋 Informe generado automáticamente | © 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management | Fecha: <span id="printDate"></span>
+         Informe generado automáticamente | © 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management | Fecha: <span id="printDate"></span>
     </div>
 </div>
 
-<button id="unlock-btn" onclick="abrirModalSeguridad()">🔒 Modo Edición</button>
+<!-- CONTROLES FLOTANTES -->
+<div class="floating-controls">
+    <button id="unlock-btn" onclick="abrirModalSeguridad()"> Iniciar Edición</button>
+    <button id="save-lock-btn" onclick="guardarYBloquear()">💾 Guardar y Bloquear</button>
+</div>
 
+<!-- Modal de Seguridad -->
 <div class="security-overlay" id="securityModal">
     <div class="security-modal">
-        <div class="security-icon">🔐</div>
+        <div class="security-icon"></div>
         <h2>Acceso Restringido</h2>
         <p>Bienvenido a consumos críticos camiones G500<br>Ingrese contraseña para editar</p>
-        <input type="password" id="passwordInput" placeholder="Contraseña" onkeypress="if(event.key==='Enter')verificarPassword()">
+        <input type="password" id="passwordInput" placeholder="Contraseña (abrir)" onkeypress="if(event.key==='Enter')verificarPassword()">
         <div class="security-btn-group">
             <button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
             <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
@@ -306,9 +324,9 @@
     const CONFIG = {
         equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
         meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-        passwordAdmin: "modMinerar",
+        passwordAdmin: "abrir", // Contraseña simplificada
         autoSaveInterval: 30000,
-        storageKey: "minerar_repuestos_v6"
+        storageKey: "minerar_repuestos_v7"
     };
 
     let añoActual = 2026;
@@ -354,7 +372,6 @@
         
         if(sessionStorage.getItem('modoEdicion') === 'activo') activarModoEdicion();
         
-        // Cargar tema guardado
         const savedTheme = localStorage.getItem("minerar_theme");
         if(savedTheme) document.body.setAttribute("data-theme", savedTheme);
     }
@@ -371,6 +388,7 @@
         };
     }
 
+    // SEGURIDAD
     function abrirModalSeguridad() {
         document.getElementById('securityModal').classList.add('show');
         document.getElementById('passwordInput').value = '';
@@ -419,7 +437,36 @@
         
         actualizarTodasLasTablas();
     }
+    
+    function guardarYBloquear() {
+        guardarTodosLosDatos();
+        desactivarModoEdicion();
+        mostrarToast("💾 Cambios guardados y sistema bloqueado", "#27ae60");
+    }
+    
+    function desactivarModoEdicion() {
+        modoEdicionActivo = false;
+        document.body.classList.remove('editing-mode');
+        document.body.classList.add('read-only-mode');
+        sessionStorage.removeItem('modoEdicion');
+        
+        const lockIndicator = document.getElementById('lock-indicator');
+        if(lockIndicator) { lockIndicator.innerHTML = ' Solo lectura'; lockIndicator.style.color = 'var(--danger)'; }
+        
+        document.getElementById('edit-indicator').style.display = 'none';
+        
+        // Re-bloquear inputs
+        document.querySelectorAll('.cell-input').forEach(input => {
+            input.setAttribute('readonly', true);
+            input.style.background = '#f0f2f5';
+            input.style.color = '#1e2a3e';
+            input.style.cursor = 'not-allowed';
+        });
+        
+        actualizarTodasLasTablas();
+    }
 
+    // TABLAS
     function obtenerDatosActual() {
         if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
         return datosPorAnio[añoActual];
@@ -434,7 +481,7 @@
     
     function generarTablaEditable(datos, tbodyId, tipo) {
         const tbody = document.getElementById(tbodyId);
-        if(!tbody) { console.error("No se encontró tbody:", tbodyId); return; }
+        if(!tbody) return;
         
         tbody.innerHTML = "";
         CONFIG.equipos.forEach(eq => {
@@ -513,14 +560,10 @@
     }
 
     function filtrarGrafico(categoria) {
-        // Remover clase active de todas las tarjetas
         document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active'));
-        // Agregar clase active a la tarjeta clickeada
         event.currentTarget.classList.add('active');
-        
         graficoFiltrado = categoria;
         actualizarGráficoConsumo();
-        
         setTimeout(() => {
             document.querySelectorAll('.stat-card').forEach(card => card.classList.remove('active'));
             graficoFiltrado = null;
@@ -587,17 +630,11 @@
     function actualizarGráficoConsumo() {
         const d = obtenerDatosActual();
         let datosEq = {};
-        
         if(graficoFiltrado && d[graficoFiltrado]) {
-            // Mostrar solo la categoría filtrada
             CONFIG.equipos.forEach(eq => { datosEq[eq] = d[graficoFiltrado][eq].reduce((a,b)=>a+b,0); });
         } else {
-            // Mostrar total de todas las categorías
-            CONFIG.equipos.forEach(eq => { 
-                datosEq[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0); 
-            });
+            CONFIG.equipos.forEach(eq => { datosEq[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0); });
         }
-        
         const top5 = Object.entries(datosEq).sort((a,b)=>b[1]-a[1]).slice(0,5);
         const ctx = document.getElementById('chartConsumo'); 
         if(!ctx) return;
@@ -637,7 +674,7 @@
         const blob = new Blob(["\ufeff"+csv], {type:'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = `Minerar_Repuestos_${añoActual}.csv`;
         document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-        mostrarToast("📊 Exportado a Excel/CSV", "#3498db");
+        mostrarToast(" Exportado a Excel/CSV", "#3498db");
     }
     
     function importarCSV(event) {
@@ -678,7 +715,7 @@
         if(!confirm("⚠️ ¿Resetear TODOS los datos? Esta acción no se puede deshacer.")) return;
         const password = prompt("🔒 Contraseña de administrador:");
         if(password === CONFIG.passwordAdmin) { if(confirm("✅ ¿Confirmar reset completo?")) { localStorage.removeItem(CONFIG.storageKey); location.reload(); } }
-        else { mostrarToast("❌ Contraseña incorrecta", "#e74c3c", true); }
+        else { mostrarToast(" Contraseña incorrecta", "#e74c3c", true); }
     }
     
     function cambiarAnio() {
