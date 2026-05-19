@@ -1577,21 +1577,187 @@ function guardarTodosLosDatos(event) {
 
 function exportarCSV() {
     const d = obtenerDatosActual();
-    let csv = "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;Total\n";
+    let csv = "MINERAR - INFORME DE REPUESTOS CRÍTICOS " + añoActual + "\n";
+    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
+    
+    // === ELÁSTICOS ORIGINALES ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "📦 PAQUETES ELÁSTICOS ORIGINALES\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
     CONFIG.equipos.forEach(eq => {
-        let row = `${eq};`; let total=0;
-        for(let i=0;i<12;i++) { 
-            let val = d.elasticosO[eq][i]+d.elasticosF[eq][i]+d.mazasN[eq][i]+d.mazasR[eq][i]+
-                d.bulones[eq][i]+d.tuercas[eq][i]+d.llantas[eq][i];
-            row += `${val};`; total += val;
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.elasticosO[eq][i];
+            row += `${val};`;
+            total += val;
         }
         csv += row + `${total}\n`;
     });
-    const blob = new Blob(["\ufeff"+csv], {type:'text/csv;charset=utf-8;'});
+    csv += "\n";
+    
+    // === ELÁSTICOS FABRICADOS ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "📦 PAQUETES ELÁSTICOS FABRICADOS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.elasticosF[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === MAZAS NUEVAS ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⚙️ MAZAS NUEVAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.mazasN[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === MAZAS REPARADAS ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⚙️ MAZAS REPARADAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.mazasR[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === BULONES ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🔩 BULONES\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.bulones[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === TUERCAS ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🔩 TUERCAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.tuercas[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === LLANTAS ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⭕ LLANTAS ROTAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.llantas[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // === RESUMEN ECONÓMICO ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "💰 RESUMEN ECONÓMICO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Cantidad;Valor Unitario;Total\n";
+    
+    const cant = {
+        elastO: document.getElementById("cantElasticosO").textContent,
+        elastF: document.getElementById("cantElasticosF").textContent,
+        mazaN: document.getElementById("cantMazasN").textContent,
+        mazaR: document.getElementById("cantMazasR").textContent,
+        bulones: document.getElementById("cantBulones").textContent,
+        tuercas: document.getElementById("cantTuercas").textContent,
+        llantas: document.getElementById("cantLlantas").textContent
+    };
+    
+    const prec = {
+        elastO: document.getElementById("precioElasticoO").value || "0",
+        elastF: document.getElementById("precioElasticoF").value || "0",
+        mazaN: document.getElementById("precioMazaN").value || "0",
+        mazaR: document.getElementById("precioMazaR").value || "0",
+        bulon: document.getElementById("precioBulon").value || "0",
+        tuerca: document.getElementById("precioTuerca").value || "0",
+        llanta: document.getElementById("precioLlanta").value || "0"
+    };
+    
+    csv += `Elásticos Originales;${cant.elastO};${prec.elastO};\n`;
+    csv += `Elásticos Fabricados;${cant.elastF};${prec.elastF};\n`;
+    csv += `Mazas Nuevas;${cant.mazaN};${prec.mazaN};\n`;
+    csv += `Mazas Reparadas;${cant.mazaR};${prec.mazaR};\n`;
+    csv += `Bulones;${cant.bulones};${prec.bulon};\n`;
+    csv += `Tuercas;${cant.tuercas};${prec.tuerca};\n`;
+    csv += `Llantas;${cant.llantas};${prec.llanta};\n`;
+    csv += `\n`;
+    
+    // === HORAS HOMBRE ===
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "👷 HORAS HOMBRE\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Horas;Valor/Hora;Total\n";
+    csv += `Personal Propio;${document.getElementById("horasPropio").value || 0};${document.getElementById("valorHoraPropio").value || 0};\n`;
+    csv += `CORIA - Mecánico;${document.getElementById("horasCoriaMecanico").value || 0};${document.getElementById("valorHoraCoriaMecanico").value || 0};\n`;
+    csv += `CORIA - Soldador;${document.getElementById("horasCoriaSoldador").value || 0};${document.getElementById("valorHoraCoriaSoldador").value || 0};\n`;
+    csv += `PATIÑO;${document.getElementById("horasPatino").value || 0};${document.getElementById("valorHoraPatino").value || 0};\n`;
+    csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
+    csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
+    
+    // Crear y descargar el archivo
+    const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = `Minerar_${añoActual}.csv`;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    mostrarToast("📊 Exportado a Excel");
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Minerar_Repuestos_Detallado_${añoActual}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    mostrarToast("📊 Exportado informe detallado a Excel");
 }
 
 function importarCSV(event) {
