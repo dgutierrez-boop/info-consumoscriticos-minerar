@@ -1761,32 +1761,74 @@ function exportarCSV() {
 }
 
 function importarCSV(event) {
-    const file = event.target.files[0]; if(!file) return;
+    const file = event.target.files[0];
+    if(!file) return;
+    
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = function(e) {
         try {
-            const lines = e.target.result.split('\n').filter(l=>l.trim() && !l.includes('Equipo'));
-            let imp = 0;
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const d = obtenerDatosActual();
+            let categoriaActual = null;
+            let registrosImportados = 0;
+            
             lines.forEach(line => {
-                const parts = line.split(';'); const eq = parts[0].trim();
-                if(CONFIG.equipos.includes(eq) && parts.length>=13) {
-                    const d = obtenerDatosActual();
-                    for(let i=0;i<12;i++) {
-                        const val = parseInt(parts[i+1])||0;
-                        d.elasticosO[eq][i] = Math.round(val*0.4);
-                        d.elasticosF[eq][i] = Math.round(val*0.1);
-                        d.mazasN[eq][i] = Math.round(val*0.15);
-                        d.mazasR[eq][i] = Math.round(val*0.1);
-                        d.bulones[eq][i] = Math.round(val*0.1);
-                        d.tuercas[eq][i] = Math.round(val*0.1);
-                        d.llantas[eq][i] = Math.round(val*0.05);
+                line = line.trim();
+                
+                // Detectar cada sección por su título
+                if(line.includes('📦 PAQUETES ELÁSTICOS ORIGINALES')) {
+                    categoriaActual = 'elasticosO';
+                }
+                else if(line.includes('📦 PAQUETES ELÁSTICOS FABRICADOS')) {
+                    categoriaActual = 'elasticosF';
+                }
+                else if(line.includes('⚙️ MAZAS NUEVAS')) {
+                    categoriaActual = 'mazasN';
+                }
+                else if(line.includes('⚙️ MAZAS REPARADAS')) {
+                    categoriaActual = 'mazasR';
+                }
+                else if(line.includes('🔩 BULONES')) {
+                    categoriaActual = 'bulones';
+                }
+                else if(line.includes('🔩 TUERCAS')) {
+                    categoriaActual = 'tuercas';
+                }
+                else if(line.includes('⭕ LLANTAS ROTAS')) {
+                    categoriaActual = 'llantas';
+                }
+                // Saltar líneas de encabezado y separadores
+                else if(line.includes('Equipo;') || line.includes('══') || line.includes('MINERAR') || 
+                        line.includes('Generado:') || line.includes('RESUMEN ECONÓMICO') || 
+                        line.includes('HORAS HOMBRE') || line.includes('Concepto;') || line === '') {
+                    return;
+                }
+                // Procesar línea de datos (debe empezar con M seguido de números)
+                else if(categoriaActual && line.match(/^M\d+;/)) {
+                    const parts = line.split(';');
+                    const equipo = parts[0].trim();
+                    
+                    if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
+                        for(let i=0; i<12; i++) {
+                            const val = parseInt(parts[i+1]) || 0;
+                            if(d[categoriaActual] && d[categoriaActual][equipo]) {
+                                d[categoriaActual][equipo][i] = val;
+                            }
+                        }
+                        registrosImportados++;
                     }
-                    imp++;
                 }
             });
+            
             actualizarTodo();
-            mostrarToast(`📥 Importados ${imp} equipos`);
-        } catch(err) { mostrarToast("❌ Error al importar", true); }
+            guardarTodosLosDatos();
+            mostrarToast(`✅ Importados ${registrosImportados} registros correctamente`);
+            
+        } catch(err) {
+            console.error('Error:', err);
+            mostrarToast("❌ Error al importar. Verifica el archivo.", true);
+        }
     };
     reader.readAsText(file);
     event.target.value = "";
