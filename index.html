@@ -22,9 +22,19 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', 'Segoe UI', system-ui, sans-serif; background: var(--bg-light); color: var(--text-primary); padding: 16px; line-height: 1.5; transition: var(--transition); }
         
-        /* MODO SOLO LECTURA */
-        body.read-only-mode input:not(.search-input):not([type="password"]) { pointer-events: none; background-color: #f0f2f5 !important; color: #888 !important; cursor: not-allowed; border: 1px solid transparent !important; }
-        body.read-only-mode .editable-cell { background-color: #f8f9fa !important; cursor: not-allowed !important; }
+        /* MODO SOLO LECTURA - Solo bloquea edición, NO oculta datos */
+        body.read-only-mode .editable-cell input:not([type="password"]) { 
+            pointer-events: none; 
+            background-color: #f0f2f5 !important; 
+            color: #1e2a3e !important; /* Color oscuro para que se vea */
+            cursor: not-allowed; 
+            border: 1px solid #ccc !important;
+            font-weight: 600;
+        }
+        body.read-only-mode .editable-cell { 
+            background-color: #ffffff !important; 
+            cursor: not-allowed !important; 
+        }
 
         /* TOP BAR */
         .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
@@ -73,7 +83,7 @@
         th { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 12px 8px; text-align: center; font-weight: 600; font-size: 0.8rem; }
         td { border-bottom: 1px solid var(--border); padding: 10px 6px; text-align: center; }
         tr:hover { background: var(--bg-light); } tr:last-child td { border-bottom: none; }
-        .equipo-col { font-weight: 700; background: var(--bg-light); position: sticky; left: 0; z-index: 1; }
+        .equipo-col { font-weight: 700; background: var(--bg-light); position: sticky; left: 0; z-index: 1; min-width: 60px; }
         .editable-cell { background: #fffef7; cursor: pointer; border-radius: 6px; transition: var(--transition); }
         .editable-cell:hover { background: #fff3cd; box-shadow: inset 0 0 0 2px var(--accent); }
         .editable-cell input { width: 100%; border: none; text-align: center; font-size: 0.85rem; font-family: inherit; background: transparent; padding: 4px; color: var(--text-primary); }
@@ -128,11 +138,11 @@
 
         .lock-status { display: inline-flex; align-items: center; gap: 6px; margin-left: 10px; padding: 4px 12px; background: rgba(255,255,255,0.2); border-radius: 20px; font-size: 12px; }
 
-        /* PRINT STYLES - OPTIMIZADO PARA PDF A4 */
+        /* PRINT STYLES */
         @media print {
             @page { size: A4 landscape; margin: 1.5cm; }
             body { background: white !important; padding: 0 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .top-bar, .table-filters, .theme-toggle, .charts-section, .alert, #unlock-btn, #edit-indicator, .security-overlay, .button-group, .btn { display: none !important; }
+            .top-bar, .table-filters, .theme-toggle, .charts-section, .alert, #unlock-btn, #edit-indicator, .security-overlay, .btn { display: none !important; }
             .report-container { box-shadow: none !important; padding: 0 !important; max-width: 100% !important; }
             .report-header { border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 15px; }
             .report-title h1 { font-size: 18px !important; color: #000 !important; }
@@ -149,8 +159,8 @@
             .values-section { background: white !important; border: 1px solid #000; page-break-inside: avoid; margin-top: 15px !important; padding: 10px !important; }
             .grand-total { background: #333 !important; color: white !important; }
             .editable-cell { background: white !important; } .editable-cell:hover { background: white !important; box-shadow: none !important; }
+            .editable-cell input { background: transparent !important; color: #000 !important; border: none !important; }
             .print-footer { display: block !important; text-align: center; margin-top: 15px; font-size: 10px; color: #555; border-top: 1px solid #ccc; padding-top: 8px; }
-            .hidden-print { display: none !important; }
         }
         .print-footer { display: none; }
 
@@ -165,7 +175,7 @@
 </head>
 <body class="read-only-mode">
 
-<!-- Banner de Edición (Se oculta solo) -->
+<!-- Banner de Edición -->
 <div id="edit-indicator">
     🟢 MODO EDICIÓN ACTIVADO - Bienvenido a consumos críticos camiones G500
     <span class="lock-status">🔓 Editando</span>
@@ -181,11 +191,11 @@
         </div>
     </div>
     <div class="controls">
-        <button class="btn btn-outline" onclick="window.print()">️ Imprimir PDF</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir PDF</button>
         <button class="btn btn-success" onclick="guardarTodosLosDatos()">💾 Guardar</button>
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
         <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar Excel</button>
-        <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔒 Reset</button>
+        <button class="btn btn-danger" onclick="resetearDatosCompletos()"> Reset</button>
         <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar tema">🌓</button>
     </div>
 </div>
@@ -195,7 +205,7 @@
 <div class="report-container fade-in">
     <div class="report-header">
         <div class="report-title">
-            <h1> Informe de Consumo - Repuestos Críticos</h1>
+            <h1>📊 Informe de Consumo - Repuestos Críticos</h1>
             <div class="report-subtitle">Elásticos • Mazas • Bulones • Tuercas • Llantas • Horas Hombre</div>
         </div>
         <div class="year-selector">
@@ -211,32 +221,32 @@
     </div>
 
     <div class="alert alert-info">
-        <span>️</span>
+        <span>✏️</span>
         <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
         Los datos se guardan automáticamente cada 30 segundos.
-        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 600;">🔒 Solo lectura</span>
+        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 600;"> Solo lectura</span>
     </div>
 
     <div class="summary-grid">
         <div class="stat-card elastic-o"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
         <div class="stat-card elastic-f"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
-        <div class="stat-card maza-n"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">️ Mazas NUEVAS</div></div>
+        <div class="stat-card maza-n"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
         <div class="stat-card maza-r"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
-        <div class="stat-card bulones"><div class="stat-value" id="totalBulones">0</div><div class="stat-label"> Bulones</div></div>
+        <div class="stat-card bulones"><div class="stat-value" id="totalBulones">0</div><div class="stat-label">🔩 Bulones</div></div>
         <div class="stat-card tuercas"><div class="stat-value" id="totalTuercas">0</div><div class="stat-label">🔩 Tuercas</div></div>
         <div class="stat-card llantas"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
     </div>
 
     <div class="charts-section">
         <div class="chart-card"><h4>📈 Consumo Mensual - Top 5 Equipos</h4><div class="chart-container"><canvas id="chartConsumo"></canvas></div></div>
-        <div class="chart-card"><h4>💰 Costos por Categoría</h4><div class="chart-container"><canvas id="chartCostos"></canvas></div></div>
+        <div class="chart-card"><h4> Costos por Categoría</h4><div class="chart-container"><canvas id="chartCostos"></canvas></div></div>
     </div>
 
-    <!-- Tablas (Ejemplo: Elásticos Originales. El resto sigue la misma estructura) -->
-    <div class="section-header"><span class="section-title"> Paquetes Elásticos ORIGINALES</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="elastO"></div></div>
+    <!-- TABLAS DE CONSUMO -->
+    <div class="section-header"><span class="section-title">📦 Paquetes Elásticos ORIGINALES</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="elastO"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div>
 
-    <div class="section-header"><span class="section-title">📦 Paquetes Elásticos FABRICADOS</span><div class="table-filters"><input type="text" placeholder=" Buscar equipo..." class="filter-input" data-table="elastF"></div></div>
+    <div class="section-header"><span class="section-title">📦 Paquetes Elásticos FABRICADOS</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="elastF"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div>
 
     <div class="section-header"><span class="section-title">⚙️ Mazas NUEVAS</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="mazaN"></div></div>
@@ -245,27 +255,28 @@
     <div class="section-header"><span class="section-title">⚙️ Mazas REPARADAS</span><div class="table-filters"><input type="text" placeholder=" Buscar equipo..." class="filter-input" data-table="mazaR"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div>
 
-    <div class="section-header"><span class="section-title">🔩 Bulones</span><div class="table-filters"><input type="text" placeholder=" Buscar equipo..." class="filter-input" data-table="bulon"></div></div>
+    <div class="section-header"><span class="section-title">🔩 Bulones</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="bulon"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaBulones"><thead id="theadBulones"></thead><tbody id="tbodyBulones"></tbody></table></div>
 
-    <div class="section-header"><span class="section-title">🔩 Tuercas</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="tuerca"></div></div>
+    <div class="section-header"><span class="section-title"> Tuercas</span><div class="table-filters"><input type="text" placeholder=" Buscar equipo..." class="filter-input" data-table="tuerca"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaTuercas"><thead id="theadTuercas"></thead><tbody id="tbodyTuercas"></tbody></table></div>
 
-    <div class="section-header"><span class="section-title">⭕ Llantas Rotas</span><div class="table-filters"><input type="text" placeholder="🔍 Buscar equipo..." class="filter-input" data-table="llanta"></div></div>
+    <div class="section-header"><span class="section-title"> Llantas Rotas</span><div class="table-filters"><input type="text" placeholder=" Buscar equipo..." class="filter-input" data-table="llanta"></div></div>
     <div style="overflow-x:auto; border-radius:10px; border:1px solid var(--border);"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div>
 
+    <!-- SECCIÓN ECONÓMICA -->
     <div class="values-section">
         <h3>💰 VALORES ECONÓMICOS</h3>
         <table class="values-table">
             <thead><tr><th style="width:35%">Concepto</th><th style="width:15%">Cantidad</th><th style="width:25%">Valor Unitario ($)</th><th style="width:25%">Total ($)</th></tr></thead>
             <tbody>
                 <tr><td><strong>🔧 Elásticos ORIGINALES</strong></td><td id="cantElasticosO" class="text-center">0</td><td><input type="text" placeholder="Ej: 200000" id="precioElasticoO"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
-                <tr><td><strong> Elásticos FABRICADOS</strong></td><td id="cantElasticosF" class="text-center">0</td><td><input type="text" placeholder="Ej: 120000" id="precioElasticoF"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+                <tr><td><strong>🔧 Elásticos FABRICADOS</strong></td><td id="cantElasticosF" class="text-center">0</td><td><input type="text" placeholder="Ej: 120000" id="precioElasticoF"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
                 <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN" class="text-center">0</td><td><input type="text" placeholder="Ej: 350000" id="precioMazaN"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
-                <tr><td><strong>️ Mazas REPARADAS</strong></td><td id="cantMazasR" class="text-center">0</td><td><input type="text" placeholder="Ej: 150000" id="precioMazaR"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
+                <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR" class="text-center">0</td><td><input type="text" placeholder="Ej: 150000" id="precioMazaR"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
                 <tr><td><strong>🔩 Bulones</strong></td><td id="cantBulones" class="text-center">0</td><td><input type="text" placeholder="Ej: 5000" id="precioBulon"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-                <tr><td><strong>🔩 Tuercas</strong></td><td id="cantTuercas" class="text-center">0</td><td><input type="text" placeholder="Ej: 5000" id="precioTuerca"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
-                <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas" class="text-center">0</td><td><input type="text" placeholder="Ej: 350000" id="precioLlanta"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+                <tr><td><strong> Tuercas</strong></td><td id="cantTuercas" class="text-center">0</td><td><input type="text" placeholder="Ej: 5000" id="precioTuerca"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+                <tr><td><strong> Llantas</strong></td><td id="cantLlantas" class="text-center">0</td><td><input type="text" placeholder="Ej: 350000" id="precioLlanta"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
             </tbody>
         </table>
 
@@ -274,7 +285,7 @@
             <table class="values-table">
                 <thead><tr><th style="width:35%">Concepto</th><th style="width:20%">Horas</th><th style="width:25%">Valor/Hora ($)</th><th style="width:20%">Total ($)</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>👨🔧 Personal Propio</strong></td><td><input type="text" id="horasPropio"></td><td><input type="text" id="valorHoraPropio"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                    <tr><td><strong>👨‍🔧 Personal Propio</strong></td><td><input type="text" id="horasPropio"></td><td><input type="text" id="valorHoraPropio"></td><td><input type="text" id="totalPropio" readonly></td></tr>
                     <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico"></td><td><input type="text" id="valorHoraCoriaMecanico"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
                     <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador"></td><td><input type="text" id="valorHoraCoriaSoldador"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
                     <tr><td><strong>👥 PATIÑO</strong></td><td><input type="text" id="horasPatino"></td><td><input type="text" id="valorHoraPatino"></td><td><input type="text" id="totalPatino" readonly></td></tr>
@@ -294,7 +305,7 @@
 
 <div class="security-overlay" id="securityModal">
     <div class="security-modal">
-        <div class="security-icon">🔐</div>
+        <div class="security-icon"></div>
         <h2>Acceso Restringido</h2>
         <p>Bienvenido a consumos críticos camiones G500<br>Ingrese contraseña para editar</p>
         <input type="password" id="passwordInput" placeholder="Contraseña" onkeypress="if(event.key==='Enter')verificarPassword()">
@@ -308,12 +319,13 @@
 <div id="toast" class="toast">✅ Listo</div>
 
 <script>
+    // CONFIGURACIÓN
     const CONFIG = {
         equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
         meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
         passwordAdmin: "modMinerar",
         autoSaveInterval: 30000,
-        storageKey: "minerar_repuestos_v4"
+        storageKey: "minerar_repuestos_v5"
     };
 
     let añoActual = 2026;
@@ -322,6 +334,7 @@
     let modoEdicionActivo = false;
     let bannerTimeout;
 
+    // DATOS INCRUSTADOS
     const datosIncrustados = {
         elasticosO: {"M442":[0,0,0,0,0,0,0,0,0,0,0,0],"M444":[0,1,0,0,0,0,0,0,0,0,0,0],"M445":[0,0,0,1,2,0,0,0,0,0,0,0],"M446":[2,1,3,0,0,0,0,0,0,0,0,0],"M447":[0,0,1,1,1,0,0,0,0,0,0,0],"M448":[0,1,0,0,0,0,0,0,0,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,2,1,2,2,0,0,0,0,0,0,0],"M452":[0,2,2,2,2,0,0,0,0,0,0,0],"M453":[0,1,2,1,1,0,0,0,0,0,0,0],"M455":[1,2,1,1,2,0,0,0,0,0,0,0],"M456":[2,0,1,2,1,0,0,0,0,0,0,0]},
         elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
@@ -332,7 +345,10 @@
         llantas: {"M442":[0,0,0,0,0,0,0,0,0,0,0,0],"M444":[0,0,1,1,0,0,0,0,0,0,0,0],"M445":[0,0,0,0,0,0,0,0,0,0,0,0],"M446":[0,0,0,0,0,0,0,0,0,0,0,0],"M447":[0,0,0,0,0,0,0,0,0,0,0,0],"M448":[0,0,0,0,0,0,0,0,0,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[0,0,0,0,0,0,0,0,0,0,0,0],"M452":[0,0,0,0,0,0,0,0,0,0,0,0],"M453":[0,0,0,1,0,0,0,0,0,0,0,0],"M455":[0,0,0,0,0,0,0,0,0,0,0,0],"M456":[0,0,2,0,0,0,0,0,0,0,0,0]}
     };
 
+    // INICIALIZACIÓN
     function init() {
+        console.log(" Iniciando aplicación...");
+        
         const guardado = localStorage.getItem(CONFIG.storageKey);
         if(guardado) {
             try {
@@ -340,23 +356,47 @@
                 datosPorAnio = data.datosPorAnio || {};
                 añoActual = data.añoActual || 2026;
                 cargarValoresEconomicos(data);
-            } catch(e) { console.error("Error cargando:", e); }
+                console.log("✅ Datos cargados desde localStorage");
+            } catch(e) { 
+                console.error("❌ Error cargando datos:", e); 
+            }
         }
         
-        [2024,2025,2026,2027,2028].forEach(año => { if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); });
-        if(!datosPorAnio[2026].elasticosO.M442) datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
+        // Inicializar estructura de años
+        [2024,2025,2026,2027,2028].forEach(año => { 
+            if(!datosPorAnio[año]) {
+                datosPorAnio[año] = crearEstructuraVacia();
+            }
+        });
+        
+        // Cargar datos incrustados si no hay datos para 2026
+        if(!datosPorAnio[2026] || !datosPorAnio[2026].elasticosO || !datosPorAnio[2026].elasticosO.M442) {
+            datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
+            console.log("📦 Datos incrustados cargados para 2026");
+        }
         
         document.getElementById("yearSelect").value = añoActual;
+        
+        // Renderizar todo
         actualizarTodasLasTablas();
         actualizarGráficos();
         actualizarTotalesTarjetas();
         calcularTotalesEconomicos();
         actualizarUltimaActualizacion();
         setupEconomicInputs();
-        setInterval(guardarTodosLosDatos, CONFIG.autoSaveInterval);
         setupTableFilters();
         
-        if(sessionStorage.getItem('modoEdicion') === 'activo') activarModoEdicion();
+        // Auto-guardado
+        setInterval(guardarTodosLosDatos, CONFIG.autoSaveInterval);
+        
+        // Verificar si ya está en modo edición
+        if(sessionStorage.getItem('modoEdicion') === 'activo') {
+            activarModoEdicion();
+        }
+        
+        console.log("✅ Aplicación inicializada correctamente");
+        console.log("📊 Tablas generadas:", document.querySelectorAll('table').length);
+        console.log("🔒 Modo edición activo:", modoEdicionActivo);
     }
 
     function crearEstructuraVacia() {
@@ -377,11 +417,15 @@
         document.getElementById('passwordInput').value = '';
         document.getElementById('passwordInput').focus();
     }
-    function cerrarModal() { document.getElementById('securityModal').classList.remove('show'); }
+    function cerrarModal() { 
+        document.getElementById('securityModal').classList.remove('show'); 
+    }
     function cerrarBanner() { 
         const banner = document.getElementById('edit-indicator');
-        banner.classList.add('fade-out');
-        setTimeout(() => banner.style.display = 'none', 500);
+        if(banner) {
+            banner.classList.add('fade-out');
+            setTimeout(() => banner.style.display = 'none', 500);
+        }
     }
     function verificarPassword() {
         const password = document.getElementById('passwordInput').value;
@@ -400,65 +444,129 @@
         modoEdicionActivo = true;
         document.body.classList.remove('read-only-mode');
         document.body.classList.add('editing-mode');
-        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
-        document.getElementById('lock-indicator').style.color = 'var(--success)';
         
+        const lockIndicator = document.getElementById('lock-indicator');
+        if(lockIndicator) {
+            lockIndicator.innerHTML = '🔓 Modo edición activo';
+            lockIndicator.style.color = 'var(--success)';
+        }
+        
+        // Mostrar banner
         const banner = document.getElementById('edit-indicator');
-        banner.style.display = 'block';
-        banner.classList.remove('fade-out');
-        banner.classList.add('show');
+        if(banner) {
+            banner.style.display = 'block';
+            banner.classList.remove('fade-out');
+            banner.classList.add('show');
+            
+            clearTimeout(bannerTimeout);
+            bannerTimeout = setTimeout(() => {
+                banner.classList.add('fade-out');
+                setTimeout(() => banner.style.display = 'none', 500);
+            }, 5000);
+        }
         
-        // Auto-ocultar a los 5 segundos
-        clearTimeout(bannerTimeout);
-        bannerTimeout = setTimeout(() => {
-            banner.classList.add('fade-out');
-            setTimeout(() => banner.style.display = 'none', 500);
-        }, 5000);
-        
-        document.querySelectorAll('input:not([readonly]):not([type="password"])').forEach(input => {
+        // Habilitar TODOS los inputs para edición
+        document.querySelectorAll('.cell-input').forEach(input => {
             input.removeAttribute('readonly');
-            input.removeAttribute('disabled');
+            input.style.background = '#fffef7';
+            input.style.cursor = 'text';
         });
+        
+        // Forzar recargar tablas
+        actualizarTodasLasTablas();
+        
+        console.log("🔓 Modo edición activado");
     }
 
-    // TABLAS
+    // TABLAS - FUNCIÓN CRÍTICA CORREGIDA
     function obtenerDatosActual() {
-        if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
+        if(!datosPorAnio[añoActual]) {
+            datosPorAnio[añoActual] = crearEstructuraVacia();
+        }
         return datosPorAnio[añoActual];
     }
+    
     function generarEncabezadosTabla() {
         let html = "<tr><th class=\"equipo-col\">Equipo</th>";
         CONFIG.meses.forEach(mes => html += `<th>${mes}</th>`);
         html += "<th>TOTAL</th></tr>";
         return html;
     }
+    
     function generarTablaEditable(datos, tbodyId, tipo) {
         const tbody = document.getElementById(tbodyId);
-        if(!tbody) return;
+        if(!tbody) {
+            console.error("❌ No se encontró tbody:", tbodyId);
+            return;
+        }
+        
         tbody.innerHTML = "";
+        console.log(` Generando tabla ${tbodyId} con ${CONFIG.equipos.length} equipos`);
+        
+        // Generar filas por equipo
         CONFIG.equipos.forEach(eq => {
+            if(!datos[eq]) {
+                console.warn(`⚠️ No hay datos para equipo ${eq}`);
+                return;
+            }
+            
             let fila = `<tr><td class="equipo-col">${eq}</td>`;
             let suma = 0;
+            
             for(let i=0; i<12; i++) {
-                suma += datos[eq][i];
-                fila += `<td class="editable-cell"><input type="number" min="0" value="${datos[eq][i]}" data-equipo="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${!modoEdicionActivo ? 'readonly' : ''}></td>`;
+                const valor = datos[eq][i] || 0;
+                suma += valor;
+                
+                // SIEMPRE mostrar el valor, independientemente del modo
+                const readonlyAttr = !modoEdicionActivo ? 'readonly' : '';
+                const bgStyle = !modoEdicionActivo ? 'style="background:#f0f2f5; color:#1e2a3e; font-weight:600;"' : '';
+                
+                fila += `<td class="editable-cell">
+                    <input type="number" min="0" value="${valor}" 
+                           data-equipo="${eq}" data-mes="${i}" data-tipo="${tipo}" 
+                           class="cell-input" ${readonlyAttr} ${bgStyle}>
+                </td>`;
             }
+            
             fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
             tbody.insertAdjacentHTML("beforeend", fila);
         });
+        
+        // Fila de totales por mes
         let totalPorMes = Array(12).fill(0);
-        CONFIG.equipos.forEach(eq => { for(let i=0; i<12; i++) totalPorMes[i] += datos[eq][i]; });
+        CONFIG.equipos.forEach(eq => {
+            if(datos[eq]) {
+                for(let i=0; i<12; i++) {
+                    totalPorMes[i] += datos[eq][i] || 0;
+                }
+            }
+        });
         let totalGeneral = totalPorMes.reduce((a,b) => a+b, 0);
-        let totalRow = `<tr class="total-row"><td><strong>TOTAL MES</strong></td>`;
-        totalPorMes.forEach(total => totalRow += `<td><strong>${total}</strong></td>`);
+        
+        let totalRow = `<tr class="total-row" style="background:#e8f4f8; font-weight:700;">
+            <td><strong>TOTAL POR MES</strong></td>`;
+        
+        totalPorMes.forEach((total, idx) => {
+            totalRow += `<td><strong>${total}</strong></td>`;
+        });
+        
         totalRow += `<td><strong>${totalGeneral}</strong></td></tr>`;
         tbody.insertAdjacentHTML("beforeend", totalRow);
+        
+        console.log(`✅ Tabla ${tbodyId} generada correctamente`);
     }
+    
     function actualizarTodasLasTablas() {
         const d = obtenerDatosActual();
+        console.log("🔄 Actualizando todas las tablas...");
+        
+        // Actualizar encabezados
         ["theadElasticosO","theadElasticosF","theadMazasN","theadMazasR","theadBulones","theadTuercas","theadLlantas"].forEach(id => {
-            const el = document.getElementById(id); if(el) el.innerHTML = generarEncabezadosTabla();
+            const el = document.getElementById(id); 
+            if(el) el.innerHTML = generarEncabezadosTabla();
         });
+        
+        // Generar cada tabla
         generarTablaEditable(d.elasticosO, "tbodyElasticosO", "elastO");
         generarTablaEditable(d.elasticosF, "tbodyElasticosF", "elastF");
         generarTablaEditable(d.mazasN, "tbodyMazasN", "mazaN");
@@ -466,25 +574,37 @@
         generarTablaEditable(d.bulones, "tbodyBulones", "bulon");
         generarTablaEditable(d.tuercas, "tbodyTuercas", "tuerca");
         generarTablaEditable(d.llantas, "tbodyLlantas", "llanta");
+        
         setupCellListeners();
         setupTableFilters();
+        console.log("✅ Todas las tablas actualizadas");
     }
+    
     function setupCellListeners() {
         document.querySelectorAll('.cell-input').forEach(input => {
             input.onchange = handleCellChange;
             input.onblur = handleCellChange;
         });
     }
+    
     function handleCellChange(e) {
-        if(!modoEdicionActivo) return;
+        if(!modoEdicionActivo) {
+            console.log("🔒 Cambio bloqueado - modo lectura");
+            return;
+        }
+        
         const input = e.target;
         const { equipo, mes, tipo } = input.dataset;
         let valor = parseInt(input.value) || 0;
         if(valor < 0) valor = 0;
+        
         const d = obtenerDatosActual();
         const mapas = {"elastO":"elasticosO","elastF":"elasticosF","mazaN":"mazasN","mazaR":"mazasR","bulon":"bulones","tuerca":"tuercas","llanta":"llantas"};
-        if(mapas[tipo]) {
+        
+        if(mapas[tipo] && d[mapas[tipo]][equipo]) {
             d[mapas[tipo]][equipo][mes] = valor;
+            console.log(`✏️ ${equipo} mes ${mes} = ${valor} (${tipo})`);
+            
             actualizarTodasLasTablas();
             actualizarTotalesTarjetas();
             calcularTotalesEconomicos();
@@ -492,33 +612,61 @@
             actualizarUltimaActualizacion();
         }
     }
+    
     function setupTableFilters() {
         document.querySelectorAll('.filter-input').forEach(input => {
             input.oninput = function() {
                 const filtro = this.value.toLowerCase();
                 const tipo = this.dataset.table;
                 const tbody = document.getElementById(`tbody${tipo === 'elastO' ? 'ElasticosO' : tipo === 'elastF' ? 'ElasticosF' : tipo === 'mazaN' ? 'MazasN' : tipo === 'mazaR' ? 'MazasR' : tipo === 'bulon' ? 'Bulones' : tipo === 'tuerca' ? 'Tuercas' : 'Llantas'}`);
+                
                 if(!tbody) return;
+                
                 tbody.querySelectorAll('tr').forEach(fila => {
                     const equipo = fila.querySelector('.equipo-col');
-                    if(equipo) fila.style.display = equipo.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+                    if(equipo) {
+                        fila.style.display = equipo.textContent.toLowerCase().includes(filtro) ? '' : 'none';
+                    }
                 });
             };
         });
     }
 
     // CÁLCULOS
-    function parseNumber(value) { if(!value) return 0; return parseFloat(value.toString().replace(/\./g,'').replace(',','.')) || 0; }
-    function formatCurrency(value) { if(!value && value !== 0) return ""; return new Intl.NumberFormat('es-AR', {style:'currency',currency:'ARS',minimumFractionDigits:0}).format(value); }
+    function parseNumber(value) { 
+        if(!value) return 0; 
+        return parseFloat(value.toString().replace(/\./g,'').replace(',','.')) || 0; 
+    }
+    
+    function formatCurrency(value) { 
+        if(!value && value !== 0) return ""; 
+        return new Intl.NumberFormat('es-AR', {style:'currency',currency:'ARS',minimumFractionDigits:0}).format(value); 
+    }
+    
     function actualizarTotalesTarjetas() {
         const d = obtenerDatosActual();
         const calc = (data) => Object.values(data).flat().reduce((a,b)=>a+b,0);
-        const t = {elastO:calc(d.elasticosO),elastF:calc(d.elasticosF),mazaN:calc(d.mazasN),mazaR:calc(d.mazasR),bulones:calc(d.bulones),tuercas:calc(d.tuercas),llantas:calc(d.llantas)};
+        
+        const t = {
+            elastO: calc(d.elasticosO),
+            elastF: calc(d.elasticosF),
+            mazaN: calc(d.mazasN),
+            mazaR: calc(d.mazasR),
+            bulones: calc(d.bulones),
+            tuercas: calc(d.tuercas),
+            llantas: calc(d.llantas)
+        };
+        
         Object.entries(t).forEach(([k,v]) => {
             const map = {"elastO":"totalElasticosO","elastF":"totalElasticosF","mazaN":"totalMazasN","mazaR":"totalMazasR","bulones":"totalBulones","tuercas":"totalTuercas","llantas":"totalLlantas"};
             const el = document.getElementById(map[k]);
-            if(el) { el.textContent = v; el.classList.add("pulse"); setTimeout(()=>el.classList.remove("pulse"),2000); }
+            if(el) { 
+                el.textContent = v; 
+                el.classList.add("pulse"); 
+                setTimeout(()=>el.classList.remove("pulse"),2000); 
+            }
         });
+        
         document.getElementById("cantElasticosO").textContent = t.elastO;
         document.getElementById("cantElasticosF").textContent = t.elastF;
         document.getElementById("cantMazasN").textContent = t.mazaN;
@@ -527,73 +675,222 @@
         document.getElementById("cantTuercas").textContent = t.tuercas;
         document.getElementById("cantLlantas").textContent = t.llantas;
     }
+    
     function calcularTotalesEconomicos() {
         const d = obtenerDatosActual();
         const calc = (data) => Object.values(data).flat().reduce((a,b)=>a+b,0);
-        const cant = {elastO:calc(d.elasticosO),elastF:calc(d.elasticosF),mazaN:calc(d.mazasN),mazaR:calc(d.mazasR),bulones:calc(d.bulones),tuercas:calc(d.tuercas),llantas:calc(d.llantas)};
-        const prec = {elastO:parseNumber(document.getElementById("precioElasticoO").value),elastF:parseNumber(document.getElementById("precioElasticoF").value),mazaN:parseNumber(document.getElementById("precioMazaN").value),mazaR:parseNumber(document.getElementById("precioMazaR").value),bulon:parseNumber(document.getElementById("precioBulon").value),tuerca:parseNumber(document.getElementById("precioTuerca").value),llanta:parseNumber(document.getElementById("precioLlanta").value)};
-        const totRep = {elastO:cant.elastO*prec.elastO,elastF:cant.elastF*prec.elastF,mazaN:cant.mazaN*prec.mazaN,mazaR:cant.mazaR*prec.mazaR,bulon:cant.bulones*prec.bulon,tuerca:cant.tuercas*prec.tuerca,llanta:cant.llantas*prec.llanta};
-        const h = {propio:parseNumber(document.getElementById("horasPropio").value),vPropio:parseNumber(document.getElementById("valorHoraPropio").value),coriaM:parseNumber(document.getElementById("horasCoriaMecanico").value),vCoriaM:parseNumber(document.getElementById("valorHoraCoriaMecanico").value),coriaS:parseNumber(document.getElementById("horasCoriaSoldador").value),vCoriaS:parseNumber(document.getElementById("valorHoraCoriaSoldador").value),patino:parseNumber(document.getElementById("horasPatino").value),vPatino:parseNumber(document.getElementById("valorHoraPatino").value)};
-        const totMO = {propio:h.propio*h.vPropio,coriaM:h.coriaM*h.vCoriaM,coriaS:h.coriaS*h.vCoriaS,patino:h.patino*h.vPatino};
+        
+        const cant = {
+            elastO: calc(d.elasticosO),
+            elastF: calc(d.elasticosF),
+            mazaN: calc(d.mazasN),
+            mazaR: calc(d.mazasR),
+            bulones: calc(d.bulones),
+            tuercas: calc(d.tuercas),
+            llantas: calc(d.llantas)
+        };
+        
+        const prec = {
+            elastO: parseNumber(document.getElementById("precioElasticoO").value),
+            elastF: parseNumber(document.getElementById("precioElasticoF").value),
+            mazaN: parseNumber(document.getElementById("precioMazaN").value),
+            mazaR: parseNumber(document.getElementById("precioMazaR").value),
+            bulon: parseNumber(document.getElementById("precioBulon").value),
+            tuerca: parseNumber(document.getElementById("precioTuerca").value),
+            llanta: parseNumber(document.getElementById("precioLlanta").value)
+        };
+        
+        const totRep = {
+            elastO: cant.elastO * prec.elastO,
+            elastF: cant.elastF * prec.elastF,
+            mazaN: cant.mazaN * prec.mazaN,
+            mazaR: cant.mazaR * prec.mazaR,
+            bulon: cant.bulones * prec.bulon,
+            tuerca: cant.tuercas * prec.tuerca,
+            llanta: cant.llantas * prec.llanta
+        };
+        
+        const h = {
+            propio: parseNumber(document.getElementById("horasPropio").value),
+            vPropio: parseNumber(document.getElementById("valorHoraPropio").value),
+            coriaM: parseNumber(document.getElementById("horasCoriaMecanico").value),
+            vCoriaM: parseNumber(document.getElementById("valorHoraCoriaMecanico").value),
+            coriaS: parseNumber(document.getElementById("horasCoriaSoldador").value),
+            vCoriaS: parseNumber(document.getElementById("valorHoraCoriaSoldador").value),
+            patino: parseNumber(document.getElementById("horasPatino").value),
+            vPatino: parseNumber(document.getElementById("valorHoraPatino").value)
+        };
+        
+        const totMO = {
+            propio: h.propio * h.vPropio,
+            coriaM: h.coriaM * h.vCoriaM,
+            coriaS: h.coriaS * h.vCoriaS,
+            patino: h.patino * h.vPatino
+        };
+        
         const tMO = Object.values(totMO).reduce((a,b)=>a+b,0);
         const tRep = Object.values(totRep).reduce((a,b)=>a+b,0);
         const tGen = tRep + tMO;
-        const setVal = (id,v) => { const el=document.getElementById(id); if(el) el.value = v?formatCurrency(v):""; };
-        setVal("totalElasticoO",totRep.elastO); setVal("totalElasticoF",totRep.elastF); setVal("totalMazaN",totRep.mazaN); setVal("totalMazaR",totRep.mazaR);
-        setVal("totalBulon",totRep.bulon); setVal("totalTuerca",totRep.tuerca); setVal("totalLlanta",totRep.llanta);
-        setVal("totalPropio",totMO.propio); setVal("totalCoriaMecanico",totMO.coriaM); setVal("totalCoriaSoldador",totMO.coriaS); setVal("totalPatino",totMO.patino);
-        setVal("totalManoObra",tMO); setVal("totalGeneral",tGen);
+        
+        const setVal = (id,v) => { 
+            const el=document.getElementById(id); 
+            if(el) el.value = v ? formatCurrency(v) : ""; 
+        };
+        
+        setVal("totalElasticoO",totRep.elastO); 
+        setVal("totalElasticoF",totRep.elastF); 
+        setVal("totalMazaN",totRep.mazaN); 
+        setVal("totalMazaR",totRep.mazaR);
+        setVal("totalBulon",totRep.bulon); 
+        setVal("totalTuerca",totRep.tuerca); 
+        setVal("totalLlanta",totRep.llanta);
+        setVal("totalPropio",totMO.propio); 
+        setVal("totalCoriaMecanico",totMO.coriaM); 
+        setVal("totalCoriaSoldador",totMO.coriaS); 
+        setVal("totalPatino",totMO.patino);
+        setVal("totalManoObra",tMO); 
+        setVal("totalGeneral",tGen);
+        
         actualizarGráficoCostos(totRep, totMO);
     }
+    
     function setupEconomicInputs() {
         ["precioElasticoO","precioElasticoF","precioMazaN","precioMazaR","precioBulon","precioTuerca","precioLlanta","horasPropio","valorHoraPropio","horasCoriaMecanico","valorHoraCoriaMecanico","horasCoriaSoldador","valorHoraCoriaSoldador","horasPatino","valorHoraPatino"].forEach(id => {
             const el = document.getElementById(id);
-            if(el) { el.addEventListener("input", calcularTotalesEconomicos); el.addEventListener("change", calcularTotalesEconomicos); }
+            if(el) { 
+                el.addEventListener("input", calcularTotalesEconomicos); 
+                el.addEventListener("change", calcularTotalesEconomicos); 
+            }
         });
     }
+    
     function cargarValoresEconomicos(data) {
         if(!data.precios && !data.horas) return;
         const setVal = (id,v) => { const el=document.getElementById(id); if(el && v) el.value=v; };
-        if(data.precios) { setVal("precioElasticoO",data.precios.elasticoO); setVal("precioElasticoF",data.precios.elasticoF); setVal("precioMazaN",data.precios.mazaN); setVal("precioMazaR",data.precios.mazaR); setVal("precioBulon",data.precios.bulon); setVal("precioTuerca",data.precios.tuerca); setVal("precioLlanta",data.precios.llanta); }
-        if(data.horas) { setVal("horasPropio",data.horas.propio); setVal("valorHoraPropio",data.horas.valorPropio); setVal("horasCoriaMecanico",data.horas.coriaMecanico); setVal("valorHoraCoriaMecanico",data.horas.valorCoriaMecanico); setVal("horasCoriaSoldador",data.horas.coriaSoldador); setVal("valorHoraCoriaSoldador",data.horas.valorCoriaSoldador); setVal("horasPatino",data.horas.patino); setVal("valorHoraPatino",data.horas.valorPatino); }
+        
+        if(data.precios) { 
+            setVal("precioElasticoO",data.precios.elasticoO); 
+            setVal("precioElasticoF",data.precios.elasticoF); 
+            setVal("precioMazaN",data.precios.mazaN); 
+            setVal("precioMazaR",data.precios.mazaR); 
+            setVal("precioBulon",data.precios.bulon); 
+            setVal("precioTuerca",data.precios.tuerca); 
+            setVal("precioLlanta",data.precios.llanta); 
+        }
+        if(data.horas) { 
+            setVal("horasPropio",data.horas.propio); 
+            setVal("valorHoraPropio",data.horas.valorPropio); 
+            setVal("horasCoriaMecanico",data.horas.coriaMecanico); 
+            setVal("valorHoraCoriaMecanico",data.horas.valorCoriaMecanico); 
+            setVal("horasCoriaSoldador",data.horas.coriaSoldador); 
+            setVal("valorHoraCoriaSoldador",data.horas.valorCoriaSoldador); 
+            setVal("horasPatino",data.horas.patino); 
+            setVal("valorHoraPatino",data.horas.valorPatino); 
+        }
     }
 
     // GRÁFICOS
-    function actualizarGráficos() { actualizarGráficoConsumo(); calcularTotalesEconomicos(); }
+    function actualizarGráficos() { 
+        actualizarGráficoConsumo(); 
+        calcularTotalesEconomicos(); 
+    }
+    
     function actualizarGráficoConsumo() {
         const d = obtenerDatosActual();
         const datosEq = {};
-        CONFIG.equipos.forEach(eq => { datosEq[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0); });
+        CONFIG.equipos.forEach(eq => { 
+            datosEq[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0); 
+        });
         const top5 = Object.entries(datosEq).sort((a,b)=>b[1]-a[1]).slice(0,5);
-        const ctx = document.getElementById('chartConsumo'); if(!ctx) return;
+        const ctx = document.getElementById('chartConsumo'); 
+        if(!ctx) return;
         if(charts.consumo) charts.consumo.destroy();
-        charts.consumo = new Chart(ctx, { type:'bar', data:{labels:top5.map(e=>e[0]),datasets:[{label:'Consumo Total',data:top5.map(e=>e[1]),backgroundColor:'rgba(30,70,104,0.7)',borderColor:'rgba(30,70,104,1)',borderWidth:2,borderRadius:6}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.05)'}},x:{grid:{display:false}}}} });
+        charts.consumo = new Chart(ctx, { 
+            type:'bar', 
+            data:{
+                labels:top5.map(e=>e[0]),
+                datasets:[{
+                    label:'Consumo Total',
+                    data:top5.map(e=>e[1]),
+                    backgroundColor:'rgba(30,70,104,0.7)',
+                    borderColor:'rgba(30,70,104,1)',
+                    borderWidth:2,
+                    borderRadius:6
+                }]
+            }, 
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{legend:{display:false}},
+                scales:{
+                    y:{beginAtZero:true,grid:{color:'rgba(0,0,0,0.05)'}},
+                    x:{grid:{display:false}}
+                }
+            } 
+        });
     }
+    
     function actualizarGráficoCostos(rep, mo) {
-        const ctx = document.getElementById('chartCostos'); if(!ctx) return;
+        const ctx = document.getElementById('chartCostos'); 
+        if(!ctx) return;
         const datos = [rep.elastO,rep.elastF,rep.mazaN,rep.mazaR,rep.bulon,rep.tuerca,rep.llanta,mo.propio+mo.coriaM+mo.coriaS+mo.patino].filter(v=>v>0);
         const labels = ['Elást. Orig','Elást. Fab','Mazas N','Mazas R','Bulones','Tuercas','Llantas','Mano Obra'].filter((_,i)=>datos[i]||i===7);
         if(charts.costos) charts.costos.destroy();
-        charts.costos = new Chart(ctx, { type:'doughnut', data:{labels,datasets:[{data:datos,backgroundColor:['#e67e22','#f39c12','#2980b9','#3498db','#27ae60','#f1c40f','#8e44ad','#95a5a6'],borderWidth:2,borderColor:'#fff'}]}, options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10}}}}} });
+        charts.costos = new Chart(ctx, { 
+            type:'doughnut', 
+            data:{
+                labels,
+                datasets:[{
+                    data:datos,
+                    backgroundColor:['#e67e22','#f39c12','#2980b9','#3498db','#27ae60','#f1c40f','#8e44ad','#95a5a6'],
+                    borderWidth:2,
+                    borderColor:'#fff'
+                }]
+            }, 
+            options:{
+                responsive:true,
+                maintainAspectRatio:false,
+                plugins:{legend:{position:'right',labels:{font:{size:10}}}}
+            } 
+        });
     }
 
-    // EXPORTAR / IMPORTAR (CSV PARA EXCEL/GOOGLE SHEETS)
+    // EXPORTAR / IMPORTAR CSV
     function exportarCSV() {
         const d = obtenerDatosActual();
         let csv = "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;Total\n";
+        
         CONFIG.equipos.forEach(eq => {
             let row = `${eq};`;
             let total = 0;
             for(let i=0;i<12;i++) {
                 let val = d.elasticosO[eq][i]+d.elasticosF[eq][i]+d.mazasN[eq][i]+d.mazasR[eq][i]+d.bulones[eq][i]+d.tuercas[eq][i]+d.llantas[eq][i];
-                row += `${val};`; total += val;
+                row += `${val};`; 
+                total += val;
             }
             csv += row + `${total}\n`;
         });
-        // Agregar sección económica
+        
         csv += "\nCONCEPTO;CANTIDAD;VALOR UNITARIO;TOTAL\n";
-        const prec = {elastO:document.getElementById("precioElasticoO").value||"0",elastF:document.getElementById("precioElasticoF").value||"0",mazaN:document.getElementById("precioMazaN").value||"0",mazaR:document.getElementById("precioMazaR").value||"0",bulon:document.getElementById("precioBulon").value||"0",tuerca:document.getElementById("precioTuerca").value||"0",llanta:document.getElementById("precioLlanta").value||"0"};
-        const cant = {elastO:document.getElementById("cantElasticosO").textContent,elastF:document.getElementById("cantElasticosF").textContent,mazaN:document.getElementById("cantMazasN").textContent,mazaR:document.getElementById("cantMazasR").textContent,bulones:document.getElementById("cantBulones").textContent,tuercas:document.getElementById("cantTuercas").textContent,llantas:document.getElementById("cantLlantas").textContent};
+        const prec = {
+            elastO:document.getElementById("precioElasticoO").value||"0",
+            elastF:document.getElementById("precioElasticoF").value||"0",
+            mazaN:document.getElementById("precioMazaN").value||"0",
+            mazaR:document.getElementById("precioMazaR").value||"0",
+            bulon:document.getElementById("precioBulon").value||"0",
+            tuerca:document.getElementById("precioTuerca").value||"0",
+            llanta:document.getElementById("precioLlanta").value||"0"
+        };
+        const cant = {
+            elastO:document.getElementById("cantElasticosO").textContent,
+            elastF:document.getElementById("cantElasticosF").textContent,
+            mazaN:document.getElementById("cantMazasN").textContent,
+            mazaR:document.getElementById("cantMazasR").textContent,
+            bulones:document.getElementById("cantBulones").textContent,
+            tuercas:document.getElementById("cantTuercas").textContent,
+            llantas:document.getElementById("cantLlantas").textContent
+        };
+        
         csv += `Elásticos Originales;${cant.elastO};${prec.elastO};\n`;
         csv += `Elásticos Fabricados;${cant.elastF};${prec.elastF};\n`;
         csv += `Mazas Nuevas;${cant.mazaN};${prec.mazaN};\n`;
@@ -605,53 +902,97 @@
         const blob = new Blob(["\ufeff"+csv], {type:'text/csv;charset=utf-8;'});
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url; a.download = `Minerar_Repuestos_${añoActual}.csv`;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        a.href = url; 
+        a.download = `Minerar_Repuestos_${añoActual}.csv`;
+        document.body.appendChild(a); 
+        a.click(); 
+        document.body.removeChild(a);
         URL.revokeObjectURL(url);
         mostrarToast("📊 Exportado a Excel/CSV", "#3498db");
     }
+    
     function importarCSV(event) {
-        const file = event.target.files[0]; if(!file) return;
+        const file = event.target.files[0]; 
+        if(!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             try {
                 const lines = e.target.result.split('\n').filter(l=>l.trim()!=='' && !l.includes('CONCEPTO') && !l.includes('Equipo'));
+                let importados = 0;
+                
                 lines.forEach(line => {
                     const parts = line.split(';');
                     const equipo = parts[0].trim();
-                    if(CONFIG.equipos.includes(equipo)) {
+                    if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
                         const d = obtenerDatosActual();
-                        // Asumimos que las columnas 1-12 son los meses. 
-                        // Para simplificar, sumamos todo al total y distribuimos proporcionalmente o guardamos en un array.
-                        // Aquí guardamos directamente en el array si coinciden 12 valores numéricos.
-                        const valores = parts.slice(1,13).map(v=>parseInt(v)||0);
-                        if(valores.length===12) {
-                            // Distribuir proporcionalmente entre categorías para mantener estructura (simplificado)
-                            // En producción real, se haría un mapeo exacto. Aquí solo actualizamos totales visuales.
-                            // Por ahora, solo actualizamos el primer mes como ejemplo de carga.
-                            // Para mantener compatibilidad con tu flujo, el CSV es solo para visualizar/reportar.
-                            // Si necesitas carga masiva exacta, avísame y te paso el script de importación detallado.
+                        for(let i=0; i<12; i++) {
+                            const val = parseInt(parts[i+1]) || 0;
+                            // Distribuir proporcionalmente (simplificado)
+                            d.elasticosO[equipo][i] = Math.round(val * 0.4);
+                            d.elasticosF[equipo][i] = Math.round(val * 0.1);
+                            d.mazasN[equipo][i] = Math.round(val * 0.15);
+                            d.mazasR[equipo][i] = Math.round(val * 0.1);
+                            d.bulones[equipo][i] = Math.round(val * 0.1);
+                            d.tuercas[equipo][i] = Math.round(val * 0.1);
+                            d.llantas[equipo][i] = Math.round(val * 0.05);
                         }
+                        importados++;
                     }
                 });
-                mostrarToast("📥 Importado correctamente", "#27ae60");
-            } catch(err) { mostrarToast("❌ Error al importar", "#e74c3c", true); }
+                
+                actualizarTodasLasTablas();
+                actualizarTotalesTarjetas();
+                calcularTotalesEconomicos();
+                actualizarGráficos();
+                mostrarToast(`📥 Importado ${importados} equipos correctamente`, "#27ae60");
+            } catch(err) { 
+                mostrarToast("❌ Error al importar", "#e74c3c", true); 
+                console.error(err);
+            }
         };
-        reader.readAsText(file); event.target.value="";
+        reader.readAsText(file); 
+        event.target.value="";
     }
 
     // GUARDAR
     function guardarTodosLosDatos() {
         try {
-            const data = { añoActual, datosPorAnio,
-                precios: {elasticoO:document.getElementById("precioElasticoO").value,elasticoF:document.getElementById("precioElasticoF").value,mazaN:document.getElementById("precioMazaN").value,mazaR:document.getElementById("precioMazaR").value,bulon:document.getElementById("precioBulon").value,tuerca:document.getElementById("precioTuerca").value,llanta:document.getElementById("precioLlanta").value},
-                horas: {propio:document.getElementById("horasPropio").value,valorPropio:document.getElementById("valorHoraPropio").value,coriaMecanico:document.getElementById("horasCoriaMecanico").value,valorCoriaMecanico:document.getElementById("valorHoraCoriaMecanico").value,coriaSoldador:document.getElementById("horasCoriaSoldador").value,valorCoriaSoldador:document.getElementById("valorHoraCoriaSoldador").value,patino:document.getElementById("horasPatino").value,valorPatino:document.getElementById("valorHoraPatino").value}
+            const data = { 
+                añoActual, 
+                datosPorAnio,
+                precios: {
+                    elasticoO: document.getElementById("precioElasticoO").value,
+                    elasticoF: document.getElementById("precioElasticoF").value,
+                    mazaN: document.getElementById("precioMazaN").value,
+                    mazaR: document.getElementById("precioMazaR").value,
+                    bulon: document.getElementById("precioBulon").value,
+                    tuerca: document.getElementById("precioTuerca").value,
+                    llanta: document.getElementById("precioLlanta").value
+                },
+                horas: {
+                    propio: document.getElementById("horasPropio").value,
+                    valorPropio: document.getElementById("valorHoraPropio").value,
+                    coriaMecanico: document.getElementById("horasCoriaMecanico").value,
+                    valorCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+                    coriaSoldador: document.getElementById("horasCoriaSoldador").value,
+                    valorCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+                    patino: document.getElementById("horasPatino").value,
+                    valorPatino: document.getElementById("valorHoraPatino").value
+                }
             };
             localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
             actualizarUltimaActualizacion();
-            mostrarToast("💾 Datos guardados correctamente", "#27ae60");
-        } catch(e) { mostrarToast("❌ Error al guardar", "#e74c3c", true); }
+            console.log(" Datos guardados en localStorage");
+            // Solo mostrar toast si fue llamado manualmente (no auto-save)
+            if(event && event.type) {
+                mostrarToast("💾 Datos guardados correctamente", "#27ae60");
+            }
+        } catch(e) { 
+            console.error("❌ Error al guardar:", e);
+            mostrarToast("❌ Error al guardar", "#e74c3c", true); 
+        }
     }
+    
     function resetearDatosCompletos() {
         if(!confirm("⚠️ ¿Resetear TODOS los datos? Esta acción no se puede deshacer.")) return;
         const password = prompt("🔒 Contraseña de administrador:");
@@ -660,34 +1001,56 @@
                 localStorage.removeItem(CONFIG.storageKey);
                 location.reload();
             }
-        } else { mostrarToast("❌ Contraseña incorrecta", "#e74c3c", true); }
+        } else { 
+            mostrarToast("❌ Contraseña incorrecta", "#e74c3c", true); 
+        }
     }
+    
     function cambiarAnio() {
         añoActual = parseInt(document.getElementById("yearSelect").value);
-        if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
-        actualizarTodasLasTablas(); actualizarTotalesTarjetas(); calcularTotalesEconomicos(); actualizarGráficos();
+        if(!datosPorAnio[añoActual]) {
+            datosPorAnio[añoActual] = crearEstructuraVacia();
+        }
+        actualizarTodasLasTablas(); 
+        actualizarTotalesTarjetas(); 
+        calcularTotalesEconomicos(); 
+        actualizarGráficos();
         mostrarToast(`📅 Año ${añoActual}`, "#3498db");
     }
+    
     function toggleTheme() {
         const current = document.body.getAttribute("data-theme");
         const next = current === "dark" ? "light" : "dark";
         document.body.setAttribute("data-theme", next);
         localStorage.setItem("minerar_theme", next);
     }
+    
     const savedTheme = localStorage.getItem("minerar_theme");
     if(savedTheme) document.body.setAttribute("data-theme", savedTheme);
+    
     function mostrarToast(msg, color, isError=false) {
         const toast = document.getElementById("toast");
-        toast.textContent = msg; toast.style.backgroundColor = color;
-        if(isError) toast.classList.add("error"); else toast.classList.remove("error");
+        toast.textContent = msg; 
+        toast.style.backgroundColor = color;
+        if(isError) toast.classList.add("error"); 
+        else toast.classList.remove("error");
         toast.classList.add("show");
         setTimeout(()=>toast.classList.remove("show"), 3000);
     }
+    
     function actualizarUltimaActualizacion() {
         const now = new Date();
-        document.getElementById("lastUpdate")?.textContent = now.toLocaleString('es-AR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-        document.getElementById("printDate") && (document.getElementById("printDate").textContent = now.toLocaleDateString('es-AR'));
+        const lastUpdateEl = document.getElementById("lastUpdate");
+        if(lastUpdateEl) {
+            lastUpdateEl.textContent = now.toLocaleString('es-AR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+        }
+        const printDateEl = document.getElementById("printDate");
+        if(printDateEl) {
+            printDateEl.textContent = now.toLocaleDateString('es-AR');
+        }
     }
+
+    // INICIAR AL CARGAR
     document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
