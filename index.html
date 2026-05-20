@@ -435,7 +435,7 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin: 28px 0 0 0; 
+            margin: 20px 0 0 0; 
             padding: 14px 20px; 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
             border-radius: 12px; 
@@ -456,7 +456,7 @@
         }
         
         .accordion-header .section-title { 
-            font-size: 1.1rem; 
+            font-size: 1rem; 
             font-weight: 700; 
             display: flex;
             align-items: center;
@@ -509,10 +509,10 @@
         th { 
             background: linear-gradient(135deg, var(--accent), #d35400); 
             color: white; 
-            padding: 12px 8px; 
+            padding: 10px 6px; 
             font-weight: 700; 
             text-transform: uppercase; 
-            font-size: 0.75rem; 
+            font-size: 0.7rem; 
             letter-spacing: 0.5px;
         }
         
@@ -524,10 +524,10 @@
         
         td { 
             border-bottom: 2px solid #ecf0f1; 
-            padding: 10px 5px; 
+            padding: 8px 4px; 
             text-align: center; 
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-primary);
         }
         
@@ -570,7 +570,7 @@
             border-radius: 6px; 
             transition: all 0.3s;
             color: var(--text-primary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         
         [data-theme="dark"] .editable-cell input {
@@ -605,15 +605,15 @@
         .alert { 
             background: linear-gradient(135deg, #d4edda, #c3e6cb); 
             border-left: 5px solid var(--success); 
-            padding: 16px 20px; 
+            padding: 12px 16px; 
             margin-bottom: 24px; 
             border-radius: 12px; 
             display: flex; 
             align-items: center; 
             gap: 12px; 
             font-weight: 600; 
+            font-size: 0.85rem;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
         }
         
         [data-theme="dark"] .alert {
@@ -635,7 +635,7 @@
         #unlock-btn { 
             background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
             color: white; 
-            padding: 12px 20px; 
+            padding: 10px 18px; 
             border-radius: 30px; 
             cursor: pointer; 
             font-weight: 700; 
@@ -666,7 +666,7 @@
         #save-lock-btn { 
             background: linear-gradient(135deg, var(--success), #229954); 
             color: white; 
-            padding: 12px 20px; 
+            padding: 10px 18px; 
             border-radius: 30px; 
             cursor: pointer; 
             font-weight: 700; 
@@ -722,14 +722,13 @@
         
         .security-modal { 
             background: linear-gradient(135deg, #fff, #f8f9fa); 
-            padding: 40px; 
+            padding: 30px; 
             border-radius: 24px; 
-            max-width: 450px; 
+            max-width: 400px; 
             width: 90%; 
             text-align: center; 
             box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
             border: 3px solid rgba(255,255,255,0.3);
-            transition: all 0.3s ease;
         }
         
         [data-theme="dark"] .security-modal {
@@ -751,7 +750,7 @@
         
         .security-modal p { 
             color: var(--text-secondary); 
-            margin-bottom: 24px; 
+            margin-bottom: 20px; 
             font-weight: 500;
         }
         
@@ -761,13 +760,12 @@
         
         .security-modal input { 
             width: 100%; 
-            padding: 14px 18px; 
-            margin: 20px 0; 
+            padding: 12px 16px; 
+            margin: 15px 0; 
             border: 3px solid var(--border); 
             border-radius: 12px; 
             font-size: 1rem; 
             font-weight: 600; 
-            transition: all 0.3s;
             color: var(--text-primary);
             background: white;
         }
@@ -784,20 +782,15 @@
             box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.2);
         }
         
-        [data-theme="dark"] .security-modal input:focus {
-            border-color: #00d4ff;
-            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
-        }
-        
         .security-btn { 
-            padding: 12px 28px; 
+            padding: 10px 24px; 
             border: none; 
             border-radius: 25px; 
             font-weight: 700; 
             cursor: pointer; 
-            margin: 0 8px; 
+            margin: 0 6px; 
             transition: all 0.3s; 
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .security-btn-primary { 
@@ -825,19 +818,14 @@
             transform: translateY(-2px); 
             box-shadow: 0 6px 15px rgba(0,0,0,0.2);
         }
-        
-        [data-theme="dark"] .security-btn:hover {
-            box-shadow: 0 0 25px rgba(0, 212, 255, 0.5);
-        }
 
         .values-section { 
             margin-top: 40px; 
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            padding: 32px; 
+            padding: 24px; 
             border-radius: 20px; 
             border: 3px solid rgba(255,255,255,0.3);
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            transition: all 0.3s ease;
         }
         
         [data-theme="dark"] .values-section {
@@ -848,8 +836,8 @@
         
         .values-section h3 { 
             color: white; 
-            margin-bottom: 24px; 
-            font-size: 1.4rem; 
+            margin-bottom: 20px; 
+            font-size: 1.2rem; 
             font-weight: 800; 
             text-align: center; 
             text-shadow: 0 2px 10px rgba(0,0,0,0.2);
@@ -866,7 +854,6 @@
             border-radius: 16px; 
             overflow: hidden; 
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
         }
         
         [data-theme="dark"] .values-table {
@@ -878,10 +865,10 @@
         .values-table th { 
             background: linear-gradient(135deg, #2c3e50, #34495e); 
             color: white; 
-            padding: 12px; 
+            padding: 10px; 
             font-weight: 700; 
             text-transform: uppercase; 
-            font-size: 0.8rem; 
+            font-size: 0.75rem; 
             letter-spacing: 0.5px;
         }
         
@@ -892,10 +879,10 @@
         }
         
         .values-table td { 
-            padding: 12px; 
+            padding: 10px; 
             border-bottom: 2px solid #ecf0f1;
             color: var(--text-primary);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         
         [data-theme="dark"] .values-table td {
@@ -915,12 +902,11 @@
         
         .values-table input { 
             width: 100%; 
-            padding: 8px 12px; 
+            padding: 6px 10px; 
             border: 2px solid var(--border); 
             border-radius: 10px; 
-            font-size: 0.85rem; 
+            font-size: 0.8rem; 
             font-weight: 600; 
-            transition: all 0.3s; 
             background: white;
             color: var(--text-primary);
         }
@@ -935,11 +921,6 @@
             outline: none; 
             border-color: var(--accent); 
             box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.2);
-        }
-        
-        [data-theme="dark"] .values-table input:focus {
-            border-color: #00d4ff;
-            box-shadow: 0 0 0 4px rgba(0, 212, 255, 0.3);
         }
         
         .values-table input[readonly] { 
@@ -964,11 +945,10 @@
             color: #00d4ff;
         }
         
-        /* CORREGIDO: Modo oscuro - Totales visibles */
         .grand-total { 
             background: linear-gradient(135deg, #f39c12, #e67e22) !important; 
             font-weight: 800 !important; 
-            font-size: 1rem !important;
+            font-size: 0.9rem !important;
         }
         
         .grand-total td { 
@@ -992,7 +972,7 @@
         .grand-total input { 
             background: transparent !important; 
             font-weight: 800 !important; 
-            font-size: 1rem !important;
+            font-size: 0.9rem !important;
         }
         
         .grand-total input {
@@ -1004,13 +984,12 @@
         }
 
         .hours-section { 
-            margin-top: 28px; 
+            margin-top: 24px; 
             background: white; 
             padding: 20px; 
             border-radius: 16px; 
             border: 3px solid rgba(255,255,255,0.4); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
         }
         
         [data-theme="dark"] .hours-section {
@@ -1021,11 +1000,11 @@
         
         .hours-section h4 { 
             color: var(--primary); 
-            margin-bottom: 20px; 
-            font-size: 1.1rem; 
+            margin-bottom: 16px; 
+            font-size: 1rem; 
             font-weight: 700; 
             border-bottom: 3px solid var(--accent); 
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
         
         [data-theme="dark"] .hours-section h4 {
@@ -1040,13 +1019,14 @@
             right: 24px; 
             background: linear-gradient(135deg, var(--success), #229954); 
             color: white; 
-            padding: 12px 24px; 
+            padding: 10px 20px; 
             border-radius: 30px; 
             opacity: 0; 
             transform: translateY(20px); 
             transition: all 0.3s; 
             z-index: 1000; 
             font-weight: 700; 
+            font-size: 0.85rem;
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
         
@@ -1205,7 +1185,7 @@
         <div class="accordion-icon" id="iconElasticosF">▼</div>
     </div>
     <div id="accordionElasticosF" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody><tr></div>
+        <div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')">
@@ -1221,7 +1201,7 @@
         <div class="accordion-icon" id="iconMazasR">▼</div>
     </div>
     <div id="accordionMazasR" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody><tr></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')">
@@ -1229,7 +1209,7 @@
         <div class="accordion-icon" id="iconBulonTuerca">▼</div>
     </div>
     <div id="accordionBulonTuerca" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></tr></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')">
@@ -1253,7 +1233,7 @@
         <div class="accordion-icon" id="iconPatinFrenoNuevo">▼</div>
     </div>
     <div id="accordionPatinFrenoNuevo" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></tr></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')">
@@ -1285,7 +1265,7 @@
         <div class="accordion-icon" id="iconPulmonFrenoReparado">▼</div>
     </div>
     <div id="accordionPulmonFrenoReparado" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></td></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionLlantas')">
@@ -1366,7 +1346,7 @@ const CONFIG = {
     equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
     meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
     passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v13"
+    storageKey: "minerar_repuestos_v14"
 };
 
 let añoActual = 2026;
@@ -1506,7 +1486,7 @@ function generarTabla(datos, tbodyId, tipo) {
             suma += val;
             const readonly = !modoEdicionActivo ? 'readonly' : '';
             fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" 
-                data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${readonly} style="width:65px;"></td>`;
+                data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${readonly} style="width:60px;"></td>`;
         }
         fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
         tbody.insertAdjacentHTML("beforeend", fila);
@@ -1540,7 +1520,6 @@ function handleCellChange(input) {
 function actualizarTodo() {
     const d = obtenerDatosActual();
     
-    // Generar encabezados de todas las tablas
     const tablas = [
         "theadElasticosO","theadElasticosF","theadMazasN","theadMazasR",
         "theadBulonTuerca","theadNeumaticoNuevo","theadNeumaticoUsado",
@@ -1552,7 +1531,6 @@ function actualizarTodo() {
         if(el) el.innerHTML = generarEncabezados(); 
     });
     
-    // Generar datos de todas las tablas
     generarTabla(d.elasticosO, "tbodyElasticosO", "elasticosO");
     generarTabla(d.elasticosF, "tbodyElasticosF", "elasticosF");
     generarTabla(d.mazasN, "tbodyMazasN", "mazasN");
@@ -1598,7 +1576,6 @@ function actualizarTarjetas() {
         llantas: calc(d.llantas)
     };
     
-    // Actualizar tarjetas
     document.getElementById("totalElasticosO").textContent = t.elastO;
     document.getElementById("totalElasticosF").textContent = t.elastF;
     document.getElementById("totalMazasN").textContent = t.mazaN;
@@ -1613,7 +1590,6 @@ function actualizarTarjetas() {
     document.getElementById("totalPulmonFrenoReparado").textContent = t.pulmonFrenoReparado;
     document.getElementById("totalLlantas").textContent = t.llantas;
     
-    // Actualizar cantidades en tabla de valores económicos
     document.getElementById("cantElasticosO").textContent = t.elastO;
     document.getElementById("cantElasticosF").textContent = t.elastF;
     document.getElementById("cantMazasN").textContent = t.mazaN;
@@ -1679,7 +1655,6 @@ function calcularEconomico() {
     setVal("totalPulmonFrenoReparado", cant.pulmonFrenoReparado * prec.pulmonFrenoReparado);
     setVal("totalLlanta", cant.llantas * prec.llanta);
     
-    // Horas Hombre
     const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
     const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
     const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
@@ -1687,14 +1662,12 @@ function calcularEconomico() {
     const hPatino = (parseFloat(document.getElementById("horasPatino").value) || 0) * (parseFloat(document.getElementById("valorHoraPatino").value) || 0);
     
     const totalMO = hPropio + hCoriaM + hCoriaS + hCarrizo + hPatino;
-    
     const totalRep = (cant.elastO * prec.elastO) + (cant.elastF * prec.elastF) + (cant.mazaN * prec.mazaN) + 
                      (cant.mazaR * prec.mazaR) + (cant.bulon * prec.bulon) + (cant.tuerca * prec.tuerca) +
                      (cant.neumaticoNuevo * prec.neumaticoNuevo) + (cant.patinFrenoNuevo * prec.patinFrenoNuevo) +
                      (cant.patinFrenoReparado * prec.patinFrenoReparado) + (cant.levaFreno * prec.levaFreno) +
                      (cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo) + (cant.pulmonFrenoReparado * prec.pulmonFrenoReparado) +
                      (cant.llantas * prec.llanta);
-    
     const totalGral = totalRep + totalMO;
     
     document.getElementById("totalPropio").value = hPropio ? formatMoney(hPropio) : "";
@@ -1707,6 +1680,10 @@ function calcularEconomico() {
 }
 
 function formatMoney(val) {
+    return new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', minimumFractionDigits:0}).format(val);
+}
+
+function formatMoneySimple(val) {
     return new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', minimumFractionDigits:0}).format(val);
 }
 
@@ -1744,6 +1721,409 @@ function guardarTodosLosDatos(event) {
     localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
     document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
     if(event && event.type) mostrarToast("💾 Datos guardados");
+}
+
+function exportarCSV() {
+    const d = obtenerDatosActual();
+    let csv = "MINERAR - INFORME DE REPUESTOS CRÍTICOS " + añoActual + "\n";
+    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
+    
+    // ELÁSTICOS ORIGINALES
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "📦 PAQUETES ELÁSTICOS ORIGINALES\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.elasticosO[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // ELÁSTICOS FABRICADOS
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "📦 PAQUETES ELÁSTICOS FABRICADOS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.elasticosF[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // MAZAS NUEVAS
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⚙️ MAZAS NUEVAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.mazasN[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // MAZAS REPARADAS
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⚙️ MAZAS REPARADAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.mazasR[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // BULÓN Y TUERCA
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🔩 BULÓN Y TUERCA SCANIA\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.bulonTuerca[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // NEUMÁTICO NUEVO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🛞 NEUMÁTICO NUEVO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.neumaticoNuevo[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // NEUMÁTICO USADO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🛞 NEUMÁTICO USADO (SOLO CONSUMO)\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.neumaticoUsado[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // PATÍN FRENO NUEVO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🛞 PATÍN DE FRENO NUEVO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.patinFrenoNuevo[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // PATÍN FRENO REPARADO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "🛞 PATÍN DE FRENO REPARADO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.patinFrenoReparado[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // LEVA FRENO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⚙️ LEVA DE FRENO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.levaFreno[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // PULMÓN FRENO NUEVO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "💨 PULMÓN DE FRENO NUEVO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.pulmonFrenoNuevo[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // PULMÓN FRENO REPARADO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "💨 PULMÓN DE FRENO REPARADO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.pulmonFrenoReparado[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // LLANTAS ROTAS
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "⭕ LLANTAS ROTAS\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+    CONFIG.equipos.forEach(eq => {
+        let row = `${eq};`;
+        let total = 0;
+        for(let i=0; i<12; i++) {
+            let val = d.llantas[eq][i];
+            row += `${val};`;
+            total += val;
+        }
+        csv += row + `${total}\n`;
+    });
+    csv += "\n";
+    
+    // RESUMEN ECONÓMICO
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "💰 RESUMEN ECONÓMICO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Cantidad;Valor Unitario;Total\n";
+    
+    const cant = {
+        elastO: document.getElementById("cantElasticosO").textContent,
+        elastF: document.getElementById("cantElasticosF").textContent,
+        mazaN: document.getElementById("cantMazasN").textContent,
+        mazaR: document.getElementById("cantMazasR").textContent,
+        bulon: document.getElementById("cantBulon").textContent,
+        tuerca: document.getElementById("cantTuerca").textContent,
+        neumaticoNuevo: document.getElementById("cantNeumaticoNuevo").textContent,
+        patinFrenoNuevo: document.getElementById("cantPatinFrenoNuevo").textContent,
+        patinFrenoReparado: document.getElementById("cantPatinFrenoReparado").textContent,
+        levaFreno: document.getElementById("cantLevaFreno").textContent,
+        pulmonFrenoNuevo: document.getElementById("cantPulmonFrenoNuevo").textContent,
+        pulmonFrenoReparado: document.getElementById("cantPulmonFrenoReparado").textContent,
+        llantas: document.getElementById("cantLlantas").textContent
+    };
+    
+    const prec = {
+        elastO: document.getElementById("precioElasticoO").value || "0",
+        elastF: document.getElementById("precioElasticoF").value || "0",
+        mazaN: document.getElementById("precioMazaN").value || "0",
+        mazaR: document.getElementById("precioMazaR").value || "0",
+        bulon: document.getElementById("precioBulon").value || "0",
+        tuerca: document.getElementById("precioTuerca").value || "0",
+        neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value || "0",
+        patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value || "0",
+        patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value || "0",
+        levaFreno: document.getElementById("precioLevaFreno").value || "0",
+        pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value || "0",
+        pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value || "0",
+        llanta: document.getElementById("precioLlanta").value || "0"
+    };
+    
+    csv += `Elásticos Originales;${cant.elastO};${prec.elastO};${formatMoneySimple(parseInt(cant.elastO) * parseFloat(prec.elastO))}\n`;
+    csv += `Elásticos Fabricados;${cant.elastF};${prec.elastF};${formatMoneySimple(parseInt(cant.elastF) * parseFloat(prec.elastF))}\n`;
+    csv += `Mazas Nuevas;${cant.mazaN};${prec.mazaN};${formatMoneySimple(parseInt(cant.mazaN) * parseFloat(prec.mazaN))}\n`;
+    csv += `Mazas Reparadas;${cant.mazaR};${prec.mazaR};${formatMoneySimple(parseInt(cant.mazaR) * parseFloat(prec.mazaR))}\n`;
+    csv += `Bulón Scania;${cant.bulon};${prec.bulon};${formatMoneySimple(parseInt(cant.bulon) * parseFloat(prec.bulon))}\n`;
+    csv += `Tuerca Scania;${cant.tuerca};${prec.tuerca};${formatMoneySimple(parseInt(cant.tuerca) * parseFloat(prec.tuerca))}\n`;
+    csv += `Neumático Nuevo;${cant.neumaticoNuevo};${prec.neumaticoNuevo};${formatMoneySimple(parseInt(cant.neumaticoNuevo) * parseFloat(prec.neumaticoNuevo))}\n`;
+    csv += `Neumático Usado;${cant.neumaticoUsado};SIN VALOR;SIN VALOR\n`;
+    csv += `Patín Freno Nuevo;${cant.patinFrenoNuevo};${prec.patinFrenoNuevo};${formatMoneySimple(parseInt(cant.patinFrenoNuevo) * parseFloat(prec.patinFrenoNuevo))}\n`;
+    csv += `Patín Freno Reparado;${cant.patinFrenoReparado};${prec.patinFrenoReparado};${formatMoneySimple(parseInt(cant.patinFrenoReparado) * parseFloat(prec.patinFrenoReparado))}\n`;
+    csv += `Leva de Freno;${cant.levaFreno};${prec.levaFreno};${formatMoneySimple(parseInt(cant.levaFreno) * parseFloat(prec.levaFreno))}\n`;
+    csv += `Pulmón Freno Nuevo;${cant.pulmonFrenoNuevo};${prec.pulmonFrenoNuevo};${formatMoneySimple(parseInt(cant.pulmonFrenoNuevo) * parseFloat(prec.pulmonFrenoNuevo))}\n`;
+    csv += `Pulmón Freno Reparado;${cant.pulmonFrenoReparado};${prec.pulmonFrenoReparado};${formatMoneySimple(parseInt(cant.pulmonFrenoReparado) * parseFloat(prec.pulmonFrenoReparado))}\n`;
+    csv += `Llantas Rotas;${cant.llantas};${prec.llanta};${formatMoneySimple(parseInt(cant.llantas) * parseFloat(prec.llanta))}\n`;
+    csv += `\n`;
+    
+    // HORAS HOMBRE
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "👷 HORAS HOMBRE\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Horas;Valor/Hora;Total\n";
+    csv += `Personal Propio;${document.getElementById("horasPropio").value || 0};${document.getElementById("valorHoraPropio").value || 0};${document.getElementById("totalPropio").value || 0}\n`;
+    csv += `CORIA - Mecánico;${document.getElementById("horasCoriaMecanico").value || 0};${document.getElementById("valorHoraCoriaMecanico").value || 0};${document.getElementById("totalCoriaMecanico").value || 0}\n`;
+    csv += `CORIA - Soldador;${document.getElementById("horasCoriaSoldador").value || 0};${document.getElementById("valorHoraCoriaSoldador").value || 0};${document.getElementById("totalCoriaSoldador").value || 0}\n`;
+    csv += `CARRIZO - Mecánica;${document.getElementById("horasCarrizo").value || 0};${document.getElementById("valorHoraCarrizo").value || 0};${document.getElementById("totalCarrizo").value || 0}\n`;
+    csv += `PATIÑO - Soldador;${document.getElementById("horasPatino").value || 0};${document.getElementById("valorHoraPatino").value || 0};${document.getElementById("totalPatino").value || 0}\n`;
+    csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
+    csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
+    
+    const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Minerar_Repuestos_Detallado_${añoActual}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    mostrarToast("📊 Exportado informe detallado a CSV");
+}
+
+function importarCSV(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const d = obtenerDatosActual();
+            let categoriaActual = null;
+            let mapCategoria = {
+                'PAQUETES ELÁSTICOS ORIGINALES': 'elasticosO',
+                'PAQUETES ELÁSTICOS FABRICADOS': 'elasticosF',
+                'MAZAS NUEVAS': 'mazasN',
+                'MAZAS REPARADAS': 'mazasR',
+                'BULÓN Y TUERCA SCANIA': 'bulonTuerca',
+                'NEUMÁTICO NUEVO': 'neumaticoNuevo',
+                'NEUMÁTICO USADO (SOLO CONSUMO)': 'neumaticoUsado',
+                'PATÍN DE FRENO NUEVO': 'patinFrenoNuevo',
+                'PATÍN DE FRENO REPARADO': 'patinFrenoReparado',
+                'LEVA DE FRENO': 'levaFreno',
+                'PULMÓN DE FRENO NUEVO': 'pulmonFrenoNuevo',
+                'PULMÓN DE FRENO REPARADO': 'pulmonFrenoReparado',
+                'LLANTAS ROTAS': 'llantas'
+            };
+            
+            lines.forEach(line => {
+                line = line.trim();
+                for(let key in mapCategoria) {
+                    if(line.includes(key)) {
+                        categoriaActual = mapCategoria[key];
+                        break;
+                    }
+                }
+                if(categoriaActual && line.match(/^M\d+;/)) {
+                    const parts = line.split(';');
+                    const equipo = parts[0];
+                    if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
+                        for(let i=0; i<12; i++) {
+                            const val = parseInt(parts[i+1]) || 0;
+                            if(d[categoriaActual] && d[categoriaActual][equipo]) {
+                                d[categoriaActual][equipo][i] = val;
+                            }
+                        }
+                    }
+                }
+            });
+            
+            actualizarTodo();
+            guardarTodosLosDatos();
+            mostrarToast("✅ Datos importados correctamente");
+        } catch(err) {
+            console.error(err);
+            mostrarToast("❌ Error al importar", true);
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = "";
+}
+
+function resetearDatosCompletos() {
+    if(!confirm("⚠️ ¿Resetear TODOS los datos?")) return;
+    const pass = prompt("🔒 Contraseña:");
+    if(pass === CONFIG.passwordAdmin) {
+        if(confirm("✅ ¿Confirmar?")) {
+            localStorage.removeItem(CONFIG.storageKey);
+            location.reload();
+        }
+    } else mostrarToast("❌ Contraseña incorrecta", true);
+}
+
+function cambiarAnio() {
+    añoActual = parseInt(document.getElementById("yearSelect").value);
+    if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
+    actualizarTodo();
+    mostrarToast(`📅 Año ${añoActual}`);
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    if(isDark) {
+        body.removeAttribute('data-theme');
+    } else {
+        body.setAttribute('data-theme', 'dark');
+    }
+    actualizarGraficos();
+}
+
+function mostrarToast(msg, error=false) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.className = 'toast show' + (error ? ' error' : '');
+    setTimeout(() => toast.className = 'toast', 3000);
 }
 
 function actualizarGraficos() {
@@ -1921,147 +2301,6 @@ function filtrarGrafico(categoria) {
         });
         graficoFiltrado = null;
     }, 5000);
-}
-
-function exportarCSV() {
-    const d = obtenerDatosActual();
-    let csv = "MINERAR - INFORME DE REPUESTOS CRÍTICOS " + añoActual + "\n";
-    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
-    
-    const categorias = [
-        {nombre:"ElasticosOriginales", datos:d.elasticosO},
-        {nombre:"ElasticosFabricados", datos:d.elasticosF},
-        {nombre:"MazasNuevas", datos:d.mazasN},
-        {nombre:"MazasReparadas", datos:d.mazasR},
-        {nombre:"BulonTuerca", datos:d.bulonTuerca},
-        {nombre:"NeumaticoNuevo", datos:d.neumaticoNuevo},
-        {nombre:"NeumaticoUsado", datos:d.neumaticoUsado},
-        {nombre:"PatinFrenoNuevo", datos:d.patinFrenoNuevo},
-        {nombre:"PatinFrenoReparado", datos:d.patinFrenoReparado},
-        {nombre:"LevaFreno", datos:d.levaFreno},
-        {nombre:"PulmonFrenoNuevo", datos:d.pulmonFrenoNuevo},
-        {nombre:"PulmonFrenoReparado", datos:d.pulmonFrenoReparado},
-        {nombre:"Llantas", datos:d.llantas}
-    ];
-    
-    categorias.forEach(cat => {
-        csv += `\n${cat.nombre}\n`;
-        csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
-        CONFIG.equipos.forEach(eq => {
-            let row = `${eq};`;
-            let total = 0;
-            for(let i=0;i<12;i++) {
-                let val = cat.datos[eq][i];
-                row += `${val};`;
-                total += val;
-            }
-            csv += row + `${total}\n`;
-        });
-    });
-    
-    const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Minerar_Repuestos_${añoActual}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    mostrarToast("📊 Exportado a CSV");
-}
-
-function importarCSV(event) {
-    const file = event.target.files[0];
-    if(!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const text = e.target.result;
-            const lines = text.split('\n');
-            const d = obtenerDatosActual();
-            let categoriaActual = null;
-            let mapCategoria = {
-                'ElasticosOriginales': 'elasticosO',
-                'ElasticosFabricados': 'elasticosF',
-                'MazasNuevas': 'mazasN',
-                'MazasReparadas': 'mazasR',
-                'BulonTuerca': 'bulonTuerca',
-                'NeumaticoNuevo': 'neumaticoNuevo',
-                'NeumaticoUsado': 'neumaticoUsado',
-                'PatinFrenoNuevo': 'patinFrenoNuevo',
-                'PatinFrenoReparado': 'patinFrenoReparado',
-                'LevaFreno': 'levaFreno',
-                'PulmonFrenoNuevo': 'pulmonFrenoNuevo',
-                'PulmonFrenoReparado': 'pulmonFrenoReparado',
-                'Llantas': 'llantas'
-            };
-            
-            lines.forEach(line => {
-                line = line.trim();
-                if(mapCategoria[line]) {
-                    categoriaActual = mapCategoria[line];
-                } else if(categoriaActual && line.match(/^M\d+;/)) {
-                    const parts = line.split(';');
-                    const equipo = parts[0];
-                    if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
-                        for(let i=0;i<12;i++) {
-                            const val = parseInt(parts[i+1]) || 0;
-                            if(d[categoriaActual] && d[categoriaActual][equipo]) {
-                                d[categoriaActual][equipo][i] = val;
-                            }
-                        }
-                    }
-                }
-            });
-            
-            actualizarTodo();
-            guardarTodosLosDatos();
-            mostrarToast("✅ Datos importados correctamente");
-        } catch(err) {
-            mostrarToast("❌ Error al importar", true);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
-}
-
-function resetearDatosCompletos() {
-    if(!confirm("⚠️ ¿Resetear TODOS los datos?")) return;
-    const pass = prompt("🔒 Contraseña:");
-    if(pass === CONFIG.passwordAdmin) {
-        if(confirm("✅ ¿Confirmar?")) {
-            localStorage.removeItem(CONFIG.storageKey);
-            location.reload();
-        }
-    } else mostrarToast("❌ Contraseña incorrecta", true);
-}
-
-function cambiarAnio() {
-    añoActual = parseInt(document.getElementById("yearSelect").value);
-    if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
-    actualizarTodo();
-    mostrarToast(`📅 Año ${añoActual}`);
-}
-
-function toggleTheme() {
-    const body = document.body;
-    const isDark = body.getAttribute('data-theme') === 'dark';
-    if(isDark) {
-        body.removeAttribute('data-theme');
-    } else {
-        body.setAttribute('data-theme', 'dark');
-    }
-    actualizarGraficos();
-}
-
-function mostrarToast(msg, error=false) {
-    const toast = document.getElementById("toast");
-    toast.textContent = msg;
-    toast.className = 'toast show' + (error ? ' error' : '');
-    setTimeout(() => toast.className = 'toast', 3000);
 }
 
 function cambiarMes(mesIndex) {
