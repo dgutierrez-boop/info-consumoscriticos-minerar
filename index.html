@@ -1046,6 +1046,30 @@
         </div>
     </div>
 
+    <!-- FILTRO DE MESES -->
+    <div style="margin-bottom: 24px; padding: 16px; background: rgba(0,212,255,0.1); border-radius: 12px; border: 2px solid #00d4ff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color: #00d4ff; margin: 0; font-size: 1rem;">📅 FILTRAR POR MES</h3>
+            <button onclick="limpiarFiltroMes()" style="background: transparent; border: 2px solid #00d4ff; color: #00d4ff; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.3s;">
+                Ver Todo el Año
+            </button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px;">
+            <button class="mes-btn" onclick="cambiarMes(0)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Ene</button>
+            <button class="mes-btn" onclick="cambiarMes(1)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Feb</button>
+            <button class="mes-btn" onclick="cambiarMes(2)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Mar</button>
+            <button class="mes-btn" onclick="cambiarMes(3)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Abr</button>
+            <button class="mes-btn" onclick="cambiarMes(4)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">May</button>
+            <button class="mes-btn" onclick="cambiarMes(5)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Jun</button>
+            <button class="mes-btn" onclick="cambiarMes(6)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Jul</button>
+            <button class="mes-btn" onclick="cambiarMes(7)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Ago</button>
+            <button class="mes-btn" onclick="cambiarMes(8)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Sep</button>
+            <button class="mes-btn" onclick="cambiarMes(9)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Oct</button>
+            <button class="mes-btn" onclick="cambiarMes(10)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Nov</button>
+            <button class="mes-btn" onclick="cambiarMes(11)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Dic</button>
+        </div>
+    </div>
+
     <div class="alert">✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
         <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 700;">🔒 Solo lectura</span>
     </div>
@@ -1165,6 +1189,7 @@ let datosPorAnio = {};
 let charts = {};
 let modoEdicionActivo = false;
 let graficoFiltrado = null;
+let mesFiltrado = null; // null = todos los meses, 0-11 = mes específico
 
 const datosIncrustados = {
     elasticosO: {"M442":[2,1,0,3,2,1,0,2,1,0,1,2],"M444":[0,1,2,0,1,0,2,1,0,1,0,1],"M445":[1,0,2,1,2,0,1,0,2,1,0,0],"M446":[2,1,3,0,1,2,0,1,0,2,1,0],"M447":[0,0,1,1,1,0,0,1,0,0,1,0],"M448":[0,1,0,0,1,0,0,0,1,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,2,1,2,2,0,1,2,1,0,1,2],"M452":[0,2,2,2,2,1,0,2,1,0,0,1],"M453":[0,1,2,1,1,0,1,0,2,1,0,0],"M455":[1,2,1,1,2,0,1,0,1,2,0,1],"M456":[2,0,1,2,1,0,0,1,0,2,1,0]},
@@ -1321,18 +1346,28 @@ function actualizarTodo() {
 
 function actualizarTarjetas() {
     const d = obtenerDatosActual();
-    const calc = data => Object.values(data).flat().reduce((a,b)=>a+b,0);
+    
+    const calc = (data) => {
+        if(mesFiltrado !== null) {
+            return Object.values(data).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0);
+        }
+        return Object.values(data).flat().reduce((a,b)=>a+b,0);
+    };
+    
     const t = {
         elastO: calc(d.elasticosO), elastF: calc(d.elasticosF),
         mazaN: calc(d.mazasN), mazaR: calc(d.mazasR),
         bulones: calc(d.bulones), tuercas: calc(d.tuercas), llantas: calc(d.llantas)
     };
+    
     const ids = {"elastO":"totalElasticosO","elastF":"totalElasticosF","mazaN":"totalMazasN",
         "mazaR":"totalMazasR","bulones":"totalBulones","tuercas":"totalTuercas","llantas":"totalLlantas"};
+    
     Object.entries(t).forEach(([k,v]) => {
         const el = document.getElementById(ids[k]);
         if(el) el.textContent = v;
     });
+    
     document.getElementById("cantElasticosO").textContent = t.elastO;
     document.getElementById("cantElasticosF").textContent = t.elastF;
     document.getElementById("cantMazasN").textContent = t.mazaN;
@@ -1347,16 +1382,35 @@ function actualizarGraficos() {
     
     let datosEquipos = {};
     CONFIG.equipos.forEach(eq => {
-        datosEquipos[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],
-            d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0);
+        if(graficoFiltrado && d[graficoFiltrado]) {
+            if(mesFiltrado !== null) {
+                datosEquipos[eq] = d[graficoFiltrado][eq][mesFiltrado] || 0;
+            } else {
+                datosEquipos[eq] = d[graficoFiltrado][eq].reduce((a,b)=>a+b,0);
+            }
+        } else {
+            if(mesFiltrado !== null) {
+                datosEquipos[eq] = [d.elasticosO[eq][mesFiltrado],d.elasticosF[eq][mesFiltrado],
+                    d.mazasN[eq][mesFiltrado],d.mazasR[eq][mesFiltrado],
+                    d.bulones[eq][mesFiltrado],d.tuercas[eq][mesFiltrado],
+                    d.llantas[eq][mesFiltrado]].reduce((a,b)=>a+b,0);
+            } else {
+                datosEquipos[eq] = [d.elasticosO[eq],d.elasticosF[eq],d.mazasN[eq],d.mazasR[eq],
+                    d.bulones[eq],d.tuercas[eq],d.llantas[eq]].flat().reduce((a,b)=>a+b,0);
+            }
+        }
     });
     const top5 = Object.entries(datosEquipos).sort((a,b)=>b[1]-a[1]).slice(0,5);
     
     let datosMensuales = Array(12).fill(0);
     CONFIG.equipos.forEach(eq => {
         for(let i=0;i<12;i++) {
-            datosMensuales[i] += [d.elasticosO[eq][i],d.elasticosF[eq][i],d.mazasN[eq][i],
-                d.mazasR[eq][i],d.bulones[eq][i],d.tuercas[eq][i],d.llantas[eq][i]].reduce((a,b)=>a+b,0);
+            if(graficoFiltrado && d[graficoFiltrado]) {
+                datosMensuales[i] += d[graficoFiltrado][eq][i] || 0;
+            } else {
+                datosMensuales[i] += [d.elasticosO[eq][i],d.elasticosF[eq][i],d.mazasN[eq][i],
+                    d.mazasR[eq][i],d.bulones[eq][i],d.tuercas[eq][i],d.llantas[eq][i]].reduce((a,b)=>a+b,0);
+            }
         }
     });
     
@@ -1373,20 +1427,30 @@ function actualizarGraficos() {
         textColor: isDark ? '#e0f2fe' : '#2c3e50'
     };
     
-    // GRÁFICO DE LÍNEA
+    let colorPrincipal = colors.blue;
+    let tituloGrafico = mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Consumo Total';
+    
+    if(graficoFiltrado === 'elasticosO') { colorPrincipal = colors.orange; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'🔧 Elást. Orig'; }
+    else if(graficoFiltrado === 'elasticosF') { colorPrincipal = colors.yellow; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'🔧 Elást. Fab'; }
+    else if(graficoFiltrado === 'mazasN') { colorPrincipal = colors.blue; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'⚙️ Mazas N'; }
+    else if(graficoFiltrado === 'mazasR') { colorPrincipal = colors.teal; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'⚙️ Mazas R'; }
+    else if(graficoFiltrado === 'bulones') { colorPrincipal = colors.green; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'🔩 Bulones'; }
+    else if(graficoFiltrado === 'tuercas') { colorPrincipal = colors.orange; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'🔩 Tuercas'; }
+    else if(graficoFiltrado === 'llantas') { colorPrincipal = colors.red; tituloGrafico = (mesFiltrado!==null?CONFIG.meses[mesFiltrado]+' - ':'')+'⭕ Llantas'; }
+    
     if(charts.line) charts.line.destroy();
     charts.line = new Chart(document.getElementById('chartLine'), {
         type: 'line',
         data: {
             labels: CONFIG.meses,
             datasets: [{
-                label: 'Consumo Total',
+                label: tituloGrafico,
                 data: datosMensuales,
-                borderColor: colors.blue,
-                backgroundColor: isDark ? 'rgba(0, 212, 255, 0.3)' : 'rgba(54, 162, 235, 0.3)',
+                borderColor: colorPrincipal,
+                backgroundColor: colorPrincipal.replace('0.9', '0.3'),
                 tension: 0.4,
                 fill: true,
-                pointBackgroundColor: colors.blue,
+                pointBackgroundColor: colorPrincipal,
                 pointBorderColor: isDark ? '#0a1628' : '#fff',
                 pointBorderWidth: 3,
                 pointRadius: 6,
@@ -1396,35 +1460,21 @@ function actualizarGraficos() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { 
-                legend: {
-                    display: true, 
-                    position: 'top',
-                    labels: { color: colors.textColor }
-                } 
-            },
+            plugins: { legend: { display: true, position: 'top', labels: { color: colors.textColor } } },
             scales: {
-                y: {
-                    beginAtZero: true, 
-                    grid: { color: colors.gridColor },
-                    ticks: { color: colors.textColor }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: colors.textColor }
-                }
+                y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
+                x: { grid: { display: false }, ticks: { color: colors.textColor } }
             }
         }
     });
     
-    // GRÁFICO DE BARRAS
     if(charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('chartBar'), {
         type: 'bar',
         data: {
             labels: top5.map(e=>e[0]),
             datasets: [{
-                label: 'Consumo Total',
+                label: mesFiltrado!==null ? CONFIG.meses[mesFiltrado] : 'Consumo Total',
                 data: top5.map(e=>e[1]),
                 backgroundColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple],
                 borderColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple].map(c=>c.replace('0.9','1')),
@@ -1435,80 +1485,106 @@ function actualizarGraficos() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { 
-                legend: { display: false } 
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true, 
-                    grid: { color: colors.gridColor },
-                    ticks: { color: colors.textColor }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: colors.textColor }
-                }
+                y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
+                x: { grid: { display: false }, ticks: { color: colors.textColor } }
             }
         }
     });
-    
-    // GRÁFICO DOUGHNUT
-    function calcCategoria(data) { return Object.values(data).flat().reduce((a,b)=>a+b,0); }
-    const categorias = {
-        'Elást. Orig': calcCategoria(d.elasticosO),
-        'Elást. Fab': calcCategoria(d.elasticosF),
-        'Mazas N': calcCategoria(d.mazasN),
-        'Mazas R': calcCategoria(d.mazasR),
-        'Bulones': calcCategoria(d.bulones),
-        'Tuercas': calcCategoria(d.tuercas),
-        'Llantas': calcCategoria(d.llantas)
-    };
     
     if(charts.doughnut) charts.doughnut.destroy();
-    charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(categorias),
-            datasets: [{
-                data: Object.values(categorias),
-                backgroundColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple, colors.yellow, colors.teal],
-                borderWidth: 4,
-                borderColor: isDark ? '#0f1f3d' : '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right', 
-                    labels: {
-                        boxWidth: 14, 
-                        font: { size: 11, weight: '600' },
-                        color: colors.textColor
-                    }
+    
+    if(!graficoFiltrado) {
+        function calcCategoria(data) { 
+            if(mesFiltrado !== null) {
+                return Object.values(data).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0);
+            }
+            return Object.values(data).flat().reduce((a,b)=>a+b,0); 
+        }
+        const categorias = {
+            'Elást. Orig': calcCategoria(d.elasticosO),
+            'Elást. Fab': calcCategoria(d.elasticosF),
+            'Mazas N': calcCategoria(d.mazasN),
+            'Mazas R': calcCategoria(d.mazasR),
+            'Bulones': calcCategoria(d.bulones),
+            'Tuercas': calcCategoria(d.tuercas),
+            'Llantas': calcCategoria(d.llantas)
+        };
+        
+        charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categorias),
+                datasets: [{
+                    data: Object.values(categorias),
+                    backgroundColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple, colors.yellow, colors.teal],
+                    borderWidth: 4,
+                    borderColor: isDark ? '#0f1f3d' : '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 14, font: { size: 11, weight: '600' }, color: colors.textColor } }
                 }
             }
-        }
-    });
-}
-
-function filtrarGrafico(categoria) {
-    graficoFiltrado = categoria;
-    actualizarGraficos();
-    setTimeout(() => { graficoFiltrado = null; actualizarGraficos(); }, 5000);
+        });
+    } else {
+        const nombreFiltro = graficoFiltrado === 'elasticosO' ? 'Elást. Orig' :
+                              graficoFiltrado === 'elasticosF' ? 'Elást. Fab' :
+                              graficoFiltrado === 'mazasN' ? 'Mazas N' :
+                              graficoFiltrado === 'mazasR' ? 'Mazas R' :
+                              graficoFiltrado === 'bulones' ? 'Bulones' :
+                              graficoFiltrado === 'tuercas' ? 'Tuercas' : 'Llantas';
+        
+        const valorFiltro = mesFiltrado !== null ? 
+            Object.values(d[graficoFiltrado]).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0) :
+            Object.values(d[graficoFiltrado]).flat().reduce((a,b)=>a+b,0);
+        
+        charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
+            type: 'doughnut',
+            data: {
+                labels: [nombreFiltro, 'Otros'],
+                datasets: [{
+                    data: [valorFiltro, 0],
+                    backgroundColor: [colorPrincipal, 'rgba(0,0,0,0.1)'],
+                    borderWidth: 4,
+                    borderColor: isDark ? '#0f1f3d' : '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 14, font: { size: 11, weight: '600' }, color: colors.textColor } }
+                }
+            }
+        });
+    }
 }
 
 function calcularEconomico() {
-    const cant = {
-        elastO: parseInt(document.getElementById("cantElasticosO").textContent)||0,
-        elastF: parseInt(document.getElementById("cantElasticosF").textContent)||0,
-        mazaN: parseInt(document.getElementById("cantMazasN").textContent)||0,
-        mazaR: parseInt(document.getElementById("cantMazasR").textContent)||0,
-        bulones: parseInt(document.getElementById("cantBulones").textContent)||0,
-        tuercas: parseInt(document.getElementById("cantTuercas").textContent)||0,
-        llantas: parseInt(document.getElementById("cantLlantas").textContent)||0
+    const d = obtenerDatosActual();
+    
+    const calcMes = (data) => {
+        if(mesFiltrado !== null) {
+            return Object.values(data).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0);
+        }
+        return Object.values(data).flat().reduce((a,b)=>a+b,0);
     };
+    
+    const cant = {
+        elastO: calcMes(d.elasticosO),
+        elastF: calcMes(d.elasticosF),
+        mazaN: calcMes(d.mazasN),
+        mazaR: calcMes(d.mazasR),
+        bulones: calcMes(d.bulones),
+        tuercas: calcMes(d.tuercas),
+        llantas: calcMes(d.llantas)
+    };
+    
     const prec = {
         elastO: parseFloat(document.getElementById("precioElasticoO").value)||0,
         elastF: parseFloat(document.getElementById("precioElasticoF").value)||0,
@@ -1518,6 +1594,7 @@ function calcularEconomico() {
         tuerca: parseFloat(document.getElementById("precioTuerca").value)||0,
         llanta: parseFloat(document.getElementById("precioLlanta").value)||0
     };
+    
     const setVal = (id, v) => { const el=document.getElementById(id); if(el) el.value = v?formatMoney(v):""; };
     setVal("totalElasticoO", cant.elastO*prec.elastO);
     setVal("totalElasticoF", cant.elastF*prec.elastF);
@@ -1527,7 +1604,6 @@ function calcularEconomico() {
     setVal("totalTuerca", cant.tuercas*prec.tuerca);
     setVal("totalLlanta", cant.llantas*prec.llanta);
     
-    // Calcular horas
     const hPropio = (parseFloat(document.getElementById("horasPropio").value)||0) * (parseFloat(document.getElementById("valorHoraPropio").value)||0);
     const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value)||0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value)||0);
     const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value)||0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value)||0);
@@ -1868,6 +1944,71 @@ function mostrarToast(msg, error=false) {
     toast.textContent = msg;
     toast.className = 'toast show' + (error ? ' error' : '');
     setTimeout(()=>toast.className = 'toast', 3000);
+}
+
+function cambiarMes(mesIndex) {
+    mesFiltrado = mesIndex;
+    
+    const btns = document.querySelectorAll('.mes-btn');
+    btns.forEach((btn, idx) => {
+        if(idx === mesIndex) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+    
+    actualizarTarjetas();
+    actualizarGraficos();
+    calcularEconomico();
+    
+    const mesNombre = mesIndex === null ? 'Todo el año' : CONFIG.meses[mesIndex];
+    mostrarToast(`📅 Filtrado: ${mesNombre}`);
+}
+
+function limpiarFiltroMes() {
+    mesFiltrado = null;
+    document.querySelectorAll('.mes-btn').forEach(btn => btn.classList.remove('active'));
+    actualizarTarjetas();
+    actualizarGraficos();
+    calcularEconomico();
+    mostrarToast('📅 Mostrando todo el año');
+}
+
+function filtrarGrafico(categoria) {
+    document.querySelectorAll('.stat-card').forEach(card => {
+        card.classList.remove('active');
+        card.style.opacity = '0.6';
+        card.style.transform = 'scale(1)';
+    });
+    
+    event.currentTarget.classList.add('active');
+    event.currentTarget.style.opacity = '1';
+    event.currentTarget.style.transform = 'scale(1.05)';
+    
+    graficoFiltrado = categoria;
+    actualizarGraficos();
+    
+    const nombres = {
+        'elasticosO': '🔧 Elásticos Originales',
+        'elasticosF': '🔧 Elásticos Fabricados', 
+        'mazasN': '⚙️ Mazas Nuevas',
+        'mazasR': '⚙️ Mazas Reparadas',
+        'bulones': '🔩 Bulones',
+        'tuercas': '🔩 Tuercas',
+        'llantas': '⭕ Llantas'
+    };
+    mostrarToast(`📊 Filtrado: ${nombres[categoria]}`);
+    
+    setTimeout(() => {
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.classList.remove('active');
+            card.style.opacity = '1';
+            card.style.transform = 'scale(1)';
+        });
+        graficoFiltrado = null;
+        actualizarGraficos();
+    }, 10000);
 }
 
 document.addEventListener('DOMContentLoaded', init);
