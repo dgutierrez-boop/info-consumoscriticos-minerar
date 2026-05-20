@@ -1006,7 +1006,6 @@
         
         .file-input { display: none; }
         
-        /* ESTILOS PARA BOTONES DE MES ACTIVOS */
         .mes-btn {
             padding: 10px;
             border: 2px solid #00d4ff;
@@ -1136,7 +1135,7 @@
     <div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div>
 
     <div class="section-header"><span class="section-title">⚙️ Mazas NUEVAS</span></div>
-    <div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div>
+    <div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></tr></div>
 
     <div class="section-header"><span class="section-title">⚙️ Mazas REPARADAS</span></div>
     <div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div>
@@ -1156,13 +1155,13 @@
         <table class="values-table">
             <thead><tr><th>Concepto</th><th>Cantidad</th><th>Valor Unitario ($)</th><th>Total ($)</th></tr></thead>
             <tbody>
-                <tr><td><strong>🔧 Elásticos ORIGINALES</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
-                <tr><td><strong>🔧 Elásticos FABRICADOS</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
-                <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
-                <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
-                <tr><td><strong>🔩 Bulones</strong></td><td id="cantBulones">0</td><td><input type="text" id="precioBulon" placeholder="0"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-                <tr><td><strong>🔩 Tuercas</strong></td><td id="cantTuercas">0</td><td><input type="text" id="precioTuerca" placeholder="0"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
-                <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+                <tr><td><strong>🔧 Elásticos ORIGINALES</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
+                <tr><td><strong>🔧 Elásticos FABRICADOS</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+                <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
+                <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
+                <tr><td><strong>🔩 Bulones</strong></td><td id="cantBulones">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
+                <tr><td><strong>🔩 Tuercas</strong></td><td id="cantTuercas">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+                <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
             </tbody>
         </table>
         
@@ -1171,10 +1170,10 @@
             <table class="values-table">
                 <thead><tr><th>Concepto</th><th>Horas</th><th>Valor/Hora ($)</th><th>Total ($)</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>👨‍ Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0"></td><td><input type="text" id="valorHoraPropio" placeholder="0"></td><td><input type="text" id="totalPropio" readonly></td></tr>
-                    <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
-                    <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
-                    <tr><td><strong>👥 PATIÑO</strong></td><td><input type="text" id="horasPatino" placeholder="0"></td><td><input type="text" id="valorHoraPatino" placeholder="0"></td><td><input type="text" id="totalPatino" readonly></td></tr>
+                    <tr><td><strong>👨‍ Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                    <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
+                    <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
+                    <tr><td><strong>👥 PATIÑO</strong></td><td><input type="text" id="horasPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatino" readonly></td></tr>
                     <tr class="grand-total"><td><strong>💰 TOTAL MANO DE OBRA</strong></td><td colspan="2" style="text-align:right;">SUMA:</td><td><input type="text" id="totalManoObra" readonly></td></tr>
                     <tr class="grand-total"><td><strong>🎯 TOTAL GENERAL</strong></td><td colspan="2" style="text-align:right;">REPUESTOS + MO:</td><td><input type="text" id="totalGeneral" readonly></td></tr>
                 </tbody>
@@ -1237,7 +1236,6 @@ function init() {
             const data = JSON.parse(guardado);
             datosPorAnio = data.datosPorAnio || {};
             añoActual = data.añoActual || 2026;
-            // Cargar precios guardados
             if(data.precios) {
                 if(data.precios.elasticoO) document.getElementById("precioElasticoO").value = data.precios.elasticoO;
                 if(data.precios.elasticoF) document.getElementById("precioElasticoF").value = data.precios.elasticoF;
@@ -1326,7 +1324,7 @@ function obtenerDatosActual() {
 function generarEncabezados() {
     let html = "<tr><th>Equipo</th>";
     CONFIG.meses.forEach(m => html += `<th>${m}</th>`);
-    html += "<th>TOTAL</th></tr>";
+    html += "<th>TOTAL</th></table>";
     return html;
 }
 
@@ -1346,7 +1344,7 @@ function generarTabla(datos, tbodyId, tipo) {
             fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" 
                 data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${readonly} ${bg}></td>`;
         }
-        fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
+        fila += `<td class="total-row"><strong>${suma}</strong><\/td></td>`;
         tbody.insertAdjacentHTML("beforeend", fila);
     });
     let totales = Array(12).fill(0);
