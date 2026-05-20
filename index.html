@@ -15,7 +15,6 @@
             --text-secondary: #7f8c8d; --border: #bdc3c7; --radius: 16px;
         }
         
-        /* DARK MODE FUTURISTA */
         [data-theme="dark"] {
             --primary: #0a1628; --primary-dark: #051020; --accent: #00d4ff;
             --success: #00ff88; --warning: #ffd700; --danger: #ff6b6b;
@@ -336,6 +335,11 @@
         [data-theme="dark"] .stat-card.llantas { 
             border-left-color: #c084ff; 
             background: linear-gradient(135deg, #1e3a5f 0%, #0f1f3d 100%);
+        }
+        
+        .stat-card.active {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6) !important;
+            border-color: #00ff88 !important;
         }
         
         .stat-value { 
@@ -1002,6 +1006,31 @@
         
         .file-input { display: none; }
         
+        /* ESTILOS PARA BOTONES DE MES ACTIVOS */
+        .mes-btn {
+            padding: 10px;
+            border: 2px solid #00d4ff;
+            background: transparent;
+            color: #00d4ff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .mes-btn:hover {
+            background: #00d4ff;
+            color: #0a1628;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+        
+        .mes-btn.active {
+            background: #00d4ff;
+            color: #0a1628;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.6);
+        }
+        
         @media print {
             body { background: white !important; }
             .top-bar, .floating-controls, .alert, .theme-toggle { display: none !important; }
@@ -1055,18 +1084,18 @@
             </button>
         </div>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px;">
-            <button class="mes-btn" onclick="cambiarMes(0)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Ene</button>
-            <button class="mes-btn" onclick="cambiarMes(1)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Feb</button>
-            <button class="mes-btn" onclick="cambiarMes(2)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Mar</button>
-            <button class="mes-btn" onclick="cambiarMes(3)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Abr</button>
-            <button class="mes-btn" onclick="cambiarMes(4)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">May</button>
-            <button class="mes-btn" onclick="cambiarMes(5)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Jun</button>
-            <button class="mes-btn" onclick="cambiarMes(6)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Jul</button>
-            <button class="mes-btn" onclick="cambiarMes(7)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Ago</button>
-            <button class="mes-btn" onclick="cambiarMes(8)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Sep</button>
-            <button class="mes-btn" onclick="cambiarMes(9)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Oct</button>
-            <button class="mes-btn" onclick="cambiarMes(10)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Nov</button>
-            <button class="mes-btn" onclick="cambiarMes(11)" style="padding: 10px; border: 2px solid #00d4ff; background: transparent; color: #00d4ff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s;">Dic</button>
+            <button class="mes-btn" onclick="cambiarMes(0)">Ene</button>
+            <button class="mes-btn" onclick="cambiarMes(1)">Feb</button>
+            <button class="mes-btn" onclick="cambiarMes(2)">Mar</button>
+            <button class="mes-btn" onclick="cambiarMes(3)">Abr</button>
+            <button class="mes-btn" onclick="cambiarMes(4)">May</button>
+            <button class="mes-btn" onclick="cambiarMes(5)">Jun</button>
+            <button class="mes-btn" onclick="cambiarMes(6)">Jul</button>
+            <button class="mes-btn" onclick="cambiarMes(7)">Ago</button>
+            <button class="mes-btn" onclick="cambiarMes(8)">Sep</button>
+            <button class="mes-btn" onclick="cambiarMes(9)">Oct</button>
+            <button class="mes-btn" onclick="cambiarMes(10)">Nov</button>
+            <button class="mes-btn" onclick="cambiarMes(11)">Dic</button>
         </div>
     </div>
 
@@ -1189,7 +1218,7 @@ let datosPorAnio = {};
 let charts = {};
 let modoEdicionActivo = false;
 let graficoFiltrado = null;
-let mesFiltrado = null; // null = todos los meses, 0-11 = mes específico
+let mesFiltrado = null;
 
 const datosIncrustados = {
     elasticosO: {"M442":[2,1,0,3,2,1,0,2,1,0,1,2],"M444":[0,1,2,0,1,0,2,1,0,1,0,1],"M445":[1,0,2,1,2,0,1,0,2,1,0,0],"M446":[2,1,3,0,1,2,0,1,0,2,1,0],"M447":[0,0,1,1,1,0,0,1,0,0,1,0],"M448":[0,1,0,0,1,0,0,0,1,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,2,1,2,2,0,1,2,1,0,1,2],"M452":[0,2,2,2,2,1,0,2,1,0,0,1],"M453":[0,1,2,1,1,0,1,0,2,1,0,0],"M455":[1,2,1,1,2,0,1,0,1,2,0,1],"M456":[2,0,1,2,1,0,0,1,0,2,1,0]},
@@ -1208,6 +1237,26 @@ function init() {
             const data = JSON.parse(guardado);
             datosPorAnio = data.datosPorAnio || {};
             añoActual = data.añoActual || 2026;
+            // Cargar precios guardados
+            if(data.precios) {
+                if(data.precios.elasticoO) document.getElementById("precioElasticoO").value = data.precios.elasticoO;
+                if(data.precios.elasticoF) document.getElementById("precioElasticoF").value = data.precios.elasticoF;
+                if(data.precios.mazaN) document.getElementById("precioMazaN").value = data.precios.mazaN;
+                if(data.precios.mazaR) document.getElementById("precioMazaR").value = data.precios.mazaR;
+                if(data.precios.bulon) document.getElementById("precioBulon").value = data.precios.bulon;
+                if(data.precios.tuerca) document.getElementById("precioTuerca").value = data.precios.tuerca;
+                if(data.precios.llanta) document.getElementById("precioLlanta").value = data.precios.llanta;
+            }
+            if(data.horas) {
+                if(data.horas.propio) document.getElementById("horasPropio").value = data.horas.propio;
+                if(data.horas.valorPropio) document.getElementById("valorHoraPropio").value = data.horas.valorPropio;
+                if(data.horas.coriaMecanico) document.getElementById("horasCoriaMecanico").value = data.horas.coriaMecanico;
+                if(data.horas.valorCoriaMecanico) document.getElementById("valorHoraCoriaMecanico").value = data.horas.valorCoriaMecanico;
+                if(data.horas.coriaSoldador) document.getElementById("horasCoriaSoldador").value = data.horas.coriaSoldador;
+                if(data.horas.valorCoriaSoldador) document.getElementById("valorHoraCoriaSoldador").value = data.horas.valorCoriaSoldador;
+                if(data.horas.patino) document.getElementById("horasPatino").value = data.horas.patino;
+                if(data.horas.valorPatino) document.getElementById("valorHoraPatino").value = data.horas.valorPatino;
+            }
         } catch(e) { console.error(e); }
     }
     [2024,2025,2026,2027,2028].forEach(año => { if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); });
@@ -1648,6 +1697,7 @@ function guardarTodosLosDatos(event) {
         }
     };
     localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+    document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
     if(event && event.type) mostrarToast("💾 Datos guardados");
 }
 
@@ -1656,7 +1706,6 @@ function exportarCSV() {
     let csv = "MINERAR - INFORME DE REPUESTOS CRÍTICOS " + añoActual + "\n";
     csv += "Generado: " + new Date().toLocaleString() + "\n\n";
     
-    // === ELÁSTICOS ORIGINALES ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "📦 PAQUETES ELÁSTICOS ORIGINALES\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1673,7 +1722,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === ELÁSTICOS FABRICADOS ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "📦 PAQUETES ELÁSTICOS FABRICADOS\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1690,7 +1738,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === MAZAS NUEVAS ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "⚙️ MAZAS NUEVAS\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1707,7 +1754,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === MAZAS REPARADAS ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "⚙️ MAZAS REPARADAS\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1724,7 +1770,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === BULONES ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "🔩 BULONES\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1741,7 +1786,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === TUERCAS ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "🔩 TUERCAS\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1758,7 +1802,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === LLANTAS ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "⭕ LLANTAS ROTAS\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1775,7 +1818,6 @@ function exportarCSV() {
     });
     csv += "\n";
     
-    // === RESUMEN ECONÓMICO ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "💰 RESUMEN ECONÓMICO\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1810,7 +1852,6 @@ function exportarCSV() {
     csv += `Llantas;${cant.llantas};${prec.llanta};\n`;
     csv += `\n`;
     
-    // === HORAS HOMBRE ===
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "👷 HORAS HOMBRE\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -1822,7 +1863,6 @@ function exportarCSV() {
     csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
     csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
     
-    // Crear y descargar el archivo
     const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -1852,7 +1892,6 @@ function importarCSV(event) {
             lines.forEach(line => {
                 line = line.trim();
                 
-                // Detectar cada sección por su título
                 if(line.includes('📦 PAQUETES ELÁSTICOS ORIGINALES')) {
                     categoriaActual = 'elasticosO';
                 }
@@ -1874,13 +1913,11 @@ function importarCSV(event) {
                 else if(line.includes('⭕ LLANTAS ROTAS')) {
                     categoriaActual = 'llantas';
                 }
-                // Saltar líneas de encabezado y separadores
                 else if(line.includes('Equipo;') || line.includes('══') || line.includes('MINERAR') || 
                         line.includes('Generado:') || line.includes('RESUMEN ECONÓMICO') || 
                         line.includes('HORAS HOMBRE') || line.includes('Concepto;') || line === '') {
                     return;
                 }
-                // Procesar línea de datos (debe empezar con M seguido de números)
                 else if(categoriaActual && line.match(/^M\d+;/)) {
                     const parts = line.split(';');
                     const equipo = parts[0].trim();
