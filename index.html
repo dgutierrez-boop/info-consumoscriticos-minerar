@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
+    
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- 🔥 Firebase SDK (AGREGADO) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
         :root {
             --primary: #2c3e50; --primary-dark: #1a252f; --accent: #e67e22;
@@ -1326,7 +1335,7 @@
     </div>
     
     <div style="text-align:center; margin-top:32px; padding:20px; color:var(--text-secondary); font-size:0.8rem; font-weight:600;">
-        <p>📋 Informe generado automáticamente • Datos almacenados localmente • Última actualización: <span id="lastUpdate">-</span></p>
+        <p>📋 Informe generado automáticamente • Datos sincronizados en la nube ☁️ • Última actualización: <span id="lastUpdate">-</span></p>
         <p>© 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management</p>
     </div>
 </div>
@@ -1348,6 +1357,30 @@
 
 <div id="toast" class="toast">✅ Listo</div>
 
+<!-- ======================================== -->
+<!-- 🔥 CONFIG FIREBASE (AGREGAR ANTES DEL SCRIPT PRINCIPAL) -->
+<!-- ======================================== -->
+<script>
+// ⚠️ REEMPLAZÁ ESTO CON TU CONFIG DE FIREBASE CONSOLE
+const firebaseConfig = {
+    apiKey: "AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    authDomain: "minerar-repuestos.firebaseapp.com",
+    projectId: "minerar-repuestos",
+    storageBucket: "minerar-repuestos.appspot.com",
+    messagingSenderId: "1234567890",
+    appId: "1:1234567890:web:abcdef1234567890"
+};
+
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COLECCION = "repuestos_minerar";
+let firebaseOK = true;
+</script>
+
+<!-- ======================================== -->
+<!-- 📜 TU SCRIPT PRINCIPAL (MODIFICADO PARA FIREBASE) -->
+<!-- ======================================== -->
 <script>
 const CONFIG = {
     equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
@@ -1379,7 +1412,45 @@ const datosIncrustados = {
     llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
 };
 
-function init() {
+// ========================================
+// 🔄 FUNCIÓN INIT MODIFICADA (Firebase + Fallback localStorage)
+// ========================================
+async function init() {
+    // 1️⃣ Intentar cargar desde Firebase
+    if(firebaseOK) {
+        try {
+            const doc = await db.collection(COLECCION).doc(`datos_${añoActual}`).get();
+            if(doc.exists) {
+                const data = doc.data();
+                datosPorAnio = data.datosPorAnio || {};
+                añoActual = data.añoActual || 2026;
+                if(data.precios) {
+                    for(let key in data.precios) {
+                        let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                        let el = document.getElementById(elId);
+                        if(el) el.value = data.precios[key];
+                    }
+                }
+                if(data.horas) {
+                    for(let key in data.horas) {
+                        let el = document.getElementById(key);
+                        if(el) el.value = data.horas[key];
+                    }
+                }
+                document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
+                mostrarToast("☁️ Datos cargados desde la nube");
+                document.getElementById("yearSelect").value = añoActual;
+                actualizarTodo();
+                setInterval(() => guardarTodosLosDatos(), 30000);
+                return;
+            }
+        } catch(e) { 
+            console.warn("⚠️ Firebase no disponible, usando localStorage:", e); 
+            firebaseOK = false; 
+        }
+    }
+    
+    // 2️⃣ Fallback: cargar desde localStorage (tu código original)
     const guardado = localStorage.getItem(CONFIG.storageKey);
     if(guardado) {
         try {
@@ -1401,13 +1472,125 @@ function init() {
             }
         } catch(e) { console.error(e); }
     }
-    [2024,2025,2026,2027,2028].forEach(año => { if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); });
-    if(!datosPorAnio[2026].elasticosO.M442) datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
+    
+    // Estructura por defecto si no hay nada
+    [2024,2025,2026,2027,2028].forEach(año => { 
+        if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); 
+    });
+    if(!datosPorAnio[2026].elasticosO.M442) {
+        datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
+    }
     
     document.getElementById("yearSelect").value = añoActual;
     actualizarTodo();
+    
+    // Auto-guardado cada 30 segundos
     setInterval(() => guardarTodosLosDatos(), 30000);
 }
+
+// ========================================
+// ☁️ NUEVAS FUNCIONES FIREBASE
+// ========================================
+async function guardarEnFirebase() {
+    if(!firebaseOK) return false;
+    
+    const data = {
+        añoActual, datosPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        },
+        ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    try {
+        await db.collection(COLECCION).doc(`datos_${añoActual}`).set(data, { merge: true });
+        return true;
+    } catch(e) {
+        console.error("❌ Error guardando en Firebase:", e);
+        firebaseOK = false;
+        return false;
+    }
+}
+
+function guardarEnLocalStorage() {
+    const data = {
+        añoActual, datosPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        }
+    };
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+}
+
+// ========================================
+// 💾 TU FUNCIÓN ORIGINAL (MODIFICADA: Firebase primero, localStorage de backup)
+// ========================================
+async function guardarTodosLosDatos(event) {
+    // 1️⃣ Intentar guardar en Firebase
+    const guardadoFirebase = firebaseOK ? await guardarEnFirebase() : false;
+    
+    // 2️⃣ Si falla Firebase, guardar en localStorage como backup
+    if(!guardadoFirebase) {
+        guardarEnLocalStorage();
+    }
+    
+    document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
+    if(event && event.type) {
+        mostrarToast(guardadoFirebase ? "☁️ Sincronizado en la nube" : "💾 Guardado localmente");
+    }
+}
+
+// ========================================
+// 🔄 RESTO DE TUS FUNCIONES (SIN CAMBIOS - COPIAR TU CÓDIGO ORIGINAL)
+// ========================================
 
 function crearEstructuraVacia() {
     return {
@@ -1691,42 +1874,6 @@ function formatMoney(val) {
 
 function formatMoneySimple(val) {
     return new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', minimumFractionDigits:0}).format(val);
-}
-
-function guardarTodosLosDatos(event) {
-    const data = {
-        añoActual, datosPorAnio,
-        precios: {
-            elasticoO: document.getElementById("precioElasticoO").value,
-            elasticoF: document.getElementById("precioElasticoF").value,
-            mazaN: document.getElementById("precioMazaN").value,
-            mazaR: document.getElementById("precioMazaR").value,
-            bulon: document.getElementById("precioBulon").value,
-            tuerca: document.getElementById("precioTuerca").value,
-            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
-            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
-            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
-            levaFreno: document.getElementById("precioLevaFreno").value,
-            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
-            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
-            llanta: document.getElementById("precioLlanta").value
-        },
-        horas: {
-            horasPropio: document.getElementById("horasPropio").value,
-            valorHoraPropio: document.getElementById("valorHoraPropio").value,
-            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
-            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
-            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
-            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
-            horasCarrizo: document.getElementById("horasCarrizo").value,
-            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
-            horasPatino: document.getElementById("horasPatino").value,
-            valorHoraPatino: document.getElementById("valorHoraPatino").value
-        }
-    };
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
-    document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
-    if(event && event.type) mostrarToast("💾 Datos guardados");
 }
 
 function exportarCSV() {
@@ -2096,11 +2243,16 @@ function importarCSV(event) {
     event.target.value = "";
 }
 
-function resetearDatosCompletos() {
+async function resetearDatosCompletos() {
     if(!confirm("⚠️ ¿Resetear TODOS los datos?")) return;
     const pass = prompt("🔒 Contraseña:");
     if(pass === CONFIG.passwordAdmin) {
-        if(confirm("✅ ¿Confirmar?")) {
+        if(confirm("✅ ¿Confirmar? Esto borrará los datos en la NUBE también")) {
+            if(firebaseOK) {
+                try {
+                    await db.collection(COLECCION).doc(`datos_${añoActual}`).delete();
+                } catch(e) { console.error(e); }
+            }
             localStorage.removeItem(CONFIG.storageKey);
             location.reload();
         }
