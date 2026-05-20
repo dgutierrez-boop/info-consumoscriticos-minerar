@@ -1135,7 +1135,7 @@
     <div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div>
 
     <div class="section-header"><span class="section-title">⚙️ Mazas NUEVAS</span></div>
-    <div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></tr></div>
+    <div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div>
 
     <div class="section-header"><span class="section-title">⚙️ Mazas REPARADAS</span></div>
     <div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div>
@@ -1147,7 +1147,7 @@
     <div style="overflow-x:auto;"><table id="tablaTuercas"><thead id="theadTuercas"></thead><tbody id="tbodyTuercas"></tbody></table></div>
 
     <div class="section-header"><span class="section-title">⭕ Llantas Rotas</span></div>
-    <div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div>
+    <div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></td></div>
 
     <!-- SECCIÓN DE VALORES ECONÓMICOS -->
     <div class="values-section">
@@ -1324,7 +1324,7 @@ function obtenerDatosActual() {
 function generarEncabezados() {
     let html = "<tr><th>Equipo</th>";
     CONFIG.meses.forEach(m => html += `<th>${m}</th>`);
-    html += "<th>TOTAL</th></table>";
+    html += "<th>TOTAL</th></tr>";
     return html;
 }
 
@@ -1344,7 +1344,7 @@ function generarTabla(datos, tbodyId, tipo) {
             fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" 
                 data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${readonly} ${bg}></td>`;
         }
-        fila += `<td class="total-row"><strong>${suma}</strong><\/td></td>`;
+        fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
         tbody.insertAdjacentHTML("beforeend", fila);
     });
     let totales = Array(12).fill(0);
@@ -1402,19 +1402,25 @@ function actualizarTarjetas() {
     };
     
     const t = {
-        elastO: calc(d.elasticosO), elastF: calc(d.elasticosF),
-        mazaN: calc(d.mazasN), mazaR: calc(d.mazasR),
-        bulones: calc(d.bulones), tuercas: calc(d.tuercas), llantas: calc(d.llantas)
+        elastO: calc(d.elasticosO),
+        elastF: calc(d.elasticosF),
+        mazaN: calc(d.mazasN),
+        mazaR: calc(d.mazasR),
+        bulones: calc(d.bulones),
+        tuercas: calc(d.tuercas),
+        llantas: calc(d.llantas)
     };
     
-    const ids = {"elastO":"totalElasticosO","elastF":"totalElasticosF","mazaN":"totalMazasN",
-        "mazaR":"totalMazasR","bulones":"totalBulones","tuercas":"totalTuercas","llantas":"totalLlantas"};
+    // Actualizar tarjetas superiores
+    document.getElementById("totalElasticosO").textContent = t.elastO;
+    document.getElementById("totalElasticosF").textContent = t.elastF;
+    document.getElementById("totalMazasN").textContent = t.mazaN;
+    document.getElementById("totalMazasR").textContent = t.mazaR;
+    document.getElementById("totalBulones").textContent = t.bulones;
+    document.getElementById("totalTuercas").textContent = t.tuercas;
+    document.getElementById("totalLlantas").textContent = t.llantas;
     
-    Object.entries(t).forEach(([k,v]) => {
-        const el = document.getElementById(ids[k]);
-        if(el) el.textContent = v;
-    });
-    
+    // Actualizar cantidades en la tabla de valores económicos
     document.getElementById("cantElasticosO").textContent = t.elastO;
     document.getElementById("cantElasticosF").textContent = t.elastF;
     document.getElementById("cantMazasN").textContent = t.mazaN;
@@ -1613,50 +1619,47 @@ function actualizarGraficos() {
 }
 
 function calcularEconomico() {
-    const d = obtenerDatosActual();
-    
-    const calcMes = (data) => {
-        if(mesFiltrado !== null) {
-            return Object.values(data).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0);
-        }
-        return Object.values(data).flat().reduce((a,b)=>a+b,0);
-    };
-    
+    // Obtener cantidades directamente de los elementos HTML (ya filtradas por mes)
     const cant = {
-        elastO: calcMes(d.elasticosO),
-        elastF: calcMes(d.elasticosF),
-        mazaN: calcMes(d.mazasN),
-        mazaR: calcMes(d.mazasR),
-        bulones: calcMes(d.bulones),
-        tuercas: calcMes(d.tuercas),
-        llantas: calcMes(d.llantas)
+        elastO: parseInt(document.getElementById("cantElasticosO").textContent) || 0,
+        elastF: parseInt(document.getElementById("cantElasticosF").textContent) || 0,
+        mazaN: parseInt(document.getElementById("cantMazasN").textContent) || 0,
+        mazaR: parseInt(document.getElementById("cantMazasR").textContent) || 0,
+        bulones: parseInt(document.getElementById("cantBulones").textContent) || 0,
+        tuercas: parseInt(document.getElementById("cantTuercas").textContent) || 0,
+        llantas: parseInt(document.getElementById("cantLlantas").textContent) || 0
     };
     
     const prec = {
-        elastO: parseFloat(document.getElementById("precioElasticoO").value)||0,
-        elastF: parseFloat(document.getElementById("precioElasticoF").value)||0,
-        mazaN: parseFloat(document.getElementById("precioMazaN").value)||0,
-        mazaR: parseFloat(document.getElementById("precioMazaR").value)||0,
-        bulon: parseFloat(document.getElementById("precioBulon").value)||0,
-        tuerca: parseFloat(document.getElementById("precioTuerca").value)||0,
-        llanta: parseFloat(document.getElementById("precioLlanta").value)||0
+        elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
+        elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
+        mazaN: parseFloat(document.getElementById("precioMazaN").value) || 0,
+        mazaR: parseFloat(document.getElementById("precioMazaR").value) || 0,
+        bulon: parseFloat(document.getElementById("precioBulon").value) || 0,
+        tuerca: parseFloat(document.getElementById("precioTuerca").value) || 0,
+        llanta: parseFloat(document.getElementById("precioLlanta").value) || 0
     };
     
-    const setVal = (id, v) => { const el=document.getElementById(id); if(el) el.value = v?formatMoney(v):""; };
-    setVal("totalElasticoO", cant.elastO*prec.elastO);
-    setVal("totalElasticoF", cant.elastF*prec.elastF);
-    setVal("totalMazaN", cant.mazaN*prec.mazaN);
-    setVal("totalMazaR", cant.mazaR*prec.mazaR);
-    setVal("totalBulon", cant.bulones*prec.bulon);
-    setVal("totalTuerca", cant.tuercas*prec.tuerca);
-    setVal("totalLlanta", cant.llantas*prec.llanta);
+    const setVal = (id, v) => { const el = document.getElementById(id); if(el) el.value = v ? formatMoney(v) : ""; };
     
-    const hPropio = (parseFloat(document.getElementById("horasPropio").value)||0) * (parseFloat(document.getElementById("valorHoraPropio").value)||0);
-    const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value)||0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value)||0);
-    const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value)||0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value)||0);
-    const hPatino = (parseFloat(document.getElementById("horasPatino").value)||0) * (parseFloat(document.getElementById("valorHoraPatino").value)||0);
+    setVal("totalElasticoO", cant.elastO * prec.elastO);
+    setVal("totalElasticoF", cant.elastF * prec.elastF);
+    setVal("totalMazaN", cant.mazaN * prec.mazaN);
+    setVal("totalMazaR", cant.mazaR * prec.mazaR);
+    setVal("totalBulon", cant.bulones * prec.bulon);
+    setVal("totalTuerca", cant.tuercas * prec.tuerca);
+    setVal("totalLlanta", cant.llantas * prec.llanta);
+    
+    // Calcular horas hombre
+    const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
+    const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
+    const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
+    const hPatino = (parseFloat(document.getElementById("horasPatino").value) || 0) * (parseFloat(document.getElementById("valorHoraPatino").value) || 0);
+    
     const totalMO = hPropio + hCoriaM + hCoriaS + hPatino;
-    const totalRep = (cant.elastO*prec.elastO)+(cant.elastF*prec.elastF)+(cant.mazaN*prec.mazaN)+(cant.mazaR*prec.mazaR)+(cant.bulones*prec.bulon)+(cant.tuercas*prec.tuerca)+(cant.llantas*prec.llanta);
+    const totalRep = (cant.elastO * prec.elastO) + (cant.elastF * prec.elastF) + (cant.mazaN * prec.mazaN) + 
+                     (cant.mazaR * prec.mazaR) + (cant.bulones * prec.bulon) + (cant.tuercas * prec.tuerca) + 
+                     (cant.llantas * prec.llanta);
     const totalGral = totalRep + totalMO;
     
     document.getElementById("totalPropio").value = hPropio ? formatMoney(hPropio) : "";
@@ -1815,51 +1818,6 @@ function exportarCSV() {
         csv += row + `${total}\n`;
     });
     csv += "\n";
-    
-    csv += "═══════════════════════════════════════════════════════\n";
-    csv += "💰 RESUMEN ECONÓMICO\n";
-    csv += "═══════════════════════════════════════════════════════\n";
-    csv += "Concepto;Cantidad;Valor Unitario;Total\n";
-    
-    const cant = {
-        elastO: document.getElementById("cantElasticosO").textContent,
-        elastF: document.getElementById("cantElasticosF").textContent,
-        mazaN: document.getElementById("cantMazasN").textContent,
-        mazaR: document.getElementById("cantMazasR").textContent,
-        bulones: document.getElementById("cantBulones").textContent,
-        tuercas: document.getElementById("cantTuercas").textContent,
-        llantas: document.getElementById("cantLlantas").textContent
-    };
-    
-    const prec = {
-        elastO: document.getElementById("precioElasticoO").value || "0",
-        elastF: document.getElementById("precioElasticoF").value || "0",
-        mazaN: document.getElementById("precioMazaN").value || "0",
-        mazaR: document.getElementById("precioMazaR").value || "0",
-        bulon: document.getElementById("precioBulon").value || "0",
-        tuerca: document.getElementById("precioTuerca").value || "0",
-        llanta: document.getElementById("precioLlanta").value || "0"
-    };
-    
-    csv += `Elásticos Originales;${cant.elastO};${prec.elastO};\n`;
-    csv += `Elásticos Fabricados;${cant.elastF};${prec.elastF};\n`;
-    csv += `Mazas Nuevas;${cant.mazaN};${prec.mazaN};\n`;
-    csv += `Mazas Reparadas;${cant.mazaR};${prec.mazaR};\n`;
-    csv += `Bulones;${cant.bulones};${prec.bulon};\n`;
-    csv += `Tuercas;${cant.tuercas};${prec.tuerca};\n`;
-    csv += `Llantas;${cant.llantas};${prec.llanta};\n`;
-    csv += `\n`;
-    
-    csv += "═══════════════════════════════════════════════════════\n";
-    csv += "👷 HORAS HOMBRE\n";
-    csv += "═══════════════════════════════════════════════════════\n";
-    csv += "Concepto;Horas;Valor/Hora;Total\n";
-    csv += `Personal Propio;${document.getElementById("horasPropio").value || 0};${document.getElementById("valorHoraPropio").value || 0};\n`;
-    csv += `CORIA - Mecánico;${document.getElementById("horasCoriaMecanico").value || 0};${document.getElementById("valorHoraCoriaMecanico").value || 0};\n`;
-    csv += `CORIA - Soldador;${document.getElementById("horasCoriaSoldador").value || 0};${document.getElementById("valorHoraCoriaSoldador").value || 0};\n`;
-    csv += `PATIÑO;${document.getElementById("horasPatino").value || 0};${document.getElementById("valorHoraPatino").value || 0};\n`;
-    csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
-    csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
     
     const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
     const url = URL.createObjectURL(blob);
