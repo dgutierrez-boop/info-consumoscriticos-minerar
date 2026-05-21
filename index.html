@@ -611,17 +611,18 @@
             box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
         }
         
-        .total-row { 
-            background: linear-gradient(135deg, #2c3e50, #34495e); 
-            color: white !important; 
-            font-weight: 800;
-        }
-        
-        [data-theme="dark"] .total-row {
-            background: linear-gradient(135deg, #00d4ff, #0099cc);
-            color: #0a1628 !important;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
+        .total-row {
+    background: linear-gradient(135deg, #34495e, #2c3e50) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+}
+
+/* ASEGURAR QUE EL TEXTO DENTRO DE LA FILA TOTAL SE VEA */
+.total-row strong, .total-row td {
+    color: #ffffff !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+}
 
         .alert { 
             background: linear-gradient(135deg, #d4edda, #c3e6cb); 
@@ -1366,7 +1367,7 @@
         <h2>🔐 Acceso Restringido</h2>
         <p>Ingrese contraseña para editar</p>
         <!-- ✅ CAMBIADO: type="password" para ocultar la contraseña -->
-        <input type="password" id="passwordInput" placeholder="Contraseña (abrir)">
+        <input type="password" id="passwordInput" placeholder="••••••" autocomplete="off">
         <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
         <button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
     </div>
@@ -2494,25 +2495,32 @@ function toggleAccordion(accordionId) {
 }
 
 function filtrarGrafico(categoria) {
+    // 1. Resetear visuales
     document.querySelectorAll('.stat-card').forEach(card => {
         card.classList.remove('active');
         card.style.opacity = '0.6';
     });
     
+    // 2. Activar la tarjeta clickeada
     event.currentTarget.classList.add('active');
     event.currentTarget.style.opacity = '1';
     
-    graficoFiltrado = categoria;
-    mostrarToast(`📊 Mostrando solo: ${event.currentTarget.querySelector('.stat-label').innerText}`);
+    // 3. Mostrar mensaje
+    mostrarToast(`📊 Filtrando: ${event.currentTarget.querySelector('.stat-label').innerText}`);
     
+    // 4. Forzar actualización de gráficos con un pequeño retraso
     setTimeout(() => {
-        document.querySelectorAll('.stat-card').forEach(card => {
-            card.classList.remove('active');
-            card.style.opacity = '1';
-        });
-        graficoFiltrado = null;
         actualizarGraficos();
-    }, 5000);
+        
+        // 5. Restaurar todo después de 4 segundos
+        setTimeout(() => {
+            document.querySelectorAll('.stat-card').forEach(card => {
+                card.classList.remove('active');
+                card.style.opacity = '1';
+            });
+            actualizarGraficos(); // Volver a mostrar todo
+        }, 4000);
+    }, 100);
 }
 
 function cambiarMes(mesIndex) {
