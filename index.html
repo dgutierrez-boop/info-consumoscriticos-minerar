@@ -1437,24 +1437,27 @@ const datosIncrustados = {
 async function init() {
     console.log("🔄 Iniciando app...");
     
-    // 1️⃣ Intentar cargar desde Firebase
+    // 1️⃣ Intentar cargar desde Firebase PRIMERO
     if(firebaseOK) {
         try {
-            console.log("☁️ Intentando cargar desde Firebase...");
+            console.log("☁️ Conectando a Firebase...");
             const doc = await db.collection(COLECCION).doc(`datos_${añoActual}`).get();
             
             if(doc.exists) {
                 console.log("✅ Datos encontrados en Firebase");
                 const data = doc.data();
                 
-                // Reconstruir estructura completa
-                datosPorAnio = {};
+                // Cargar año actual
+                añoActual = data.añoActual || 2026;
+                
+                // Inicializar estructura vacía para todos los años
                 [2024,2025,2026,2027,2028].forEach(año => { 
                     datosPorAnio[año] = crearEstructuraVacia(); 
                 });
                 
-                // Cargar datos del año actual
+                // Si hay datosPorAnio guardado, usarlo
                 if(data.datosPorAnio && data.datosPorAnio[añoActual]) {
+                    console.log("📥 Cargando datos del año", añoActual);
                     const tipos = ['elasticosO','elasticosF','mazasN','mazasR','bulonTuerca',
                                    'neumaticoNuevo','neumaticoUsado','patinFrenoNuevo',
                                    'patinFrenoReparado','levaFreno','pulmonFrenoNuevo',
@@ -1476,7 +1479,9 @@ async function init() {
                     for(let key in data.precios) {
                         let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
                         let el = document.getElementById(elId);
-                        if(el) el.value = data.precios[key];
+                        if(el && data.precios[key] !== undefined) {
+                            el.value = data.precios[key];
+                        }
                     }
                 }
                 
@@ -1484,27 +1489,34 @@ async function init() {
                 if(data.horas) {
                     for(let key in data.horas) {
                         let el = document.getElementById(key);
-                        if(el) el.value = data.horas[key];
+                        if(el && data.horas[key] !== undefined) {
+                            el.value = data.horas[key];
+                        }
                     }
                 }
                 
-                document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
-                mostrarToast("☁️ Datos cargados desde la nube");
+                // Actualizar UI
                 document.getElementById("yearSelect").value = añoActual;
+                document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
+                
                 actualizarTodo();
+                mostrarToast("☁️ Datos cargados desde Firebase");
+                
+                // Auto-guardado cada 30 segundos
                 setInterval(() => guardarTodosLosDatos(), 30000);
-                return;
+                return; // ✅ IMPORTANTE: Salir para no sobreescribir
+                
             } else {
-                console.log("📝 No existen datos en Firebase, usando datos iniciales");
+                console.log("📝 No existen datos en Firebase, creando estructura inicial");
             }
         } catch(e) { 
-            console.warn("⚠️ Firebase no disponible, usando localStorage:", e); 
+            console.warn("⚠️ Firebase no disponible:", e); 
             firebaseOK = false; 
         }
     }
     
-    // 2️⃣ Fallback: cargar desde localStorage
-    console.log("💾 Cargando desde localStorage...");
+    // 2️⃣ Fallback: localStorage (solo si Firebase falla)
+    console.log("💾 Intentando cargar desde localStorage...");
     const guardado = localStorage.getItem(CONFIG.storageKey);
     if(guardado) {
         try {
@@ -1528,16 +1540,21 @@ async function init() {
         } catch(e) { console.error(e); }
     }
     
-    // Estructura por defecto si no hay nada
+    // 3️⃣ Estructura por defecto SOLO si no hay nada
     [2024,2025,2026,2027,2028].forEach(año => { 
         if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); 
     });
-    if(!datosPorAnio[2026].elasticosO.M442) {
+    
+    // Solo cargar datos incrustados si NO hay datos guardados
+    if(!datosPorAnio[2026].elasticosO.M442 || datosPorAnio[2026].elasticosO.M442.every(v => v === 0)) {
+        console.log("📦 Cargando datos iniciales de ejemplo");
         datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
     }
     
     document.getElementById("yearSelect").value = añoActual;
     actualizarTodo();
+    
+    // Auto-guardado
     setInterval(() => guardarTodosLosDatos(), 30000);
 }
 
