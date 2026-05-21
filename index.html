@@ -8,7 +8,7 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <!-- 🔥 Firebase SDK (AGREGADO) -->
+    <!-- 🔥 Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     
@@ -61,6 +61,22 @@
         }
         
         [data-theme="dark"] body.read-only-mode .editable-cell input:not([type="password"]) {
+            background-color: #1e3a5f !important;
+            color: #e0f2fe !important;
+            border: 2px solid #00d4ff !important;
+        }
+
+        /* 🔒 NUEVO: Bloquear también los inputs de valores económicos en modo lectura */
+        body.read-only-mode .values-table input:not([readonly]) {
+            pointer-events: none !important;
+            background-color: #f8f9fa !important;
+            color: #2c3e50 !important;
+            cursor: not-allowed !important;
+            border: 2px solid #dee2e6 !important;
+            font-weight: 700 !important;
+        }
+        
+        [data-theme="dark"] body.read-only-mode .values-table input:not([readonly]) {
             background-color: #1e3a5f !important;
             color: #e0f2fe !important;
             border: 2px solid #00d4ff !important;
@@ -1349,6 +1365,7 @@
     <div class="security-modal">
         <h2>🔐 Acceso Restringido</h2>
         <p>Ingrese contraseña para editar</p>
+        <!-- ✅ CAMBIADO: type="password" para ocultar la contraseña -->
         <input type="password" id="passwordInput" placeholder="Contraseña (abrir)">
         <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
         <button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
@@ -1358,18 +1375,17 @@
 <div id="toast" class="toast">✅ Listo</div>
 
 <!-- ======================================== -->
-<!-- 🔥 CONFIG FIREBASE (AGREGAR ANTES DEL SCRIPT PRINCIPAL) -->
+<!-- 🔥 CONFIG FIREBASE -->
 <!-- ======================================== -->
 <script>
-// ⚠️ REEMPLAZÁ ESTO CON TU CONFIG DE FIREBASE CONSOLE
-// ⚠️ REEMPLAZÁ ESTO CON TU CONFIG DE FIREBASE CONSOLE
+// ⚠️ REEMPLAZÁ ESTO CON TU CONFIG REAL DE FIREBASE CONSOLE
 const firebaseConfig = {
-    apiKey: "AIzaSyDXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+    apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
     projectId: "minerar-repuestos",
-    storageBucket: "minerar-repuestos.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef1234567890"
+    storageBucket: "minerar-repuestos.firebasestorage.app",
+    messagingSenderId: "470761239890",
+    appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
 
 // Inicializar Firebase
@@ -1380,13 +1396,14 @@ let firebaseOK = true;
 </script>
 
 <!-- ======================================== -->
-<!-- 📜 TU SCRIPT PRINCIPAL (MODIFICADO PARA FIREBASE) -->
+<!-- 📜 SCRIPT PRINCIPAL -->
 <!-- ======================================== -->
 <script>
 const CONFIG = {
     equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
     meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
     passwordAdmin: "abrir",
+    passwordReset: "NOTOCAR", // ✅ NUEVO: Contraseña para resetear
     storageKey: "minerar_repuestos_v16"
 };
 
@@ -1414,17 +1431,46 @@ const datosIncrustados = {
 };
 
 // ========================================
-// 🔄 FUNCIÓN INIT MODIFICADA (Firebase + Fallback localStorage)
+// 🔄 FUNCIÓN INIT CORREGIDA PARA FIREBASE
 // ========================================
 async function init() {
+    console.log("🔄 Iniciando app...");
+    
     // 1️⃣ Intentar cargar desde Firebase
     if(firebaseOK) {
         try {
+            console.log("☁️ Intentando cargar desde Firebase...");
             const doc = await db.collection(COLECCION).doc(`datos_${añoActual}`).get();
+            
             if(doc.exists) {
+                console.log("✅ Datos encontrados en Firebase");
                 const data = doc.data();
-                datosPorAnio = data.datosPorAnio || {};
-                añoActual = data.añoActual || 2026;
+                
+                // Reconstruir estructura completa
+                datosPorAnio = {};
+                [2024,2025,2026,2027,2028].forEach(año => { 
+                    datosPorAnio[año] = crearEstructuraVacia(); 
+                });
+                
+                // Cargar datos del año actual
+                if(data.datosPorAnio && data.datosPorAnio[añoActual]) {
+                    const tipos = ['elasticosO','elasticosF','mazasN','mazasR','bulonTuerca',
+                                   'neumaticoNuevo','neumaticoUsado','patinFrenoNuevo',
+                                   'patinFrenoReparado','levaFreno','pulmonFrenoNuevo',
+                                   'pulmonFrenoReparado','llantas'];
+                    
+                    tipos.forEach(tipo => {
+                        if(data.datosPorAnio[añoActual][tipo]) {
+                            CONFIG.equipos.forEach(eq => {
+                                if(data.datosPorAnio[añoActual][tipo][eq]) {
+                                    datosPorAnio[añoActual][tipo][eq] = data.datosPorAnio[añoActual][tipo][eq];
+                                }
+                            });
+                        }
+                    });
+                }
+                
+                // Cargar precios
                 if(data.precios) {
                     for(let key in data.precios) {
                         let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -1432,18 +1478,23 @@ async function init() {
                         if(el) el.value = data.precios[key];
                     }
                 }
+                
+                // Cargar horas
                 if(data.horas) {
                     for(let key in data.horas) {
                         let el = document.getElementById(key);
                         if(el) el.value = data.horas[key];
                     }
                 }
+                
                 document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
                 mostrarToast("☁️ Datos cargados desde la nube");
                 document.getElementById("yearSelect").value = añoActual;
                 actualizarTodo();
                 setInterval(() => guardarTodosLosDatos(), 30000);
                 return;
+            } else {
+                console.log("📝 No existen datos en Firebase, usando datos iniciales");
             }
         } catch(e) { 
             console.warn("⚠️ Firebase no disponible, usando localStorage:", e); 
@@ -1451,7 +1502,8 @@ async function init() {
         }
     }
     
-    // 2️⃣ Fallback: cargar desde localStorage (tu código original)
+    // 2️⃣ Fallback: cargar desde localStorage
+    console.log("💾 Cargando desde localStorage...");
     const guardado = localStorage.getItem(CONFIG.storageKey);
     if(guardado) {
         try {
@@ -1471,6 +1523,7 @@ async function init() {
                     if(el) el.value = data.horas[key];
                 }
             }
+            mostrarToast("💾 Datos cargados localmente");
         } catch(e) { console.error(e); }
     }
     
@@ -1484,19 +1537,18 @@ async function init() {
     
     document.getElementById("yearSelect").value = añoActual;
     actualizarTodo();
-    
-    // Auto-guardado cada 30 segundos
     setInterval(() => guardarTodosLosDatos(), 30000);
 }
 
 // ========================================
-// ☁️ NUEVAS FUNCIONES FIREBASE
+// ☁️ FUNCIONES FIREBASE
 // ========================================
 async function guardarEnFirebase() {
     if(!firebaseOK) return false;
     
     const data = {
-        añoActual, datosPorAnio,
+        añoActual,
+        datosPorAnio,
         precios: {
             elasticoO: document.getElementById("precioElasticoO").value,
             elasticoF: document.getElementById("precioElasticoF").value,
@@ -1528,7 +1580,9 @@ async function guardarEnFirebase() {
     };
     
     try {
+        console.log("☁️ Guardando en Firebase...");
         await db.collection(COLECCION).doc(`datos_${añoActual}`).set(data, { merge: true });
+        console.log("✅ Guardado exitoso en Firebase");
         return true;
     } catch(e) {
         console.error("❌ Error guardando en Firebase:", e);
@@ -1571,14 +1625,9 @@ function guardarEnLocalStorage() {
     localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
 }
 
-// ========================================
-// 💾 TU FUNCIÓN ORIGINAL (MODIFICADA: Firebase primero, localStorage de backup)
-// ========================================
 async function guardarTodosLosDatos(event) {
-    // 1️⃣ Intentar guardar en Firebase
     const guardadoFirebase = firebaseOK ? await guardarEnFirebase() : false;
     
-    // 2️⃣ Si falla Firebase, guardar en localStorage como backup
     if(!guardadoFirebase) {
         guardarEnLocalStorage();
     }
@@ -1590,7 +1639,7 @@ async function guardarTodosLosDatos(event) {
 }
 
 // ========================================
-// 🔄 RESTO DE TUS FUNCIONES (SIN CAMBIOS - COPIAR TU CÓDIGO ORIGINAL)
+// 🔄 RESTO DE FUNCIONES
 // ========================================
 
 function crearEstructuraVacia() {
@@ -2246,8 +2295,9 @@ function importarCSV(event) {
 
 async function resetearDatosCompletos() {
     if(!confirm("⚠️ ¿Resetear TODOS los datos?")) return;
-    const pass = prompt("🔒 Contraseña:");
-    if(pass === CONFIG.passwordAdmin) {
+    const pass = prompt("🔒 Contraseña para resetear:");
+    // ✅ CAMBIADO: Verificar contraseña "NOTOCAR" en mayúsculas
+    if(pass === CONFIG.passwordReset) {
         if(confirm("✅ ¿Confirmar? Esto borrará los datos en la NUBE también")) {
             if(firebaseOK) {
                 try {
@@ -2257,7 +2307,7 @@ async function resetearDatosCompletos() {
             localStorage.removeItem(CONFIG.storageKey);
             location.reload();
         }
-    } else mostrarToast("❌ Contraseña incorrecta", true);
+    } else mostrarToast("❌ Contraseña incorrecta (debe ser NOTOCAR)", true);
 }
 
 function cambiarAnio() {
