@@ -95,6 +95,8 @@
             gap: 12px;
             border: 2px solid rgba(255,255,255,0.3);
             transition: all 0.3s ease;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
         
         [data-theme="dark"] .top-bar {
@@ -356,9 +358,11 @@
             padding: 16px 10px; 
             text-align: center; 
             cursor: pointer; 
-            transition: all 0.3s; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            user-select: none;
         }
         
         .stat-card:nth-child(1) { background: linear-gradient(135deg, #FF6B6B, #EE5A5A); }
@@ -381,8 +385,9 @@
         }
         
         .stat-card:hover { 
-            transform: translateY(-5px) scale(1.02); 
-            box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+            transform: translateY(-6px) scale(1.04); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 5;
         }
         
         [data-theme="dark"] .stat-card:hover {
@@ -391,9 +396,39 @@
         }
         
         .stat-card.active {
-            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8) !important;
+            animation: glow-pulse 2s ease-in-out infinite;
             border: 3px solid #ffffff !important;
-            transform: scale(1.05);
+            transform: scale(1.08) !important;
+            z-index: 10;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.7); }
+            50% { box-shadow: 0 0 45px rgba(0, 255, 136, 0.95); }
+        }
+        
+        .stat-card::before {
+            content: "🔍 Click para filtrar gráficos";
+            position: absolute;
+            bottom: 100%; left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--primary-dark);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+        [data-theme="dark"] .stat-card::before {
+            background: #00d4ff; color: #0a1628;
+        }
+        .stat-card:hover::before {
+            opacity: 1; transform: translateX(-50%) translateY(0);
         }
         
         .stat-value { 
@@ -426,6 +461,7 @@
             border: 3px solid rgba(255,255,255,0.5); 
             box-shadow: 0 6px 20px rgba(0,0,0,0.1);
             transition: all 0.3s ease;
+            page-break-inside: avoid;
         }
         
         [data-theme="dark"] .chart-card {
@@ -519,6 +555,7 @@
             border: 2px solid var(--border); 
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
+            page-break-inside: avoid;
         }
         
         [data-theme="dark"] table {
@@ -853,6 +890,7 @@
             border-radius: 20px; 
             border: 3px solid rgba(255,255,255,0.3);
             box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            page-break-inside: avoid;
         }
         
         [data-theme="dark"] .values-section {
@@ -1077,29 +1115,188 @@
         
         .file-input { display: none; }
         
+        /* 🖨️ MEJORAS PARA IMPRESIÓN GERENCIAL */
         @media print {
-            .top-bar, .floating-controls, .alert, .theme-toggle, .controls, .year-selector, .mes-btn, .btn-ver-todo, .accordion-header {
+            body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .top-bar, .floating-controls, .alert, .theme-toggle, .controls, 
+            .year-selector, .mes-btn, .btn-ver-todo, .accordion-header,
+            .filtro-meses, .toast {
                 display: none !important;
             }
+            
             .accordion-content {
                 max-height: none !important;
                 display: block !important;
+                overflow: visible !important;
             }
-            body, .report-container, .values-section, .hours-section {
-                background: white !important;
+            
+            .report-container { 
+                background: white !important; 
                 color: black !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 20px !important;
+                max-width: 100% !important;
+                margin: 0 !important;
             }
-            .stat-value, .report-title h1 {
-                background: white !important;
+            
+            .report-header {
+                border-bottom: 3px solid #2c3e50 !important;
+                padding-bottom: 15px !important;
+            }
+            
+            .report-title h1 {
+                color: #2c3e50 !important;
+                -webkit-text-fill-color: #2c3e50 !important;
+                background: none !important;
+                font-size: 1.5rem !important;
+            }
+            
+            .report-title p {
+                color: #555 !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .summary-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            .stat-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 2px solid #ccc !important;
+                transform: none !important;
+                animation: none !important;
+                box-shadow: none !important;
+            }
+            
+            .stat-value, .stat-label {
+                color: black !important;
                 -webkit-text-fill-color: black !important;
+                text-shadow: none !important;
             }
-            table, tr, td, th {
+            
+            .charts-section {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px !important;
+            }
+            
+            .chart-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            
+            .chart-card h4 {
+                color: #2c3e50 !important;
+                -webkit-text-fill-color: #2c3e50 !important;
+                background: none !important;
+                font-size: 1rem !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .chart-container { 
+                height: 220px !important; 
+            }
+            
+            table, .values-table {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+                font-size: 0.75rem !important;
+            }
+            
+            th {
+                background: #2c3e50 !important;
+                color: white !important;
+                -webkit-text-fill-color: white !important;
+                font-size: 0.65rem !important;
+            }
+            
+            td {
+                color: #333 !important;
+                border-bottom: 1px solid #ddd !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .total-row, .grand-total {
+                background: #2c3e50 !important;
+                color: white !important;
+            }
+            
+            .values-section {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+                break-inside: avoid;
                 page-break-inside: avoid;
             }
-            @page {
-                margin: 1.5cm;
+            
+            .values-section h3 {
+                color: #2c3e50 !important;
+                text-shadow: none !important;
+            }
+            
+            .hours-section {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            
+            .hours-section h4 {
+                color: #2c3e50 !important;
+                border-bottom-color: #2c3e50 !important;
+            }
+            
+            .values-table input {
+                border: 1px solid #ccc !important;
+                background: white !important;
+                color: #333 !important;
+            }
+            
+            .values-table input[readonly] {
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                border: none !important;
+                font-weight: 700 !important;
+            }
+            
+            .footer-print {
+                display: block !important;
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 15px;
+                border-top: 2px solid #2c3e50;
+                color: #555;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            
+            /* Evitar cortes en tablas y gráficos */
+            table, tr, .chart-card, .values-section, .hours-section {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Forzar salto de página entre secciones grandes si es necesario */
+            .accordion-content {
+                page-break-after: auto;
             }
         }
+        
+        .footer-print { display: none; }
     </style>
 </head>
 <body class="read-only-mode">
@@ -1165,19 +1362,19 @@
     </div>
 
     <div class="summary-grid">
-        <div class="stat-card" onclick="filtrarGrafico('elasticosO')"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('elasticosF')"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('mazasN')"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('mazasR')"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('bulonTuerca')"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón y Tuerca</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('neumaticoNuevo')"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('neumaticoUsado')"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('patinFrenoNuevo')"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('patinFrenoReparado')"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('levaFreno')"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva de Freno</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoNuevo')"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoReparado')"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
-        <div class="stat-card" onclick="filtrarGrafico('llantas')"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas Rotas</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('elasticosO')" data-tooltip="Elásticos Originales"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('elasticosF')" data-tooltip="Elásticos Fabricados"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('mazasN')" data-tooltip="Mazas Nuevas"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('mazasR')" data-tooltip="Mazas Reparadas"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('bulonTuerca')" data-tooltip="Bulones y Tuercas"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón y Tuerca</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('neumaticoNuevo')" data-tooltip="Neumáticos Nuevos"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('neumaticoUsado')" data-tooltip="Neumáticos Usados"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('patinFrenoNuevo')" data-tooltip="Patines de Freno Nuevos"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('patinFrenoReparado')" data-tooltip="Patines de Freno Reparados"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('levaFreno')" data-tooltip="Levas de Freno"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva de Freno</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoNuevo')" data-tooltip="Pulmones de Freno Nuevos"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoReparado')" data-tooltip="Pulmones de Freno Reparados"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('llantas')" data-tooltip="Llantas Rotas"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas Rotas</div></div>
     </div>
 
     <div class="charts-section">
@@ -1347,6 +1544,11 @@
         <p>📋 Informe generado automáticamente • Datos sincronizados en la nube ☁️ • Última actualización: <span id="lastUpdate">-</span></p>
         <p>© 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management</p>
     </div>
+    
+    <!-- Footer para impresión -->
+    <div class="footer-print">
+        Informe Gerencial MINERAR • Confidencial • Generado: <span id="printDate"></span>
+    </div>
 </div>
 
 <div class="floating-controls">
@@ -1396,6 +1598,7 @@ let charts = {};
 let modoEdicionActivo = false;
 let graficoFiltrado = null;
 let mesFiltrado = null;
+let categoriaFiltrada = null; // 🎯 Nueva variable para filtrado gerencial
 
 const datosIncrustados = {
     elasticosO: {"M442":[2,1,0,3,2,1,0,2,1,0,1,2],"M444":[0,1,2,0,1,0,2,1,0,1,0,1],"M445":[1,0,2,1,2,0,1,0,2,1,0,0],"M446":[2,1,3,0,1,2,0,1,0,2,1,0],"M447":[0,0,1,1,1,0,0,1,0,0,1,0],"M448":[0,1,0,0,1,0,0,0,1,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,2,1,2,2,0,1,2,1,0,1,2],"M452":[0,2,2,2,2,1,0,2,1,0,0,1],"M453":[0,1,2,1,1,0,1,0,2,1,0,0],"M455":[1,2,1,1,2,0,1,0,1,2,0,1],"M456":[2,0,1,2,1,0,0,1,0,2,1,0]},
@@ -1412,6 +1615,21 @@ const datosIncrustados = {
     pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
 };
+
+// Helper para nombres legibles en gráficos gerenciales
+function cardLabel(categoria) {
+    const map = {
+        'elasticosO': 'Elásticos ORIG', 'elasticosF': 'Elásticos FAB',
+        'mazasN': 'Mazas NUEVAS', 'mazasR': 'Mazas REPARADAS',
+        'bulonTuerca': 'Bulón/Tuerca',
+        'neumaticoNuevo': 'Neumático NUEVO', 'neumaticoUsado': 'Neumático USADO',
+        'patinFrenoNuevo': 'Patín NUEVO', 'patinFrenoReparado': 'Patín REPARADO',
+        'levaFreno': 'Leva de Freno',
+        'pulmonFrenoNuevo': 'Pulmón NUEVO', 'pulmonFrenoReparado': 'Pulmón REPARADO',
+        'llantas': 'Llantas Rotas'
+    };
+    return map[categoria] || categoria;
+}
 
 async function init() {
     console.log("🔄 Iniciando app...");
@@ -1947,7 +2165,7 @@ function exportarCSV() {
         bulon: document.getElementById("cantBulon").textContent,
         tuerca: document.getElementById("cantTuerca").textContent,
         neumaticoNuevo: document.getElementById("cantNeumaticoNuevo").textContent,
-        neumaticoUsado: document.getElementById("cantNeumaticoUsado").textContent || "0", // FIX undefined
+        neumaticoUsado: document.getElementById("cantNeumaticoUsado").textContent || "0",
         patinFrenoNuevo: document.getElementById("cantPatinFrenoNuevo").textContent,
         patinFrenoReparado: document.getElementById("cantPatinFrenoReparado").textContent,
         levaFreno: document.getElementById("cantLevaFreno").textContent,
@@ -2014,7 +2232,6 @@ function exportarCSV() {
     mostrarToast("📊 Exportado informe detallado a CSV");
 }
 
-// ✅ IMPORTADOR INTELIGENTE (Arreglado para leer tu CSV específico)
 function importarCSV(event) {
     const file = event.target.files[0];
     if(!file) return;
@@ -2054,7 +2271,6 @@ function importarCSV(event) {
                 line = line.trim();
                 if(!line) return;
 
-                // 1. Detectar categoría actual
                 for(let key in mapCategoria) {
                     if(line.includes(key)) {
                         categoriaActual = mapCategoria[key];
@@ -2062,14 +2278,12 @@ function importarCSV(event) {
                     }
                 }
 
-                // 2. Procesar filas de datos (Ej: M442;0;0...)
                 if(categoriaActual && line.match(/^M\d{3,4};/)) {
                     const parts = line.split(';');
                     const equipo = parts[0];
                     
                     if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
                         for(let i=0; i<12; i++) {
-                            // Limpieza de datos: si es undefined o NaN, pone 0
                             let val = parseInt(parts[i+1]);
                             if(isNaN(val)) val = 0; 
                             
@@ -2084,7 +2298,7 @@ function importarCSV(event) {
             
             if(filasProcesadas > 0) {
                 actualizarTodo();
-                guardarTodosLosDatos(); // Guarda automáticamente en Firebase
+                guardarTodosLosDatos();
                 mostrarToast(`✅ Importados ${filasProcesadas} registros exitosamente`);
             } else {
                 mostrarToast("⚠️ No se encontraron datos válidos en el archivo", true);
@@ -2139,149 +2353,338 @@ function mostrarToast(msg, error=false) {
     setTimeout(() => toast.className = 'toast', 3000);
 }
 
+// 🎯 FUNCIÓN DE FILTRADO GERENCIAL - INTERACTIVA CON TOGGLE
+function filtrarGrafico(categoria) {
+    const card = event.currentTarget;
+    
+    // Toggle: si ya está filtrada, quitar filtro
+    if (categoriaFiltrada === categoria) {
+        categoriaFiltrada = null;
+        document.querySelectorAll('.stat-card').forEach(c => {
+            c.classList.remove('active');
+            c.style.opacity = '1';
+            c.style.transform = 'scale(1)';
+        });
+        mostrarToast('📊 Vista completa restaurada');
+    } else {
+        // Activar nueva categoría
+        categoriaFiltrada = categoria;
+        document.querySelectorAll('.stat-card').forEach(c => {
+            c.classList.remove('active');
+            c.style.opacity = '0.65';
+            c.style.transform = 'scale(0.97)';
+        });
+        card.classList.add('active');
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1.07)';
+        
+        const label = card.querySelector('.stat-label').innerText;
+        mostrarToast(`🔍 Filtrando: ${label}`);
+    }
+    
+    // Actualizar gráficos con animación
+    setTimeout(() => actualizarGraficos(), 100);
+}
+
+// 🎯 ACTUALIZAR GRÁFICOS CON DATOS GERENCIALES: NOMBRES + CANTIDADES + PORCENTAJES
 function actualizarGraficos() {
     const d = obtenerDatosActual();
-    
-    let datosEquipos = {};
-    CONFIG.equipos.forEach(eq => {
-        if(mesFiltrado !== null) {
-            datosEquipos[eq] = [d.elasticosO[eq][mesFiltrado], d.elasticosF[eq][mesFiltrado],
-                d.mazasN[eq][mesFiltrado], d.mazasR[eq][mesFiltrado],
-                d.bulonTuerca[eq][mesFiltrado], d.neumaticoNuevo[eq][mesFiltrado],
-                d.neumaticoUsado[eq][mesFiltrado], d.patinFrenoNuevo[eq][mesFiltrado],
-                d.patinFrenoReparado[eq][mesFiltrado], d.levaFreno[eq][mesFiltrado],
-                d.pulmonFrenoNuevo[eq][mesFiltrado], d.pulmonFrenoReparado[eq][mesFiltrado],
-                d.llantas[eq][mesFiltrado]].reduce((a,b)=>a+b,0);
-        } else {
-            datosEquipos[eq] = [d.elasticosO[eq], d.elasticosF[eq], d.mazasN[eq], d.mazasR[eq],
-                d.bulonTuerca[eq], d.neumaticoNuevo[eq], d.neumaticoUsado[eq],
-                d.patinFrenoNuevo[eq], d.patinFrenoReparado[eq], d.levaFreno[eq],
-                d.pulmonFrenoNuevo[eq], d.pulmonFrenoReparado[eq], d.llantas[eq]].flat().reduce((a,b)=>a+b,0);
-        }
-    });
-    const top5 = Object.entries(datosEquipos).sort((a,b)=>b[1]-a[1]).slice(0,5);
-    
-    let datosMensuales = Array(12).fill(0);
-    CONFIG.equipos.forEach(eq => {
-        for(let i=0;i<12;i++) {
-            datosMensuales[i] += [d.elasticosO[eq][i], d.elasticosF[eq][i], d.mazasN[eq][i],
-                d.mazasR[eq][i], d.bulonTuerca[eq][i], d.neumaticoNuevo[eq][i],
-                d.neumaticoUsado[eq][i], d.patinFrenoNuevo[eq][i], d.patinFrenoReparado[eq][i],
-                d.levaFreno[eq][i], d.pulmonFrenoNuevo[eq][i], d.pulmonFrenoReparado[eq][i],
-                d.llantas[eq][i]].reduce((a,b)=>a+b,0);
-        }
-    });
-    
     const isDark = document.body.getAttribute('data-theme') === 'dark';
-    const colors = {
-        blue: isDark ? 'rgba(0, 212, 255, 0.9)' : 'rgba(54, 162, 235, 0.9)',
-        orange: isDark ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 159, 64, 0.9)',
-        green: isDark ? 'rgba(0, 255, 136, 0.9)' : 'rgba(75, 192, 192, 0.9)',
-        red: isDark ? 'rgba(255, 107, 107, 0.9)' : 'rgba(255, 99, 132, 0.9)',
-        purple: isDark ? 'rgba(168, 85, 247, 0.9)' : 'rgba(153, 102, 255, 0.9)',
-        yellow: isDark ? 'rgba(255, 215, 0, 0.9)' : 'rgba(255, 206, 86, 0.9)',
-        teal: isDark ? 'rgba(20, 184, 166, 0.9)' : 'rgba(26, 188, 156, 0.9)',
-        gridColor: isDark ? 'rgba(0, 212, 255, 0.2)' : 'rgba(0,0,0,0.08)',
-        textColor: isDark ? '#e0f2fe' : '#2c3e50'
-    };
     
-    if(charts.line) charts.line.destroy();
+    // Colores según tema
+    const colors = {
+        primary: isDark ? 'rgba(0, 212, 255, 0.95)' : 'rgba(54, 162, 235, 0.95)',
+        secondary: isDark ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 159, 64, 0.8)',
+        success: isDark ? 'rgba(0, 255, 136, 0.9)' : 'rgba(75, 192, 192, 0.9)',
+        danger: isDark ? 'rgba(255, 107, 107, 0.9)' : 'rgba(255, 99, 132, 0.9)',
+        purple: isDark ? 'rgba(168, 85, 247, 0.9)' : 'rgba(153, 102, 255, 0.9)',
+        grid: isDark ? 'rgba(0, 212, 255, 0.15)' : 'rgba(0,0,0,0.06)',
+        text: isDark ? '#e0f2fe' : '#2c3e50',
+        muted: isDark ? 'rgba(125, 211, 252, 0.5)' : 'rgba(127, 140, 141, 0.7)'
+    };
+
+    // === 📈 GRÁFICO DE LÍNEA: Evolución Mensual ===
+    let lineData, lineLabel;
+    
+    if (categoriaFiltrada) {
+        // Datos de la categoría filtrada
+        const datosFiltrados = Array(12).fill(0);
+        CONFIG.equipos.forEach(eq => {
+            for(let i=0; i<12; i++) {
+                datosFiltrados[i] += d[categoriaFiltrada][eq][i] || 0;
+            }
+        });
+        
+        // Datos de "otros" para comparar (solo si es sub-categoría)
+        let datosComparacion = null;
+        if (categoriaFiltrada.includes('elasticos')) {
+            const otra = categoriaFiltrada === 'elasticosO' ? 'elasticosF' : 'elasticosO';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('mazas')) {
+            const otra = categoriaFiltrada === 'mazasN' ? 'mazasR' : 'mazasN';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('neumatico')) {
+            const otra = categoriaFiltrada === 'neumaticoNuevo' ? 'neumaticoUsado' : 'neumaticoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('patinFreno')) {
+            const otra = categoriaFiltrada === 'patinFrenoNuevo' ? 'patinFrenoReparado' : 'patinFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('pulmonFreno')) {
+            const otra = categoriaFiltrada === 'pulmonFrenoNuevo' ? 'pulmonFrenoReparado' : 'pulmonFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        }
+        
+        lineData = [{
+            label: cardLabel(categoriaFiltrada),
+            data: datosFiltrados,
+            borderColor: colors.primary,
+            backgroundColor: colors.primary.replace('0.95', '0.25'),
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            borderWidth: 3
+        }];
+        
+        if (datosComparacion) {
+            lineData.push({
+                label: 'Comparación',
+                data: datosComparacion,
+                borderColor: colors.muted,
+                borderDash: [5, 5],
+                tension: 0.4,
+                fill: false,
+                pointRadius: 3,
+                borderWidth: 2
+            });
+        }
+        lineLabel = `${cardLabel(categoriaFiltrada)} - Evolución ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Anual'}`;
+    } else {
+        // Vista completa: suma de todas las categorías
+        const totales = Array(12).fill(0);
+        CONFIG.equipos.forEach(eq => {
+            for(let i=0; i<12; i++) {
+                totales[i] += Object.values(d).flatMap(cat => cat[eq] || [])[i] || 0;
+            }
+        });
+        lineData = [{
+            label: 'Consumo Total',
+            data: totales,
+            borderColor: colors.primary,
+            backgroundColor: colors.primary.replace('0.95', '0.25'),
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointHoverRadius: 8
+        }];
+        lineLabel = '📈 Consumo Total - Evolución Mensual';
+    }
+
+    if (charts.line) charts.line.destroy();
     charts.line = new Chart(document.getElementById('chartLine'), {
         type: 'line',
-        data: {
-            labels: CONFIG.meses,
-            datasets: [{
-                label: mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Consumo Total',
-                data: datosMensuales,
-                borderColor: colors.blue,
-                backgroundColor: colors.blue.replace('0.9', '0.3'),
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: colors.blue,
-                pointBorderColor: isDark ? '#0a1628' : '#fff',
-                pointBorderWidth: 3,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
+        data: { labels: CONFIG.meses, datasets: lineData },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: true, position: 'top', labels: { color: colors.textColor } } },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { 
+                legend: { position: 'top', labels: { color: colors.text, font: { size: 11 } } },
+                title: { display: true, text: lineLabel, color: colors.text, font: { size: 13, weight: '700' } },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a,b) => a + (b||0), 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
+                        }
+                    }
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
-                x: { grid: { display: false }, ticks: { color: colors.textColor } }
+                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                x: { grid: { display: false }, ticks: { color: colors.text } }
             }
         }
     });
+
+    // === 📊 GRÁFICO DE BARRAS: Top 5 Equipos ===
+    let barLabels = [], barData = [], barColors = [];
     
-    if(charts.bar) charts.bar.destroy();
+    if (categoriaFiltrada) {
+        // Calcular total por equipo para ESA categoría
+        const porEquipo = {};
+        CONFIG.equipos.forEach(eq => {
+            porEquipo[eq] = mesFiltrado !== null 
+                ? (d[categoriaFiltrada][eq]?.[mesFiltrado] || 0)
+                : (d[categoriaFiltrada][eq]?.reduce((a,b)=>a+b,0) || 0);
+        });
+        
+        // Top 5
+        const top5 = Object.entries(porEquipo).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        barLabels = top5.map(e => e[0]);
+        barData = top5.map(e => e[1]);
+        barColors = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+    } else {
+        // Total general por equipo
+        const porEquipo = {};
+        CONFIG.equipos.forEach(eq => {
+            porEquipo[eq] = mesFiltrado !== null
+                ? Object.values(d).flatMap(cat => cat[eq] || [])[mesFiltrado] || 0
+                : Object.values(d).flatMap(cat => cat[eq] || []).reduce((a,b)=>a+b,0);
+        });
+        const top5 = Object.entries(porEquipo).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        barLabels = top5.map(e => e[0]);
+        barData = top5.map(e => e[1]);
+        barColors = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+    }
+
+    if (charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('chartBar'), {
         type: 'bar',
         data: {
-            labels: top5.map(e=>e[0]),
+            labels: barLabels,
             datasets: [{
-                label: mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Consumo Total',
-                data: top5.map(e=>e[1]),
-                backgroundColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple],
-                borderColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple].map(c=>c.replace('0.9','1')),
-                borderWidth: 3,
-                borderRadius: 10
+                label: categoriaFiltrada ? cardLabel(categoriaFiltrada) : 'Consumo Total',
+                data: barData,
+                backgroundColor: barColors,
+                borderColor: barColors.map(c => c.replace(/[\d.]+\)$/, '1)')),
+                borderWidth: 2,
+                borderRadius: 8
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { 
+                legend: { display: false },
+                title: { display: true, text: '📊 Top 5 Equipos', color: colors.text, font: { size: 13, weight: '700' } },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a,b) => a + (b||0), 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
+                        }
+                    }
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { color: colors.gridColor }, ticks: { color: colors.textColor } },
-                x: { grid: { display: false }, ticks: { color: colors.textColor } }
+                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                x: { grid: { display: false }, ticks: { color: colors.text } }
             }
         }
     });
+
+    // === 🎯 GRÁFICO DONUT: Distribución por Categoría ===
+    let doughnutLabels = [], doughnutData = [], doughnutColors = [];
     
-    if(charts.doughnut) charts.doughnut.destroy();
-    
-    function calcCategoria(data) { 
-        if(mesFiltrado !== null) {
-            return Object.values(data).reduce((sum, eq) => sum + (eq[mesFiltrado] || 0), 0);
+    if (categoriaFiltrada) {
+        // Si es sub-categoría, mostrar comparación con su par
+        if (categoriaFiltrada === 'elasticosO' || categoriaFiltrada === 'elasticosF') {
+            doughnutLabels = ['Elásticos ORIG', 'Elásticos FAB'];
+            doughnutData = [
+                Object.values(d.elasticosO).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.elasticosF).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.secondary];
+        } else if (categoriaFiltrada === 'mazasN' || categoriaFiltrada === 'mazasR') {
+            doughnutLabels = ['Mazas NUEVAS', 'Mazas REPARADAS'];
+            doughnutData = [
+                Object.values(d.mazasN).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.mazasR).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.success, colors.danger];
+        } else if (categoriaFiltrada === 'neumaticoNuevo' || categoriaFiltrada === 'neumaticoUsado') {
+            doughnutLabels = ['Neumático NUEVO', 'Neumático USADO'];
+            doughnutData = [
+                Object.values(d.neumaticoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.neumaticoUsado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.muted];
+        } else if (categoriaFiltrada === 'patinFrenoNuevo' || categoriaFiltrada === 'patinFrenoReparado') {
+            doughnutLabels = ['Patín NUEVO', 'Patín REPARADO'];
+            doughnutData = [
+                Object.values(d.patinFrenoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.patinFrenoReparado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.success, colors.purple];
+        } else if (categoriaFiltrada === 'pulmonFrenoNuevo' || categoriaFiltrada === 'pulmonFrenoReparado') {
+            doughnutLabels = ['Pulmón NUEVO', 'Pulmón REPARADO'];
+            doughnutData = [
+                Object.values(d.pulmonFrenoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.pulmonFrenoReparado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.secondary];
+        } else {
+            // Categorías únicas: mostrar su valor vs el resto
+            const valorFiltrado = Object.values(d[categoriaFiltrada]).flat().reduce((a,b)=>a+b,0);
+            const resto = Object.entries(d).filter(([k]) => k !== categoriaFiltrada)
+                .flatMap(([_, cat]) => Object.values(cat).flat()).reduce((a,b)=>a+b,0);
+            doughnutLabels = [cardLabel(categoriaFiltrada), 'Otras categorías'];
+            doughnutData = [valorFiltrado, resto];
+            doughnutColors = [colors.primary, colors.muted];
         }
-        return Object.values(data).flat().reduce((a,b)=>a+b,0); 
+    } else {
+        // Vista completa: todas las categorías
+        const calc = (data) => Object.values(data).flat().reduce((a,b)=>a+b,0);
+        doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tuerca', 'Neum. N', 'Neum. U', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Pulmón R', 'Llantas'];
+        doughnutData = [
+            calc(d.elasticosO), calc(d.elasticosF), calc(d.mazasN), calc(d.mazasR),
+            calc(d.bulonTuerca), calc(d.neumaticoNuevo), calc(d.neumaticoUsado),
+            calc(d.patinFrenoNuevo), calc(d.patinFrenoReparado), calc(d.levaFreno),
+            calc(d.pulmonFrenoNuevo), calc(d.pulmonFrenoReparado), calc(d.llantas)
+        ];
+        doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple, '#ffd700', colors.teal, '#ff6b6b', '#ffb347', '#4ecdc4', '#45b7d1', '#96ceb4', '#e74c3c'];
     }
-    
-    const categorias = {
-        'Elást. Orig': calcCategoria(d.elasticosO),
-        'Elást. Fab': calcCategoria(d.elasticosF),
-        'Mazas N': calcCategoria(d.mazasN),
-        'Mazas R': calcCategoria(d.mazasR),
-        'Bulón/Tuerca': calcCategoria(d.bulonTuerca),
-        'Neum. Nuevo': calcCategoria(d.neumaticoNuevo),
-        'Neum. Usado': calcCategoria(d.neumaticoUsado),
-        'Patín N': calcCategoria(d.patinFrenoNuevo),
-        'Patín R': calcCategoria(d.patinFrenoReparado),
-        'Leva Freno': calcCategoria(d.levaFreno),
-        'Pulmón N': calcCategoria(d.pulmonFrenoNuevo),
-        'Pulmón R': calcCategoria(d.pulmonFrenoReparado),
-        'Llantas': calcCategoria(d.llantas)
-    };
-    
+
+    if (charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
         type: 'doughnut',
         data: {
-            labels: Object.keys(categorias),
+            labels: doughnutLabels,
             datasets: [{
-                data: Object.values(categorias),
-                backgroundColor: [colors.blue, colors.orange, colors.green, colors.red, colors.purple, colors.yellow, colors.teal, '#ff6b6b', '#ffb347', '#4ecdc4', '#45b7d1', '#96ceb4', '#e74c3c'],
-                borderWidth: 4,
-                borderColor: isDark ? '#0f1f3d' : '#fff'
+                data: doughnutData,
+                backgroundColor: doughnutColors,
+                borderWidth: 3,
+                borderColor: isDark ? '#0f1f3d' : '#fff',
+                hoverOffset: 15
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false, animation: { duration: 500 },
             plugins: {
-                legend: { position: 'right', labels: { boxWidth: 14, font: { size: 11, weight: '600' }, color: colors.textColor } }
-            }
+                legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10, weight: '600' }, color: colors.text } },
+                title: { display: true, text: categoriaFiltrada ? '🎯 Comparación de Categoría' : '🎯 Distribución General', color: colors.text, font: { size: 13, weight: '700' } },
+                tooltip: { 
+                    callbacks: { 
+                        label: function(ctx) {
+                            const label = ctx.label || '';
+                            const value = ctx.parsed || 0;
+                            const total = ctx.dataset.data.reduce((a,b) => a + b, 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
+                        }
+                    }
+                }
+            },
+            cutout: '65%'
         }
     });
 }
@@ -2295,30 +2698,6 @@ function toggleAccordion(accordionId) {
     if(icon) {
         icon.classList.toggle('rotated');
     }
-}
-
-function filtrarGrafico(categoria) {
-    document.querySelectorAll('.stat-card').forEach(card => {
-        card.classList.remove('active');
-        card.style.opacity = '0.6';
-    });
-    
-    event.currentTarget.classList.add('active');
-    event.currentTarget.style.opacity = '1';
-    
-    graficoFiltrado = categoria;
-    mostrarToast(`📊 Filtrando: ${event.currentTarget.querySelector('.stat-label').innerText}`);
-    
-    setTimeout(() => {
-        actualizarGraficos();
-        setTimeout(() => {
-            document.querySelectorAll('.stat-card').forEach(card => {
-                card.classList.remove('active');
-                card.style.opacity = '1';
-            });
-            actualizarGraficos();
-        }, 4000);
-    }, 100);
 }
 
 function cambiarMes(mesIndex) {
@@ -2342,6 +2721,11 @@ function limpiarFiltroMes() {
     calcularEconomico();
     mostrarToast('📅 Mostrando todo el año');
 }
+
+// 🖨️ Configurar fecha de impresión
+window.onbeforeprint = function() {
+    document.getElementById('printDate').textContent = new Date().toLocaleString('es-AR');
+};
 
 document.addEventListener('DOMContentLoaded', init);
 </script>
