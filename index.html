@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
     
-    <!-- Favicon package -->
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
@@ -380,6 +379,7 @@
         .stat-card:nth-child(11) { background: linear-gradient(135deg, #3498DB, #2980B9); }
         .stat-card:nth-child(12) { background: linear-gradient(135deg, #5DADE2, #2E86C1); }
         .stat-card:nth-child(13) { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+        .stat-card:nth-child(14) { background: linear-gradient(135deg, #2ECC71, #27AE60); }
         
         [data-theme="dark"] .stat-card {
             box-shadow: var(--neon-glow);
@@ -1297,7 +1297,6 @@
         
         .footer-print { display: none; }
         
-        /* ===== NUEVO: Estilo para el indicador de filtro activo en valores económicos ===== */
         .filter-badge {
             display: inline-block;
             background: rgba(255,255,255,0.2);
@@ -1407,7 +1406,7 @@
         </div>
     </div>
 
-    <!-- ACORDEONES (sin cambios) -->
+    <!-- ACORDEONES -->
     <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')">
         <div class="section-title">📦 Paquetes Elásticos ORIGINALES</div>
         <div class="accordion-icon" id="iconElasticosO">▼</div>
@@ -1469,7 +1468,7 @@
         <div class="accordion-icon" id="iconPatinFrenoNuevo">▼</div>
     </div>
     <div id="accordionPatinFrenoNuevo" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></tr></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')">
@@ -1493,7 +1492,7 @@
         <div class="accordion-icon" id="iconPulmonFrenoNuevo">▼</div>
     </div>
     <div id="accordionPulmonFrenoNuevo" class="accordion-content">
-        <div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div>
+        <div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></td></div>
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')">
@@ -1597,8 +1596,9 @@ const db = firebase.firestore();
 const COLECCION = "repuestos_minerar";
 let firebaseOK = true;
 
+// ===== EQUIPOS ACTUALIZADOS CON M454 =====
 const CONFIG = {
-    equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M455","M456"],
+    equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"],
     meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
     passwordAdmin: "abrir",
     passwordReset: "NOTOCAR",
@@ -1609,15 +1609,58 @@ let añoActual = 2026;
 let datosPorAnio = {};
 let charts = {};
 let modoEdicionActivo = false;
-let categoriaFiltrada = null;      // <--- NUEVO: categoría seleccionada desde tarjeta
-let mesFiltrado = null;            // <--- NUEVO: mes seleccionado
+let categoriaFiltrada = null;
+let mesFiltrado = null;
 
+// ===== DATOS INICIALES CON M454 AGREGADO (con ceros para empezar) =====
 const datosIncrustados = {
-    elasticosO: {"M442":[2,1,0,3,2,1,0,2,1,0,1,2],"M444":[0,1,2,0,1,0,2,1,0,1,0,1],"M445":[1,0,2,1,2,0,1,0,2,1,0,0],"M446":[2,1,3,0,1,2,0,1,0,2,1,0],"M447":[0,0,1,1,1,0,0,1,0,0,1,0],"M448":[0,1,0,0,1,0,0,0,1,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,2,1,2,2,0,1,2,1,0,1,2],"M452":[0,2,2,2,2,1,0,2,1,0,0,1],"M453":[0,1,2,1,1,0,1,0,2,1,0,0],"M455":[1,2,1,1,2,0,1,0,1,2,0,1],"M456":[2,0,1,2,1,0,0,1,0,2,1,0]},
+    elasticosO: {
+        "M442":[2,1,0,3,2,1,0,2,1,0,1,2],
+        "M444":[0,1,2,0,1,0,2,1,0,1,0,1],
+        "M445":[1,0,2,1,2,0,1,0,2,1,0,0],
+        "M446":[2,1,3,0,1,2,0,1,0,2,1,0],
+        "M447":[0,0,1,1,1,0,0,1,0,0,1,0],
+        "M448":[0,1,0,0,1,0,0,0,1,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[2,2,1,2,2,0,1,2,1,0,1,2],
+        "M452":[0,2,2,2,2,1,0,2,1,0,0,1],
+        "M453":[0,1,2,1,1,0,1,0,2,1,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[1,2,1,1,2,0,1,0,1,2,0,1],
+        "M456":[2,0,1,2,1,0,0,1,0,2,1,0]
+    },
     elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    mazasN: {"M442":[0,0,0,0,0,0,0,0,0,0,0,0],"M444":[0,0,0,2,1,0,0,0,0,0,0,0],"M445":[0,0,0,1,1,0,0,0,0,0,0,0],"M446":[0,0,0,2,2,0,0,0,0,0,0,0],"M447":[0,0,0,1,1,0,0,0,0,0,0,0],"M448":[1,0,2,0,0,0,0,0,0,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[0,0,0,0,0,0,0,0,0,0,0,0],"M452":[0,0,1,2,2,0,0,0,0,0,0,0],"M453":[0,0,0,0,0,0,0,0,0,0,0,0],"M455":[0,1,0,1,1,0,0,0,0,0,0,0],"M456":[0,0,0,0,0,0,0,0,0,0,0,0]},
+    mazasN: {
+        "M442":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444":[0,0,0,2,1,0,0,0,0,0,0,0],
+        "M445":[0,0,0,1,1,0,0,0,0,0,0,0],
+        "M446":[0,0,0,2,2,0,0,0,0,0,0,0],
+        "M447":[0,0,0,1,1,0,0,0,0,0,0,0],
+        "M448":[1,0,2,0,0,0,0,0,0,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452":[0,0,1,2,2,0,0,0,0,0,0,0],
+        "M453":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[0,1,0,1,1,0,0,0,0,0,0,0],
+        "M456":[0,0,0,0,0,0,0,0,0,0,0,0]
+    },
     mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    bulonTuerca: {"M442":[2,0,0,0,0,0,0,0,0,0,0,0],"M444":[10,20,10,30,20,0,0,0,0,0,0,0],"M445":[0,0,3,10,20,0,0,0,0,0,0,0],"M446":[2,2,10,12,12,0,0,0,0,0,0,0],"M447":[0,10,0,30,30,0,0,0,0,0,0,0],"M448":[20,0,2,10,10,0,0,0,0,0,0,0],"M450":[0,0,0,0,0,0,0,0,0,0,0,0],"M451":[2,0,0,20,10,0,0,0,0,0,0,0],"M452":[10,10,19,32,25,0,0,0,0,0,0,0],"M453":[4,0,10,15,10,0,0,0,0,0,0,0],"M455":[0,10,0,10,20,0,0,0,0,0,0,0],"M456":[20,10,10,10,10,0,0,0,0,0,0,0]},
+    bulonTuerca: {
+        "M442":[2,0,0,0,0,0,0,0,0,0,0,0],
+        "M444":[10,20,10,30,20,0,0,0,0,0,0,0],
+        "M445":[0,0,3,10,20,0,0,0,0,0,0,0],
+        "M446":[2,2,10,12,12,0,0,0,0,0,0,0],
+        "M447":[0,10,0,30,30,0,0,0,0,0,0,0],
+        "M448":[20,0,2,10,10,0,0,0,0,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[2,0,0,20,10,0,0,0,0,0,0,0],
+        "M452":[10,10,19,32,25,0,0,0,0,0,0,0],
+        "M453":[4,0,10,15,10,0,0,0,0,0,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[0,10,0,10,20,0,0,0,0,0,0,0],
+        "M456":[20,10,10,10,10,0,0,0,0,0,0,0]
+    },
     neumaticoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     patinFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
@@ -1643,7 +1686,7 @@ function cardLabel(categoria) {
 }
 
 async function init() {
-    console.log("🔄 Iniciando app...");
+    console.log("🔄 Iniciando app con M454 incluido...");
     
     if(firebaseOK) {
         try {
@@ -1662,6 +1705,8 @@ async function init() {
                             CONFIG.equipos.forEach(eq => {
                                 if(data.datosPorAnio[añoActual][tipo][eq]) {
                                     datosPorAnio[añoActual][tipo][eq] = data.datosPorAnio[añoActual][tipo][eq];
+                                } else if (eq === "M454") {
+                                    datosPorAnio[añoActual][tipo][eq] = Array(12).fill(0);
                                 }
                             });
                         }
@@ -1816,7 +1861,7 @@ async function guardarTodosLosDatos(event) {
 }
 
 function crearEstructuraVacia() {
-    return {
+    const estructura = {
         elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
         elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
         mazasN: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
@@ -1831,6 +1876,7 @@ function crearEstructuraVacia() {
         pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
         llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
     };
+    return estructura;
 }
 
 function obtenerDatosActual() {
@@ -1929,15 +1975,12 @@ function handleCellChange(input) {
     }
 }
 
-// ===== NUEVA FUNCIÓN: Obtener cantidad según filtros (categoría + mes) =====
 function obtenerCantidadFiltrada(categoria) {
     const d = obtenerDatosActual();
     const data = d[categoria];
     if(!data) return 0;
     
-    // Si hay filtro de categoría Y mes específico
     if (categoriaFiltrada === categoria && mesFiltrado !== null) {
-        // Sumar solo el mes seleccionado
         let total = 0;
         CONFIG.equipos.forEach(eq => {
             if(data[eq] && data[eq][mesFiltrado]) {
@@ -1946,9 +1989,7 @@ function obtenerCantidadFiltrada(categoria) {
         });
         return total;
     }
-    // Si hay filtro de categoría pero NO mes específico (ver anual de esa categoría)
     else if (categoriaFiltrada === categoria && mesFiltrado === null) {
-        // Sumar todos los meses
         let total = 0;
         CONFIG.equipos.forEach(eq => {
             if(data[eq]) {
@@ -1957,9 +1998,7 @@ function obtenerCantidadFiltrada(categoria) {
         });
         return total;
     }
-    // Si NO hay filtro de categoría pero SÍ hay filtro de mes
     else if (categoriaFiltrada === null && mesFiltrado !== null) {
-        // Sumar el mes específico para esta categoría
         let total = 0;
         CONFIG.equipos.forEach(eq => {
             if(data[eq] && data[eq][mesFiltrado]) {
@@ -1968,7 +2007,6 @@ function obtenerCantidadFiltrada(categoria) {
         });
         return total;
     }
-    // Sin filtros: total anual
     else {
         let total = 0;
         CONFIG.equipos.forEach(eq => {
@@ -2016,13 +2054,11 @@ function actualizarTodo() {
 function actualizarTarjetas() {
     const d = obtenerDatosActual();
     
-    // Función para calcular según filtros (para las tarjetas superiores)
     const calcConFiltros = (categoria) => {
         const data = d[categoria];
         if(!data) return 0;
         
         if (mesFiltrado !== null) {
-            // Si hay mes filtrado, sumar solo ese mes
             let total = 0;
             CONFIG.equipos.forEach(eq => {
                 if(data[eq] && data[eq][mesFiltrado]) {
@@ -2031,7 +2067,6 @@ function actualizarTarjetas() {
             });
             return total;
         } else {
-            // Sin filtro de mes: total anual
             let total = 0;
             CONFIG.equipos.forEach(eq => {
                 if(data[eq]) {
@@ -2042,7 +2077,6 @@ function actualizarTarjetas() {
         }
     };
     
-    // Actualizar todas las tarjetas
     document.getElementById("totalElasticosO").textContent = calcConFiltros("elasticosO");
     document.getElementById("totalElasticosF").textContent = calcConFiltros("elasticosF");
     document.getElementById("totalMazasN").textContent = calcConFiltros("mazasN");
@@ -2059,7 +2093,6 @@ function actualizarTarjetas() {
 }
 
 function calcularEconomico() {
-    // Obtener cantidades usando la nueva función con filtros
     const cant = {
         elastO: obtenerCantidadFiltrada("elasticosO"),
         elastF: obtenerCantidadFiltrada("elasticosF"),
@@ -2077,7 +2110,6 @@ function calcularEconomico() {
         llantas: obtenerCantidadFiltrada("llantas")
     };
     
-    // Actualizar los campos de cantidad en la tabla económica
     document.getElementById("cantElasticosO").textContent = cant.elastO;
     document.getElementById("cantElasticosF").textContent = cant.elastF;
     document.getElementById("cantMazasN").textContent = cant.mazaN;
@@ -2093,7 +2125,6 @@ function calcularEconomico() {
     document.getElementById("cantPulmonFrenoReparado").textContent = cant.pulmonFrenoReparado;
     document.getElementById("cantLlantas").textContent = cant.llantas;
     
-    // Actualizar el indicador de filtro en el título
     const filterIndicator = document.getElementById("filterIndicator");
     if (categoriaFiltrada !== null && mesFiltrado !== null) {
         filterIndicator.textContent = `📌 Filtro: ${cardLabel(categoriaFiltrada)} - ${CONFIG.meses[mesFiltrado]}`;
@@ -2105,7 +2136,6 @@ function calcularEconomico() {
         filterIndicator.textContent = `📌 Año completo - TOTALES ANUALES`;
     }
     
-    // Calcular totales económicos (igual que antes)
     const prec = {
         elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
         elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
@@ -2409,12 +2439,10 @@ function mostrarToast(msg, error=false) {
     setTimeout(() => toast.className = 'toast', 3000);
 }
 
-// ===== NUEVA FUNCIÓN: Filtrar gráfico Y también valores económicos =====
 function filtrarGrafico(categoria) {
     const card = event.currentTarget;
     
     if (categoriaFiltrada === categoria) {
-        // Desactivar filtro
         categoriaFiltrada = null;
         document.querySelectorAll('.stat-card').forEach(c => {
             c.classList.remove('active');
@@ -2423,7 +2451,6 @@ function filtrarGrafico(categoria) {
         });
         mostrarToast('📊 Vista completa restaurada - Mostrando TOTALES ANUALES');
     } else {
-        // Activar filtro por categoría
         categoriaFiltrada = categoria;
         document.querySelectorAll('.stat-card').forEach(c => {
             c.classList.remove('active');
@@ -2442,7 +2469,6 @@ function filtrarGrafico(categoria) {
         }
     }
     
-    // Actualizar todo: gráficos + valores económicos + tarjetas
     setTimeout(() => {
         actualizarGraficos();
         calcularEconomico();
@@ -2750,7 +2776,6 @@ function toggleAccordion(accordionId) {
     }
 }
 
-// ===== NUEVA FUNCIÓN: Cambiar mes - Ahora actualiza valores económicos también =====
 function cambiarMes(mesIndex) {
     mesFiltrado = mesIndex;
     const btns = document.querySelectorAll('.mes-btn');
@@ -2759,10 +2784,9 @@ function cambiarMes(mesIndex) {
         else btn.classList.remove('active');
     });
     
-    // Actualizar todo: tarjetas, gráficos y valores económicos
     actualizarTarjetas();
     actualizarGraficos();
-    calcularEconomico();  // <--- Esto actualizará los valores económicos según el mes
+    calcularEconomico();
     
     if (categoriaFiltrada !== null) {
         mostrarToast(`📅 ${CONFIG.meses[mesIndex]} - Filtrando: ${cardLabel(categoriaFiltrada)}`);
@@ -2771,15 +2795,13 @@ function cambiarMes(mesIndex) {
     }
 }
 
-// ===== NUEVA FUNCIÓN: Limpiar filtro de mes - Restaura totales anuales =====
 function limpiarFiltroMes() {
     mesFiltrado = null;
     document.querySelectorAll('.mes-btn').forEach(btn => btn.classList.remove('active'));
     
-    // Actualizar todo: tarjetas, gráficos y valores económicos
     actualizarTarjetas();
     actualizarGraficos();
-    calcularEconomico();  // <--- Esto restaurará los TOTALES ANUALES
+    calcularEconomico();
     
     if (categoriaFiltrada !== null) {
         mostrarToast(`📅 Mostrando año completo - Filtrando: ${cardLabel(categoriaFiltrada)}`);
