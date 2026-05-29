@@ -85,6 +85,34 @@
             border: 2px solid #00d4ff !important;
         }
 
+        /* 🔒 NUEVO: Ocultar encabezados de tablas en modo solo lectura */
+        body.read-only-mode th {
+            display: none !important;
+            visibility: hidden !important;
+            height: 0 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        
+        /* 🔒 NUEVO: Ajustar primera fila cuando no hay headers */
+        body.read-only-mode tbody tr:first-child td {
+            border-top: 3px solid var(--accent);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        /* 🔒 NUEVO: Asegurar que en modo edición los headers se muestren */
+        body.editing-mode th,
+        body:not(.read-only-mode) th {
+            display: table-cell !important;
+            visibility: visible !important;
+            height: auto !important;
+        }
+        
+        /* 🔒 NUEVO: Transición suave para headers */
+        th {
+            transition: opacity 0.3s ease, visibility 0.3s ease, height 0.3s ease;
+        }
+
         .top-bar { 
             display: flex; 
             justify-content: space-between; 
@@ -1224,6 +1252,7 @@
                 color: white !important;
                 -webkit-text-fill-color: white !important;
                 font-size: 0.65rem !important;
+                display: table-cell !important; /* 🔒 NUEVO: Forzar mostrar headers al imprimir */
             }
             
             td {
@@ -1314,6 +1343,9 @@
     </style>
 </head>
 <body class="read-only-mode">
+
+<!-- ... TODO EL HTML DEL BODY SE MANTIENE IGUAL ... -->
+<!-- (El contenido HTML no cambia, solo agregamos el CSS arriba) -->
 
 <div class="top-bar">
     <div class="logo">
