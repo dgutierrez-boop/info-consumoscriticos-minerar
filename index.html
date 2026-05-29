@@ -337,7 +337,7 @@
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
         <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar Excel</button>
         <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔒 Reset</button>
-        <button class="theme-toggle" onclick="toggleTheme()" title="Modo Oscuro/Claro">🌓</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Modo Oscuro/Claro"></button>
     </div>
 </div>
 
@@ -346,7 +346,7 @@
 <div class="report-container">
     <div class="report-header">
         <div class="report-title">
-            <h1>📊 Informe de Consumo - Repuestos Críticos</h1>
+            <h1> Informe de Consumo - Repuestos Críticos</h1>
             <p>Elásticos • Mazas • Bulones/Tuercas • Neumáticos • Patines • Levas • Pulmones • Llantas • Horas Hombre</p>
         </div>
         <div class="year-selector">
@@ -382,22 +382,22 @@
         </div>
     </div>
 
-    <div class="alert">✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
+    <div class="alert">️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
         <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 700;">🔒 Solo lectura</span>
     </div>
 
     <div class="summary-grid">
         <div class="stat-card" onclick="filtrarCard('elasticosO')" id="cardElasticosO"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
-        <div class="stat-card" onclick="filtrarCard('elasticosF')" id="cardElasticosF"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
+        <div class="stat-card" onclick="filtrarCard('elasticosF')" id="cardElasticosF"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label"> Elásticos FAB</div></div>
         <div class="stat-card" onclick="filtrarCard('mazasN')" id="cardMazasN"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">️ Mazas NUEVAS</div></div>
         <div class="stat-card" onclick="filtrarCard('mazasR')" id="cardMazasR"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
         <div class="stat-card" onclick="filtrarCard('bulonTuerca')" id="cardBulonTuerca"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label"> Bulón y Tuerca</div></div>
         <div class="stat-card" onclick="filtrarCard('neumaticoNuevo')" id="cardNeumaticoNuevo"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
-        <div class="stat-card" onclick="filtrarCard('neumaticoUsado')" id="cardNeumaticoUsado"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
+        <div class="stat-card" onclick="filtrarCard('neumaticoUsado')" id="cardNeumaticoUsado"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label"> Neumático USADO</div></div>
         <div class="stat-card" onclick="filtrarCard('patinFrenoNuevo')" id="cardPatinFrenoNuevo"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
         <div class="stat-card" onclick="filtrarCard('patinFrenoReparado')" id="cardPatinFrenoReparado"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label"> Patín REPAR</div></div>
         <div class="stat-card" onclick="filtrarCard('levaFreno')" id="cardLevaFreno"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva de Freno</div></div>
-        <div class="stat-card" onclick="filtrarCard('pulmonFrenoNuevo')" id="cardPulmonFrenoNuevo"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarCard('pulmonFrenoNuevo')" id="cardPulmonFrenoNuevo"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label"> Pulmón NUEVO</div></div>
         <div class="stat-card" onclick="filtrarCard('pulmonFrenoReparado')" id="cardPulmonFrenoReparado"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
         <div class="stat-card" onclick="filtrarCard('llantas')" id="cardLlantas"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas Rotas</div></div>
     </div>
@@ -408,7 +408,7 @@
             <div class="chart-container"><canvas id="chartLine"></canvas></div>
         </div>
         <div class="chart-card">
-            <h4 id="chartBarTitle">📊 Top 5 Equipos</h4>
+            <h4 id="chartBarTitle"> Top 5 Equipos</h4>
             <div class="chart-container"><canvas id="chartBar"></canvas></div>
         </div>
         <div class="chart-card">
@@ -442,7 +442,7 @@
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')">
-        <div class="section-title">⚙️ Mazas REPARADAS</div>
+        <div class="section-title">️ Mazas REPARADAS</div>
         <div class="accordion-icon" id="iconMazasR">▼</div>
     </div>
     <div id="accordionMazasR" class="accordion-content">
@@ -458,7 +458,7 @@
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')">
-        <div class="section-title">🛞 Neumático NUEVO</div>
+        <div class="section-title"> Neumático NUEVO</div>
         <div class="accordion-icon" id="iconNeumaticoNuevo">▼</div>
     </div>
     <div id="accordionNeumaticoNuevo" class="accordion-content">
@@ -474,7 +474,7 @@
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')">
-        <div class="section-title">🛞 Patín de Freno NUEVO</div>
+        <div class="section-title"> Patín de Freno NUEVO</div>
         <div class="accordion-icon" id="iconPatinFrenoNuevo">▼</div>
     </div>
     <div id="accordionPatinFrenoNuevo" class="accordion-content">
@@ -503,7 +503,7 @@
     </div>
 
     <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')">
-        <div class="section-title">💨 Pulmón de Freno NUEVO</div>
+        <div class="section-title"> Pulmón de Freno NUEVO</div>
         <div class="accordion-icon" id="iconPulmonFrenoNuevo">▼</div>
     </div>
     <div id="accordionPulmonFrenoNuevo" class="accordion-content">
@@ -542,14 +542,14 @@
                 <tr><td><strong> Elásticos FABRICADOS</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
                 <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
                 <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
-                <tr><td><strong>🔩 Bulón (Scania)</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
+                <tr><td><strong> Bulón (Scania)</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
                 <tr><td><strong>🔩 Tuerca (Scania)</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
-                <tr><td><strong>🛞 Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
+                <tr><td><strong> Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
                 <tr><td><strong>🛞 Neumático USADO</strong></td><td id="cantNeumaticoUsado">0</td><td colspan="2" style="text-align:center; color:#888;">SIN VALOR ECONÓMICO</td></tr>
                 <tr><td><strong>🛞 Patín de Freno NUEVO</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
                 <tr><td><strong>🛞 Patín de Freno REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
                 <tr><td><strong>⚙️ Leva de Freno</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
-                <tr><td><strong>💨 Pulmón de Freno NUEVO</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
+                <tr><td><strong> Pulmón de Freno NUEVO</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
                 <tr><td><strong>💨 Pulmón de Freno REPARADO</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
                 <tr><td><strong>⭕ Llantas Rotas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
             </tbody>
@@ -560,7 +560,7 @@
             <table class="values-table">
                 <thead><tr><th>Concepto</th><th>Horas</th><th>Valor/Hora ($)</th><th>Total ($)</th></tr></thead>
                 <tbody>
-                    <tr><td><strong>👨‍ Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                    <tr><td><strong>‍ Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
                     <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
                     <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
                     <tr><td><strong>👥 CARRIZO - Mecánica</strong></td><td><input type="text" id="horasCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCarrizo" readonly></td></tr>
@@ -619,7 +619,7 @@ const CONFIG = {
     meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
     passwordAdmin: "abrir",
     passwordReset: "NOTOCAR",
-    storageKey: "minerar_repuestos_v19"
+    storageKey: "minerar_repuestos_v20"
 };
 
 let añoActual = 2026;
@@ -637,11 +637,10 @@ const LABELS = {
     pulmonFrenoNuevo: 'Pulmón NUEVO', pulmonFrenoReparado: 'Pulmón REPARADO', llantas: 'Llantas Rotas'
 };
 
-// ===== FUNCIONES DE GUARDADO ROBUSTAS =====
+// ===== GUARDADO ESTABLE (SIN ESCRITURA INMEDIATA POR CELDA) =====
 async function guardarEnFirebase() {
     if (!firebaseOK) return false;
     try {
-        // Validar estructura mínima
         if (!datosPorAnio[añoActual]) crearEstructuraVacia();
         
         const data = {
@@ -652,7 +651,6 @@ async function guardarEnFirebase() {
             ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Recolectar precios y horas de forma segura
         const idsPrecios = ['ElasticoO','ElasticoF','MazaN','MazaR','Bulon','Tuerca','NeumaticoNuevo','PatinFrenoNuevo','PatinFrenoReparado','LevaFreno','PulmonFrenoNuevo','PulmonFrenoReparado','Llanta'];
         idsPrecios.forEach(id => {
             const el = document.getElementById(`precio${id}`);
@@ -665,12 +663,10 @@ async function guardarEnFirebase() {
             data.horas[id] = el ? el.value : "0";
         });
 
-        console.log("📤 Enviando a Firebase...", data);
         await db.collection(COLECCION).doc(`datos_${añoActual}`).set(data, { merge: true });
-        console.log("✅ Guardado exitoso en Firebase");
         return true;
     } catch (e) {
-        console.error("❌ Error Firebase:", e.code, e.message);
+        console.error("❌ Error Firebase:", e);
         mostrarToast(`❌ Error: ${e.code || 'Conexión'}`, true);
         firebaseOK = false;
         return false;
@@ -680,7 +676,6 @@ async function guardarEnFirebase() {
 function guardarEnLocalStorage() {
     try {
         const data = { añoActual, datosPorAnio };
-        // Guardar precios y horas
         const idsPrecios = ['ElasticoO','ElasticoF','MazaN','MazaR','Bulon','Tuerca','NeumaticoNuevo','PatinFrenoNuevo','PatinFrenoReparado','LevaFreno','PulmonFrenoNuevo','PulmonFrenoReparado','Llanta'];
         data.precios = {};
         idsPrecios.forEach(id => {
@@ -694,7 +689,7 @@ function guardarEnLocalStorage() {
             data.horas[id] = el ? el.value : "0";
         });
         localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
-    } catch(e) { console.error("Error localStorage:", e); }
+    } catch(e) { console.error(e); }
 }
 
 async function guardarTodosLosDatos(event) {
@@ -731,7 +726,10 @@ async function iniciarEscuchaTiempoReal() {
                             });
                         }
                     });
-                    if (hayCambios) { actualizarTodo(); mostrarToast("🔄 Actualizado desde otra PC"); }
+                    if (hayCambios) { 
+                        actualizarTodo(); 
+                        mostrarToast("🔄 Actualizado desde otra PC"); 
+                    }
                     document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
                 }
             }
@@ -761,7 +759,6 @@ async function init() {
                         }
                     });
                 }
-                // Cargar precios y horas
                 if (data.precios) {
                     for (let key in data.precios) {
                         const elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -783,10 +780,9 @@ async function init() {
                 setInterval(() => guardarTodosLosDatos(), 30000);
                 return;
             }
-        } catch(e) { console.warn("⚠️ Firebase no disponible:", e); firebaseOK = false; }
+        } catch(e) { console.warn("️ Firebase no disponible:", e); firebaseOK = false; }
     }
     
-    // Fallback localStorage
     const guardado = localStorage.getItem(CONFIG.storageKey);
     if (guardado) {
         try {
@@ -860,7 +856,7 @@ function limpiarFiltroMes() {
     mesFiltrado = null;
     document.querySelectorAll('.mes-btn').forEach(btn => btn.classList.remove('active'));
     actualizarTarjetas(); actualizarGraficos(); calcularEconomico();
-    mostrarToast('📅 Mostrando año completo', false);
+    mostrarToast(' Mostrando año completo', false);
 }
 function filtrarCard(tipo) {
     categoriaFiltrada = categoriaFiltrada === tipo ? null : tipo;
@@ -871,7 +867,7 @@ function filtrarCard(tipo) {
         if (el) el.classList.add('active');
     }
     actualizarGraficos(); calcularEconomico(); actualizarTarjetas();
-    mostrarToast(categoriaFiltrada ? `🔍 Filtrando: ${LABELS[categoriaFiltrada]}` : '📊 Mostrando todas las categorías', false);
+    mostrarToast(categoriaFiltrada ? ` Filtrando: ${LABELS[categoriaFiltrada]}` : '📊 Mostrando todas las categorías', false);
 }
 
 // ========== GRÁFICOS ==========
@@ -903,7 +899,7 @@ function actualizarGraficos() {
     if (charts.line) charts.line.destroy();
     charts.line = new Chart(document.getElementById('chartLine'), {
         type: 'line', data: { labels: CONFIG.meses, datasets: lineData },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, plugins: { legend: { labels: { color: colors.text, font: { size: 11 } } }, title: { display: true, text: lineTitle, color: colors.text, font: { size: 13, weight: '700' } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y || 0} unidades (${ctx.dataset.data.reduce((a,b)=>a+(b||0),0)>0?((ctx.parsed.y/ctx.dataset.data.reduce((a,b)=>a+(b||0),0))*100).toFixed(1):0}%)` } } }, scales: { y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } }, x: { grid: { display: false }, ticks: { color: colors.text } } } }
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 400 }, plugins: { legend: { labels: { color: colors.text, font: { size: 11 } } }, title: { display: true, text: lineTitle, color: colors.text, font: { size: 13, weight: '700' } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y || 0} unidades` } } }, scales: { y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } }, x: { grid: { display: false }, ticks: { color: colors.text } } } }
     });
 
     // BARRAS
@@ -916,7 +912,7 @@ function actualizarGraficos() {
         barLabels = porEquipo.map(e => e.name); barData = porEquipo.map(e => e.val);
     }
     barColors = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
-    const barTitle = categoriaFiltrada ? `📊 Top 5 Equipos - ${LABELS[categoriaFiltrada]}` : `📊 Top 5 Equipos - Consumo Total`;
+    const barTitle = categoriaFiltrada ? ` Top 5 Equipos - ${LABELS[categoriaFiltrada]}` : `📊 Top 5 Equipos - Consumo Total`;
     document.getElementById('chartBarTitle').textContent = barTitle;
     if (charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('chartBar'), {
@@ -940,7 +936,7 @@ function actualizarGraficos() {
     if (charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
         type: 'doughnut', data: { labels: doughnutLabels, datasets: [{ data: doughnutData, backgroundColor: doughnutColors, borderWidth: 3, borderColor: isDark ? '#0f1f3d' : '#fff', hoverOffset: 15 }] },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 500 }, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10, weight: '600' }, color: colors.text } }, title: { display: true, text: doughnutTitle, color: colors.text, font: { size: 13, weight: '700' } }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed || 0} unidades (${ctx.dataset.data.reduce((a,b)=>a+b,0)>0?((ctx.parsed/ctx.dataset.data.reduce((a,b)=>a+b,0))*100).toFixed(1):0}%)` } } }, cutout: '65%' }
+        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 500 }, plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10, weight: '600' }, color: colors.text } }, title: { display: true, text: doughnutTitle, color: colors.text, font: { size: 13, weight: '700' } }, tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed || 0} unidades` } } }, cutout: '65%' }
     });
 }
 
@@ -974,23 +970,23 @@ function generarTabla(datos, tbodyId, tipo) {
     tbody.insertAdjacentHTML("beforeend", row);
     document.querySelectorAll(`#${tbodyId} .cell-input`).forEach(inp => { inp.onchange = () => handleCellChange(inp); });
 }
+
+// ✅ handleCellChange AHORA SOLO ACTUALIZA LA VISTA LOCAL (SIN FIREBASE INMEDIATO)
 function handleCellChange(input) {
     if(!modoEdicionActivo) return;
     const {eq, mes, tipo} = input.dataset;
     let val = parseInt(input.value)||0; if(val<0) val=0;
     const d = obtenerDatosActual();
     if(d[tipo] && d[tipo][eq]) {
-        d[tipo][eq][mes] = val;
-        // Guardado inmediato seguro
-        if(firebaseOK) {
-            db.collection(COLECCION).doc(`datos_${añoActual}`).set({
-                [`datosPorAnio.${añoActual}.${tipo}.${eq}.${mes}`]: val,
-                ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true }).catch(e => console.error(e));
-        }
-        actualizarTarjetas(); actualizarGraficos(); calcularEconomico();
+        d[tipo][eq][mes] = val; // Actualiza memoria local
+        
+        // Actualiza UI visual inmediatamente (tarjetas, gráficos)
+        actualizarTarjetas(); 
+        actualizarGraficos(); 
+        calcularEconomico();
     }
 }
+
 function actualizarTodo() {
     const d = obtenerDatosActual();
     ['ElasticosO','ElasticosF','MazasN','MazasR','BulonTuerca','NeumaticoNuevo','NeumaticoUsado','PatinFrenoNuevo','PatinFrenoReparado','LevaFreno','PulmonFrenoNuevo','PulmonFrenoReparado','Llantas'].forEach(nombre => {
@@ -1035,7 +1031,7 @@ function calcularEconomico() {
     const filterIndicator = document.getElementById("filterIndicator");
     filterIndicator.textContent = categoriaFiltrada && mesFiltrado !== null ? `📌 ${LABELS[categoriaFiltrada]} - ${CONFIG.meses[mesFiltrado]}` :
                                   categoriaFiltrada ? ` ${LABELS[categoriaFiltrada]}` :
-                                  mesFiltrado !== null ? `📌 ${CONFIG.meses[mesFiltrado]}` : `📌 Año completo`;
+                                  mesFiltrado !== null ? `📌 ${CONFIG.meses[mesFiltrado]}` : ` Año completo`;
 
     const prec = {
         elastO: parseFloat(document.getElementById("precioElasticoO").value)||0, elastF: parseFloat(document.getElementById("precioElasticoF").value)||0,
