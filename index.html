@@ -3,487 +3,1597 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📊 Dashboard - Repuestos Críticos Scania G500</title>
+    <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
+    
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="./android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="./android-chrome-512x512.png">
+    <meta name="theme-color" content="#ffffff">
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* ===== ESTILOS COMPLETOS (MANTENIDOS IGUALES) ===== */
         :root {
-            --bg: #0a1628; --card: #0f1f3d; --border: #1e40af;
-            --text: #e0f2fe; --text2: #7dd3fc;
-            --cyan: #00d4ff; --green: #00ff88; --gold: #ffd700;
-            --red: #ff6b6b; --orange: #ff8c42; --purple: #a855f7;
+            --primary: #2c3e50; --primary-dark: #1a252f; --accent: #e67e22;
+            --success: #27ae60; --warning: #f39c12; --danger: #e74c3c;
+            --info: #3498db; --purple: #9b59b6; --teal: #1abc9c;
+            --bg-light: #ecf0f1; --bg-card: #ffffff; --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d; --border: #bdc3c7; --radius: 16px;
+            --verde-menta: #38B6B2;
         }
+        
+        [data-theme="dark"] {
+            --primary: #0a1628; --primary-dark: #051020; --accent: #00d4ff;
+            --success: #00ff88; --warning: #ffd700; --danger: #ff6b6b;
+            --info: #00d4ff; --purple: #a855f7; --teal: #14b8a6;
+            --bg-light: #0a1628; --bg-card: #0f1f3d; --text-primary: #e0f2fe;
+            --text-secondary: #7dd3fc; --border: #1e40af;
+            --neon-glow: 0 0 20px rgba(0, 212, 255, 0.5);
+            --neon-border: 0 0 10px rgba(0, 212, 255, 0.8);
+            --verde-menta: #38B6B2;
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0a1628, #1e3a8a 50%, #0f1f3d);
-            color: var(--text); padding: 16px; min-height: 100vh;
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: var(--text-primary); 
+            padding: 16px; 
+            min-height: 100vh;
+            transition: all 0.5s ease;
         }
-        .dashboard {
-            max-width: 1400px; margin: 0 auto;
-            background: linear-gradient(135deg, #0f1f3d, #1e3a8a);
-            border-radius: 20px; padding: 28px;
-            border: 2px solid var(--cyan);
-            box-shadow: 0 0 40px rgba(0,212,255,0.15);
+        
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0a1628 0%, #1e3a8a 50%, #0f1f3d 100%);
         }
-        .header {
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 15px; margin-bottom: 24px;
-            padding-bottom: 20px; border-bottom: 2px solid var(--cyan);
+        
+        body.read-only-mode .editable-cell input:not([type="password"]) { 
+            pointer-events: none; 
+            background-color: #f8f9fa !important; 
+            color: #2c3e50 !important; 
+            cursor: not-allowed; 
+            border: 2px solid #dee2e6 !important; 
+            font-weight: 700; 
+            border-radius: 6px;
         }
-        .header h1 {
-            font-size: 1.4rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--cyan), var(--green));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        
+        [data-theme="dark"] body.read-only-mode .editable-cell input:not([type="password"]) {
+            background-color: #1e3a5f !important;
+            color: #e0f2fe !important;
+            border: 2px solid #00d4ff !important;
         }
-        .header p { font-size: 0.8rem; color: var(--text2); margin-top: 4px; }
-        .year-btn {
-            background: var(--card); color: var(--cyan); border: 2px solid var(--cyan);
-            padding: 8px 20px; border-radius: 20px; font-weight: 700; cursor: pointer;
+
+        body.read-only-mode .values-table input:not([readonly]) {
+            pointer-events: none !important;
+            background-color: #f8f9fa !important;
+            color: #2c3e50 !important;
+            cursor: not-allowed !important;
+            border: 2px solid #dee2e6 !important;
+            font-weight: 700 !important;
+        }
+        
+        [data-theme="dark"] body.read-only-mode .values-table input:not([readonly]) {
+            background-color: #1e3a5f !important;
+            color: #e0f2fe !important;
+            border: 2px solid #00d4ff !important;
+        }
+
+        .top-bar { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 16px 24px; 
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); 
+            border-radius: var(--radius); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15); 
+            margin-bottom: 24px; 
+            flex-wrap: wrap; 
+            gap: 12px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        [data-theme="dark"] .top-bar {
+            background: linear-gradient(135deg, #0f1f3d 0%, #1e3a8a 100%);
+            border: 2px solid #00d4ff;
+            box-shadow: var(--neon-glow), 0 8px 32px rgba(0,0,0,0.5);
+        }
+        
+        .logo { 
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 800; 
+            font-size: 1.5rem; 
+            background: linear-gradient(135deg, var(--primary), var(--accent)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+        
+        [data-theme="dark"] .logo {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--neon-glow);
+        }
+        
+        .logo img {
+            height: 45px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.5));
+        }
+        
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+        
+        .btn { 
+            padding: 10px 18px; 
+            border: none; 
+            border-radius: 25px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+            transition: all 0.3s; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
             font-size: 0.9rem;
         }
-        .filter-section {
-            background: rgba(0,212,255,0.05); border: 1px solid rgba(0,212,255,0.3);
-            border-radius: 12px; padding: 16px; margin-bottom: 20px;
-        }
-        .filter-section h3 {
-            font-size: 0.85rem; color: var(--cyan); margin-bottom: 12px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .meses-row {
-            display: flex; gap: 8px; flex-wrap: wrap;
-        }
-        .mes-btn {
-            padding: 8px 14px; border: 1px solid rgba(0,212,255,0.4);
-            background: transparent; color: var(--text2); border-radius: 8px;
-            cursor: pointer; font-weight: 600; font-size: 0.75rem;
-            transition: all 0.3s; min-width: 55px; text-align: center;
-        }
-        .mes-btn:hover, .mes-btn.active {
-            background: var(--cyan); color: #0a1628;
-            box-shadow: 0 0 15px rgba(0,212,255,0.5);
-            border-color: var(--cyan);
-        }
-        .ver-todo {
-            margin-left: auto; padding: 8px 16px;
-            border: 1px solid rgba(0,255,136,0.5);
-            background: transparent; color: var(--green); border-radius: 8px;
-            cursor: pointer; font-weight: 600; font-size: 0.75rem;
-        }
-        .ver-todo:hover { background: var(--green); color: #0a1628; }
-        .status-bar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 8px 16px; background: rgba(0,255,136,0.05);
-            border-radius: 8px; margin-bottom: 20px; font-size: 0.8rem;
-            border: 1px solid rgba(0,255,136,0.2);
-        }
-        .status-bar span { color: var(--green); }
-        .lock-status { color: var(--red) !important; font-weight: 700; }
         
-        /* TARJETAS INTERACTIVAS */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 12px; margin-bottom: 24px;
+        [data-theme="dark"] .btn {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            border: 1px solid #00d4ff;
+            color: #e0f2fe;
+            box-shadow: var(--neon-glow);
         }
-        .card {
-            border-radius: 12px; padding: 16px 12px; text-align: center;
-            cursor: pointer; transition: all 0.3s; position: relative;
-            border: 2px solid rgba(255,255,255,0.1);
-            overflow: hidden;
+        
+        .btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
         }
-        .card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0;
-            height: 3px; background: rgba(255,255,255,0.3);
+        
+        [data-theme="dark"] .btn:hover {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.6);
+            border-color: #00ff88;
         }
-        .card:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        
+        .btn-success { background: linear-gradient(135deg, var(--success), #229954); } 
+        .btn-warning { background: linear-gradient(135deg, var(--warning), #e67e22); color: #fff; }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #c0392b); } 
+        .btn-outline { 
+            background: linear-gradient(135deg, #fff, #ecf0f1); 
+            color: var(--primary); 
+            border: 2px solid var(--border);
         }
-        .card.active {
-            transform: scale(1.06);
-            border: 2px solid white !important;
-            box-shadow: 0 0 25px rgba(255,255,255,0.3);
+        
+        [data-theme="dark"] .btn-outline {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            color: #e0f2fe;
+            border: 2px solid #00d4ff;
         }
-        .card .value {
-            font-size: 1.8rem; font-weight: 800; color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        
+        .theme-toggle { 
+            width: 45px; 
+            height: 45px; 
+            border-radius: 50%; 
+            border: 3px solid var(--border); 
+            background: linear-gradient(135deg, #fff, #ecf0f1); 
+            cursor: pointer; 
+            font-size: 1.4rem; 
+            transition: all 0.3s; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        .card .label {
-            font-size: 0.65rem; color: rgba(255,255,255,0.9);
-            font-weight: 700; text-transform: uppercase;
-            margin-top: 4px; letter-spacing: 0.5px;
+        
+        [data-theme="dark"] .theme-toggle {
+            border: 3px solid #00d4ff;
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            box-shadow: var(--neon-glow);
         }
-        .c1{background:linear-gradient(135deg,#ff6b6b,#ee5a5a)}
-        .c2{background:linear-gradient(135deg,#ff8c42,#f39c12)}
-        .c3{background:linear-gradient(135deg,#4ecdc4,#44b3a3)}
-        .c4{background:linear-gradient(135deg,#45b7d1,#3498db)}
-        .c5{background:linear-gradient(135deg,#96ceb4,#7fb89a)}
-        .c6{background:linear-gradient(135deg,#f4d03f,#e67e22)}
-        .c7{background:linear-gradient(135deg,#bdc3c7,#95a5a6)}
-        .c8{background:linear-gradient(135deg,#9b59b6,#8e44ad)}
-        .c9{background:linear-gradient(135deg,#a569bd,#8e44ad)}
-        .c10{background:linear-gradient(135deg,#1abc9c,#16a085)}
-        .c11{background:linear-gradient(135deg,#3498db,#2980b9)}
-        .c12{background:linear-gradient(135deg,#5dade2,#2e86c1)}
-        .c13{background:linear-gradient(135deg,#e74c3c,#c0392b)}
-        .c14{background:linear-gradient(135deg,#2ecc71,#27ae60)}
+        
+        .theme-toggle:hover { 
+            transform: rotate(180deg) scale(1.1);
+        }
 
-        /* GRÁFICOS */
-        .charts-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 20px; margin-bottom: 24px;
+        .report-container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); 
+            border-radius: var(--radius); 
+            box-shadow: 0 15px 50px rgba(0,0,0,0.2); 
+            padding: 32px; 
+            border: 3px solid rgba(255,255,255,0.4);
+            transition: all 0.3s ease;
         }
-        .chart-box {
-            background: rgba(0,212,255,0.03); border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 14px; padding: 20px;
+        
+        [data-theme="dark"] .report-container {
+            background: linear-gradient(135deg, #0f1f3d 0%, #1e3a8a 100%);
+            border: 3px solid #00d4ff;
+            box-shadow: var(--neon-glow), 0 15px 50px rgba(0,0,0,0.5);
         }
-        .chart-box h4 {
-            font-size: 0.95rem; color: var(--cyan); margin-bottom: 16px;
-            font-weight: 700; display: flex; align-items: center; gap: 8px;
+        
+        .report-header { 
+            border-bottom: 4px solid var(--accent); 
+            padding-bottom: 24px; 
+            margin-bottom: 32px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 20px;
         }
-        .chart-container { position: relative; height: 260px; }
+        
+        [data-theme="dark"] .report-header {
+            border-bottom: 4px solid #00d4ff;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+        }
+        
+        .report-title h1 { 
+            font-size: 1.8rem; 
+            color: var(--primary); 
+            font-weight: 800; 
+            background: linear-gradient(135deg, var(--primary), var(--accent)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+        
+        [data-theme="dark"] .report-title h1 {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: var(--neon-glow);
+        }
+        
+        .report-title p { 
+            color: var(--text-secondary); 
+            font-size: 1rem; 
+            margin-top: 5px; 
+            font-weight: 500;
+        }
+        
+        [data-theme="dark"] .report-title p {
+            color: #7dd3fc;
+        }
+        
+        .year-selector { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            background: linear-gradient(135deg, #fff, #ecf0f1); 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            border: 2px solid var(--border); 
+            font-weight: 600;
+        }
+        
+        [data-theme="dark"] .year-selector {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            border: 2px solid #00d4ff;
+            color: #e0f2fe;
+            box-shadow: var(--neon-border);
+        }
+        
+        .year-selector select { 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            border: 2px solid var(--border); 
+            font-weight: 600; 
+            cursor: pointer; 
+            background: white;
+        }
+        
+        [data-theme="dark"] .year-selector select {
+            background: #0f1f3d;
+            border: 2px solid #00d4ff;
+            color: #e0f2fe;
+        }
 
-        /* BOTONES FLOTANTES */
-        .float-btn {
-            position: fixed; bottom: 24px; left: 24px; z-index: 999;
-            padding: 14px 24px; border-radius: 30px; border: none;
-            font-weight: 700; cursor: pointer; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 8px;
+        .filtro-meses {
+            margin-bottom: 24px;
+            padding: 16px;
+            background: rgba(56, 182, 178, 0.1);
+            border-radius: 12px;
+            border: 2px solid #38B6B2;
+        }
+        
+        .btn-ver-todo {
+            background: transparent;
+            border: 2px solid #38B6B2;
+            color: #38B6B2;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
             transition: all 0.3s;
         }
-        .edit-btn {
-            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
-            color: var(--cyan); border: 2px solid var(--cyan);
-            box-shadow: 0 0 20px rgba(0,212,255,0.3);
+        
+        .btn-ver-todo:hover {
+            background: #38B6B2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(56, 182, 178, 0.5);
         }
-        .edit-btn:hover { box-shadow: 0 0 30px rgba(0,212,255,0.6); }
-        .save-btn {
-            background: linear-gradient(135deg, var(--green), #00cc6a);
-            color: #0a1628; display: none;
+        
+        .mes-btn {
+            padding: 10px;
+            border: 2px solid #38B6B2;
+            background: transparent;
+            color: #38B6B2;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 0.8rem;
         }
-        body.editing .edit-btn { display: none; }
-        body.editing .save-btn { display: flex; }
+        
+        .mes-btn:hover {
+            background: #38B6B2;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(56, 182, 178, 0.5);
+        }
+        
+        .mes-btn.active {
+            background: #38B6B2;
+            color: white;
+            box-shadow: 0 0 20px rgba(56, 182, 178, 0.6);
+        }
 
-        /* MODAL */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8); display: none;
-            align-items: center; justify-content: center; z-index: 10000;
+        .summary-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); 
+            gap: 12px; 
+            margin-bottom: 32px;
+        }
+        
+        .stat-card { 
+            border-radius: 16px; 
+            padding: 16px 10px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            position: relative;
+            user-select: none;
+        }
+        
+        .stat-card:nth-child(1) { background: linear-gradient(135deg, #FF6B6B, #EE5A5A); }
+        .stat-card:nth-child(2) { background: linear-gradient(135deg, #FF8C42, #F39C12); }
+        .stat-card:nth-child(3) { background: linear-gradient(135deg, #4ECDC4, #44B3A3); }
+        .stat-card:nth-child(4) { background: linear-gradient(135deg, #45B7D1, #3498DB); }
+        .stat-card:nth-child(5) { background: linear-gradient(135deg, #96CEB4, #7FB89A); }
+        .stat-card:nth-child(6) { background: linear-gradient(135deg, #F4D03F, #E67E22); }
+        .stat-card:nth-child(7) { background: linear-gradient(135deg, #BDC3C7, #95A5A6); }
+        .stat-card:nth-child(8) { background: linear-gradient(135deg, #9B59B6, #8E44AD); }
+        .stat-card:nth-child(9) { background: linear-gradient(135deg, #A569BD, #8E44AD); }
+        .stat-card:nth-child(10) { background: linear-gradient(135deg, #1ABC9C, #16A085); }
+        .stat-card:nth-child(11) { background: linear-gradient(135deg, #3498DB, #2980B9); }
+        .stat-card:nth-child(12) { background: linear-gradient(135deg, #5DADE2, #2E86C1); }
+        .stat-card:nth-child(13) { background: linear-gradient(135deg, #E74C3C, #C0392B); }
+        .stat-card:nth-child(14) { background: linear-gradient(135deg, #2ECC71, #27AE60); }
+        
+        [data-theme="dark"] .stat-card {
+            box-shadow: var(--neon-glow);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat-card:hover { 
+            transform: translateY(-6px) scale(1.04); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            z-index: 5;
+        }
+        
+        [data-theme="dark"] .stat-card:hover {
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+            border-color: #00ff88;
+        }
+        
+        .stat-card.active {
+            animation: glow-pulse 2s ease-in-out infinite;
+            border: 3px solid #ffffff !important;
+            transform: scale(1.08) !important;
+            z-index: 10;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.7); }
+            50% { box-shadow: 0 0 45px rgba(0, 255, 136, 0.95); }
+        }
+        
+        .stat-card::before {
+            content: "🔍 Click para filtrar gráficos";
+            position: absolute;
+            bottom: 100%; left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--primary-dark);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+        [data-theme="dark"] .stat-card::before {
+            background: #00d4ff; color: #0a1628;
+        }
+        .stat-card:hover::before {
+            opacity: 1; transform: translateX(-50%) translateY(0);
+        }
+        
+        .stat-value { 
+            font-size: 1.8rem; 
+            font-weight: 800; 
+            color: white; 
+            margin: 5px 0; 
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .stat-label { 
+            font-size: 0.65rem; 
+            text-transform: uppercase; 
+            color: rgba(255,255,255,0.95); 
+            font-weight: 700; 
+            letter-spacing: 0.5px;
+        }
+
+        .charts-section { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+            gap: 24px; 
+            margin: 32px 0;
+        }
+        
+        .chart-card { 
+            background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%); 
+            border-radius: 16px; 
+            padding: 24px; 
+            border: 3px solid rgba(255,255,255,0.5); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            page-break-inside: avoid;
+        }
+        
+        [data-theme="dark"] .chart-card {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0f1f3d 100%);
+            border: 3px solid #00d4ff;
+            box-shadow: var(--neon-glow);
+        }
+        
+        .chart-card h4 { 
+            font-size: 1.1rem; 
+            color: var(--primary); 
+            margin-bottom: 20px; 
+            font-weight: 700; 
+            background: linear-gradient(135deg, var(--primary), var(--accent)); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+        }
+        
+        [data-theme="dark"] .chart-card h4 {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .chart-container { position: relative; height: 280px; }
+
+        .accordion-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin: 20px 0 0 0; 
+            padding: 14px 20px; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            border-radius: 12px; 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        [data-theme="dark"] .accordion-header {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            border: 2px solid #00d4ff;
+            box-shadow: var(--neon-glow);
+        }
+        
+        .accordion-header:hover {
+            transform: translateY(-2px);
+        }
+        
+        .accordion-header .section-title { 
+            font-size: 1rem; 
+            font-weight: 700; 
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .accordion-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: transparent;
+        }
+        
+        .accordion-content.open {
+            max-height: 2000px;
+            transition: max-height 0.6s ease-in;
+        }
+        
+        .accordion-content table {
+            margin-top: 16px;
+            margin-bottom: 0;
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            border: 2px solid var(--border); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            page-break-inside: avoid;
+        }
+        
+        [data-theme="dark"] table {
+            background: #0f1f3d;
+            border: 2px solid #00d4ff;
+            box-shadow: var(--neon-border);
+        }
+        
+        th { 
+            background: linear-gradient(135deg, var(--accent), #d35400); 
+            color: white; 
+            padding: 10px 6px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 0.7rem; 
+            letter-spacing: 0.5px;
+        }
+        
+        [data-theme="dark"] th {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a1628;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        td { 
+            border-bottom: 2px solid #ecf0f1; 
+            padding: 8px 4px; 
+            text-align: center; 
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] td {
+            border-bottom: 2px solid #1e3a8a;
+            color: #e0f2fe;
+        }
+        
+        tr:hover { 
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+        }
+        
+        [data-theme="dark"] tr:hover {
+            background: linear-gradient(135deg, #1e3a5f, #1e3a8a);
+        }
+        
+        .equipo-col { 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #f8f9fa, #ecf0f1); 
+            color: var(--primary);
+        }
+        
+        [data-theme="dark"] .equipo-col {
+            background: linear-gradient(135deg, #1e3a5f, #1e3a8a);
+            color: #00d4ff;
+        }
+        
+        .editable-cell { background: #fffef7; border-radius: 6px; }
+        
+        [data-theme="dark"] .editable-cell {
+            background: #0f1f3d;
+        }
+        
+        .editable-cell input { 
+            width: 100%; 
+            border: 2px solid transparent; 
+            text-align: center; 
+            background: transparent; 
+            font-weight: 600; 
+            border-radius: 6px; 
+            transition: all 0.3s;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+        }
+        
+        [data-theme="dark"] .editable-cell input {
+            color: #e0f2fe;
+        }
+        
+        .editable-cell input:focus { 
+            outline: none; 
+            background: white; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2);
+        }
+        
+        [data-theme="dark"] .editable-cell input:focus {
+            background: #1e3a8a;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+        }
+        
+        .total-row { 
+            background: linear-gradient(135deg, #34495e, #2c3e50) !important; 
+            color: #ffffff !important; 
+            font-weight: 800 !important;
+        }
+        
+        .total-row strong, .total-row td {
+            color: #ffffff !important;
+            text-shadow: none !important;
+            opacity: 1 !important;
+        }
+        
+        [data-theme="dark"] .total-row {
+            background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+            color: #0a1628 !important;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .alert { 
+            background: linear-gradient(135deg, #d4edda, #c3e6cb); 
+            border-left: 5px solid var(--success); 
+            padding: 12px 16px; 
+            margin-bottom: 24px; 
+            border-radius: 12px; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-weight: 600; 
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        [data-theme="dark"] .alert {
+            background: linear-gradient(135deg, #1e3a5f, #0f1f3d);
+            border-left: 5px solid #00ff88;
+            color: #e0f2fe;
+            box-shadow: var(--neon-border);
+        }
+        
+        .floating-controls { 
+            position: fixed; 
+            bottom: 24px; 
+            left: 24px; 
+            z-index: 9999; 
+            display: flex; 
+            gap: 12px;
+        }
+        
+        #unlock-btn { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+            padding: 10px 18px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            border: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+        
+        [data-theme="dark"] #unlock-btn {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            border: 2px solid #00d4ff;
+            color: #e0f2fe;
+            box-shadow: var(--neon-glow);
+        }
+        
+        #unlock-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        [data-theme="dark"] #unlock-btn:hover {
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.6);
+        }
+        
+        #save-lock-btn { 
+            background: linear-gradient(135deg, var(--success), #229954); 
+            color: white; 
+            padding: 10px 18px; 
+            border-radius: 30px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            border: none; 
+            display: none; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.3); 
+            transition: all 0.3s; 
+            animation: pulse 2s infinite;
+        }
+        
+        [data-theme="dark"] #save-lock-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            border: 2px solid #00ff88;
+            color: #0a1628;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+        
+        #save-lock-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 10px 30px rgba(39, 174, 96, 0.4);
+        }
+        
+        @keyframes pulse { 
+            0% { box-shadow: 0 0 0 0 rgba(39,174,96,0.5); } 
+            70% { box-shadow: 0 0 0 15px rgba(39,174,96,0); } 
+            100% { box-shadow: 0 0 0 0 rgba(39,174,96,0); } 
+        }
+        
+        body.editing-mode #unlock-btn { display: none; }
+        body.editing-mode #save-lock-btn { display: flex; }
+
+        .security-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            right: 0; 
+            bottom: 0; 
+            background: rgba(0,0,0,0.7); 
+            display: none; 
+            align-items: center; 
+            justify-content: center; 
+            z-index: 10000;
             backdrop-filter: blur(5px);
         }
-        .modal-overlay.show { display: flex; }
-        .modal {
-            background: var(--card); padding: 36px; border-radius: 20px;
-            max-width: 420px; width: 90%; text-align: center;
-            border: 2px solid var(--cyan);
-            box-shadow: 0 0 40px rgba(0,212,255,0.3);
+        
+        [data-theme="dark"] .security-overlay {
+            background: rgba(10, 22, 40, 0.9);
         }
-        .modal h2 { color: var(--cyan); margin-bottom: 12px; font-size: 1.3rem; }
-        .modal p { color: var(--text2); margin-bottom: 20px; font-size: 0.9rem; }
-        .modal input {
-            width: 100%; padding: 14px; border: 2px solid var(--border);
-            border-radius: 12px; font-size: 1rem; background: var(--bg);
-            color: var(--text); text-align: center; margin-bottom: 20px;
+        
+        .security-overlay.show { display: flex; }
+        
+        .security-modal { 
+            background: linear-gradient(135deg, #fff, #f8f9fa); 
+            padding: 30px; 
+            border-radius: 24px; 
+            max-width: 400px; 
+            width: 90%; 
+            text-align: center; 
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3); 
+            border: 3px solid rgba(255,255,255,0.3);
         }
-        .modal input:focus { outline: none; border-color: var(--cyan); }
-        .modal-btns { display: flex; gap: 12px; justify-content: center; }
-        .modal-btn {
-            padding: 10px 28px; border-radius: 25px; border: none;
-            font-weight: 700; cursor: pointer; font-size: 0.9rem;
+        
+        [data-theme="dark"] .security-modal {
+            background: linear-gradient(135deg, #1e3a8a, #0f1f3d);
+            border: 3px solid #00d4ff;
+            box-shadow: 0 0 60px rgba(0, 212, 255, 0.5);
         }
-        .modal-btn.primary { background: var(--green); color: #0a1628; }
-        .modal-btn.secondary { background: #333; color: var(--text2); }
+        
+        .security-modal h2 { 
+            color: var(--primary); 
+            margin-bottom: 16px; 
+            font-weight: 800;
+        }
+        
+        [data-theme="dark"] .security-modal h2 {
+            color: #00d4ff;
+            text-shadow: var(--neon-glow);
+        }
+        
+        .security-modal p { 
+            color: var(--text-secondary); 
+            margin-bottom: 20px; 
+            font-weight: 500;
+        }
+        
+        [data-theme="dark"] .security-modal p {
+            color: #7dd3fc;
+        }
+        
+        .security-modal input { 
+            width: 100%; 
+            padding: 12px 16px; 
+            margin: 15px 0; 
+            border: 3px solid var(--border); 
+            border-radius: 12px; 
+            font-size: 1rem; 
+            font-weight: 600; 
+            color: var(--text-primary);
+            background: white;
+        }
+        
+        [data-theme="dark"] .security-modal input {
+            background: #0f1f3d;
+            border: 3px solid #00d4ff;
+            color: #e0f2fe;
+        }
+        
+        .security-modal input:focus { 
+            outline: none; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.2);
+        }
+        
+        .security-btn { 
+            padding: 10px 24px; 
+            border: none; 
+            border-radius: 25px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin: 0 6px; 
+            transition: all 0.3s; 
+            font-size: 0.9rem;
+        }
+        
+        .security-btn-primary { 
+            background: linear-gradient(135deg, var(--success), #229954); 
+            color: white;
+        }
+        
+        [data-theme="dark"] .security-btn-primary {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #0a1628;
+        }
+        
+        .security-btn-secondary { 
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d); 
+            color: white;
+        }
+        
+        [data-theme="dark"] .security-btn-secondary {
+            background: linear-gradient(135deg, #1e3a5f, #0f1f3d);
+            border: 2px solid #00d4ff;
+            color: #e0f2fe;
+        }
+        
+        .security-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+        }
 
-        /* TOAST */
-        .toast {
-            position: fixed; bottom: 24px; right: 24px; z-index: 9999;
-            padding: 12px 24px; border-radius: 25px; font-weight: 700;
-            font-size: 0.85rem; opacity: 0; transform: translateY(20px);
-            transition: all 0.3s; pointer-events: none;
+        .values-section { 
+            margin-top: 40px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            padding: 24px; 
+            border-radius: 20px; 
+            border: 3px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            page-break-inside: avoid;
         }
+        
+        [data-theme="dark"] .values-section {
+            background: linear-gradient(135deg, #0f1f3d 0%, #1e3a8a 100%);
+            border: 3px solid #00d4ff;
+            box-shadow: var(--neon-glow);
+        }
+        
+        .values-section h3 { 
+            color: white; 
+            margin-bottom: 20px; 
+            font-size: 1.2rem; 
+            font-weight: 800; 
+            text-align: center; 
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        [data-theme="dark"] .values-section h3 {
+            color: #00d4ff;
+            text-shadow: var(--neon-glow);
+        }
+        
+        .values-table { 
+            width: 100%; 
+            background: white; 
+            border-radius: 16px; 
+            overflow: hidden; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        
+        [data-theme="dark"] .values-table {
+            background: #0f1f3d;
+            border: 2px solid #00d4ff;
+            box-shadow: var(--neon-border);
+        }
+        
+        .values-table th { 
+            background: linear-gradient(135deg, #2c3e50, #34495e); 
+            color: white; 
+            padding: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            letter-spacing: 0.5px;
+        }
+        
+        [data-theme="dark"] .values-table th {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            color: #0a1628;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+        
+        .values-table td { 
+            padding: 10px; 
+            border-bottom: 2px solid #ecf0f1;
+            color: var(--text-primary);
+            font-size: 0.8rem;
+        }
+        
+        [data-theme="dark"] .values-table td {
+            border-bottom: 2px solid #1e3a8a;
+            color: #e0f2fe;
+        }
+        
+        .values-table tr:last-child td { border-bottom: none; }
+        
+        .values-table tr:hover { 
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+        }
+        
+        [data-theme="dark"] .values-table tr:hover {
+            background: linear-gradient(135deg, #1e3a5f, #1e3a8a);
+        }
+        
+        .values-table input { 
+            width: 100%; 
+            padding: 6px 10px; 
+            border: 2px solid var(--border); 
+            border-radius: 10px; 
+            font-size: 0.8rem; 
+            font-weight: 600; 
+            background: white;
+            color: var(--text-primary);
+        }
+        
+        [data-theme="dark"] .values-table input {
+            background: #0f1f3d;
+            border: 2px solid #00d4ff;
+            color: #e0f2fe;
+        }
+        
+        .values-table input:focus { 
+            outline: none; 
+            border-color: var(--accent); 
+            box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.2);
+        }
+        
+        .values-table input[readonly] { 
+            background: linear-gradient(135deg, #ecf0f1, #d5dbdb); 
+            font-weight: 800; 
+            color: var(--primary); 
+            border: none;
+        }
+        
+        [data-theme="dark"] .values-table input[readonly] {
+            background: linear-gradient(135deg, #1e3a5f, #0f1f3d);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+        
+        .values-table strong { 
+            color: var(--primary); 
+            font-weight: 700;
+        }
+        
+        [data-theme="dark"] .values-table strong {
+            color: #00d4ff;
+        }
+        
+        .grand-total { 
+            background: linear-gradient(135deg, #f39c12, #e67e22) !important; 
+            font-weight: 800 !important; 
+            font-size: 0.9rem !important;
+        }
+        
+        .grand-total td { 
+            border: none !important;
+        }
+        
+        .grand-total td strong,
+        .grand-total td {
+            color: #ffffff !important;
+        }
+        
+        [data-theme="dark"] .grand-total {
+            background: linear-gradient(135deg, #00d4ff, #0099cc) !important;
+        }
+        
+        [data-theme="dark"] .grand-total td strong,
+        [data-theme="dark"] .grand-total td {
+            color: #0a1628 !important;
+        }
+        
+        .grand-total input { 
+            background: transparent !important; 
+            font-weight: 800 !important; 
+            font-size: 0.9rem !important;
+        }
+        
+        .grand-total input {
+            color: #ffffff !important;
+        }
+        
+        [data-theme="dark"] .grand-total input {
+            color: #0a1628 !important;
+        }
+
+        .hours-section { 
+            margin-top: 24px; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 16px; 
+            border: 3px solid rgba(255,255,255,0.4); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+        
+        [data-theme="dark"] .hours-section {
+            background: #0f1f3d;
+            border: 3px solid #00d4ff;
+            box-shadow: var(--neon-glow);
+        }
+        
+        .hours-section h4 { 
+            color: var(--primary); 
+            margin-bottom: 16px; 
+            font-size: 1rem; 
+            font-weight: 700; 
+            border-bottom: 3px solid var(--accent); 
+            padding-bottom: 8px;
+        }
+        
+        [data-theme="dark"] .hours-section h4 {
+            color: #00d4ff;
+            border-bottom: 3px solid #00d4ff;
+            text-shadow: var(--neon-glow);
+        }
+
+        .toast { 
+            position: fixed; 
+            bottom: 24px; 
+            right: 24px; 
+            background: linear-gradient(135deg, var(--success), #229954); 
+            color: white; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            opacity: 0; 
+            transform: translateY(20px); 
+            transition: all 0.3s; 
+            z-index: 1000; 
+            font-weight: 700; 
+            font-size: 0.85rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        [data-theme="dark"] .toast {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #0a1628;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+        
         .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.success { background: var(--green); color: #0a1628; }
-        .toast.info { background: var(--cyan); color: #0a1628; }
-        .toast.error { background: var(--red); color: white; }
-
-        /* TABLAS EDITABLES (ocultas en lectura) */
-        .edit-section {
-            margin-top: 30px; display: none;
+        
+        .toast.error { 
+            background: linear-gradient(135deg, var(--danger), #c0392b);
         }
-        body.editing .edit-section { display: block; }
-        .edit-section table {
-            width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2);
-            border-radius: 12px; overflow: hidden; margin-bottom: 20px;
-            border: 1px solid rgba(0,212,255,0.2);
+        
+        [data-theme="dark"] .toast.error {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a5a);
+            color: white;
+            box-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
         }
-        .edit-section th {
-            background: rgba(0,212,255,0.15); color: var(--cyan);
-            padding: 10px 8px; font-size: 0.7rem; font-weight: 700;
-            text-transform: uppercase;
-        }
-        .edit-section td {
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            padding: 6px 4px; text-align: center;
-        }
-        .edit-section input {
-            width: 55px; padding: 4px; text-align: center;
-            border: 1px solid rgba(0,212,255,0.3); border-radius: 6px;
-            background: rgba(0,0,0,0.3); color: var(--text);
-            font-weight: 600; font-size: 0.8rem;
-        }
-        .edit-section input:focus {
-            outline: none; border-color: var(--cyan);
-            box-shadow: 0 0 8px rgba(0,212,255,0.3);
-        }
-        .edit-section .team-name {
-            font-weight: 800; color: var(--cyan);
-            background: rgba(0,212,255,0.05);
-        }
-        .edit-section .total-row {
-            background: rgba(0,212,255,0.1);
-            font-weight: 800; color: var(--green);
-        }
-        .edit-section h3 {
-            color: var(--cyan); font-size: 0.95rem; margin: 20px 0 10px;
-            padding: 10px 16px; background: rgba(0,212,255,0.08);
-            border-radius: 10px; border-left: 3px solid var(--cyan);
-            display: flex; align-items: center; gap: 8px; cursor: pointer;
-        }
-
-        /* VALORES ECONÓMICOS */
-        .values-section {
-            margin-top: 24px; background: rgba(0,212,255,0.03);
-            border: 1px solid rgba(0,212,255,0.2); border-radius: 14px;
-            padding: 20px;
-        }
-        .values-section h3 {
-            color: var(--cyan); font-size: 1rem; margin-bottom: 16px;
-            text-align: center; font-weight: 700;
-        }
-        .values-table {
-            width: 100%; border-collapse: collapse;
-            background: rgba(0,0,0,0.2); border-radius: 12px; overflow: hidden;
-        }
-        .values-table th {
-            background: rgba(0,212,255,0.12); color: var(--cyan);
-            padding: 10px 12px; font-size: 0.75rem; font-weight: 700;
-            text-transform: uppercase;
-        }
-        .values-table td {
-            padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.05);
-            font-size: 0.8rem; color: var(--text);
-        }
-        .values-table input {
-            width: 100%; padding: 6px 10px; border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 8px; background: rgba(0,0,0,0.3);
-            color: var(--text); font-weight: 600; font-size: 0.8rem;
-        }
-        .values-table input:focus {
-            outline: none; border-color: var(--cyan);
-        }
-        .values-table input[readonly] {
-            background: rgba(0,255,136,0.1); color: var(--green);
-            border: 1px solid rgba(0,255,136,0.3); font-weight: 800;
-        }
-        .total-general {
-            background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(0,255,136,0.1));
-            font-weight: 800 !important; font-size: 0.95rem !important;
-        }
-
-        /* FOOTER */
-        .footer {
-            text-align: center; margin-top: 24px; padding-top: 16px;
-            border-top: 1px solid rgba(0,212,255,0.15);
-            font-size: 0.75rem; color: var(--text2);
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .dashboard { padding: 16px; }
-            .cards-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-            .card { padding: 12px 8px; }
-            .card .value { font-size: 1.4rem; }
-            .charts-grid { grid-template-columns: 1fr; }
-            .chart-container { height: 200px; }
-            .header h1 { font-size: 1.1rem; }
-        }
-        @media (max-width: 480px) {
-            .cards-grid { grid-template-columns: repeat(2, 1fr); }
-            .mes-btn { padding: 6px 8px; font-size: 0.65rem; min-width: 42px; }
-        }
+        
+        .file-input { display: none; }
+        
         @media print {
-            .float-btn, .edit-section { display: none !important; }
-            body { background: white !important; }
-            .dashboard {
-                background: white !important; border: none !important;
-                box-shadow: none !important; color: black !important;
+            body { 
+                background: white !important; 
+                color: black !important; 
+                padding: 0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
             }
+            
+            .top-bar, .floating-controls, .alert, .theme-toggle, .controls, 
+            .year-selector, .mes-btn, .btn-ver-todo, .accordion-header,
+            .filtro-meses, .toast {
+                display: none !important;
+            }
+            
+            .accordion-content {
+                max-height: none !important;
+                display: block !important;
+                overflow: visible !important;
+            }
+            
+            .report-container { 
+                background: white !important; 
+                color: black !important;
+                box-shadow: none !important;
+                border: none !important;
+                padding: 20px !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+            
+            .report-header {
+                border-bottom: 3px solid #2c3e50 !important;
+                padding-bottom: 15px !important;
+            }
+            
+            .report-title h1 {
+                color: #2c3e50 !important;
+                -webkit-text-fill-color: #2c3e50 !important;
+                background: none !important;
+                font-size: 1.5rem !important;
+            }
+            
+            .report-title p {
+                color: #555 !important;
+                font-size: 0.9rem !important;
+            }
+            
+            .summary-grid {
+                display: grid !important;
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 8px !important;
+            }
+            
+            .stat-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                border: 2px solid #ccc !important;
+                transform: none !important;
+                animation: none !important;
+                box-shadow: none !important;
+            }
+            
+            .stat-value, .stat-label {
+                color: black !important;
+                -webkit-text-fill-color: black !important;
+                text-shadow: none !important;
+            }
+            
+            .charts-section {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 15px !important;
+            }
+            
+            .chart-card {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            
+            .chart-card h4 {
+                color: #2c3e50 !important;
+                -webkit-text-fill-color: #2c3e50 !important;
+                background: none !important;
+                font-size: 1rem !important;
+                margin-bottom: 10px !important;
+            }
+            
+            .chart-container { 
+                height: 220px !important; 
+            }
+            
+            table, .values-table {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+                font-size: 0.75rem !important;
+            }
+            
+            th {
+                background: #2c3e50 !important;
+                color: white !important;
+                -webkit-text-fill-color: white !important;
+                font-size: 0.65rem !important;
+            }
+            
+            td {
+                color: #333 !important;
+                border-bottom: 1px solid #ddd !important;
+                font-size: 0.75rem !important;
+            }
+            
+            .total-row, .grand-total {
+                background: #2c3e50 !important;
+                color: white !important;
+            }
+            
+            .values-section {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            
+            .values-section h3 {
+                color: #2c3e50 !important;
+                text-shadow: none !important;
+            }
+            
+            .hours-section {
+                background: white !important;
+                border: 2px solid #ccc !important;
+                box-shadow: none !important;
+            }
+            
+            .hours-section h4 {
+                color: #2c3e50 !important;
+                border-bottom-color: #2c3e50 !important;
+            }
+            
+            .values-table input {
+                border: 1px solid #ccc !important;
+                background: white !important;
+                color: #333 !important;
+            }
+            
+            .values-table input[readonly] {
+                background: #f5f5f5 !important;
+                color: #333 !important;
+                border: none !important;
+                font-weight: 700 !important;
+            }
+            
+            .footer-print {
+                display: block !important;
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 15px;
+                border-top: 2px solid #2c3e50;
+                color: #555;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+            
+            table, tr, .chart-card, .values-section, .hours-section {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .accordion-content {
+                page-break-after: auto;
+            }
+        }
+        
+        .footer-print { display: none; }
+        
+        .filter-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            margin-left: 12px;
+            font-weight: normal;
+        }
+        
+        [data-theme="dark"] .filter-badge {
+            background: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
         }
     </style>
 </head>
-<body>
+<body class="read-only-mode">
 
-<div class="dashboard">
-    <!-- HEADER -->
-    <div class="header">
-        <div>
+<div class="top-bar">
+    <div class="logo">
+        <img src="logo-minerar.png" alt="MINERAR Logo" onerror="this.style.display='none'">
+        <span>⛏️ MINERAR | Scania G500</span>
+    </div>
+    <div class="controls">
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir PDF</button>
+        <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
+        <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar Excel</button>
+        <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔒 Reset</button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Modo Oscuro/Claro">🌓</button>
+    </div>
+</div>
+
+<input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
+
+<div class="report-container">
+    <div class="report-header">
+        <div class="report-title">
             <h1>📊 Informe de Consumo - Repuestos Críticos</h1>
-            <p>Elásticos • Mazas • Bulones • Neumáticos • Patines • Levas • Pulmones • Llantas</p>
+            <p>Elásticos • Mazas • Bulones/Tuercas • Neumáticos • Patines • Levas • Pulmones • Llantas • Horas Hombre</p>
         </div>
-        <select class="year-btn" id="yearSelect" onchange="cambiarAnio()">
-            <option value="2024">2024</option>
-            <option value="2025">2025</option>
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-        </select>
-    </div>
-
-    <!-- FILTRO MESES -->
-    <div class="filter-section">
-        <h3>📅 FILTRAR POR MES</h3>
-        <div class="meses-row">
-            <button class="mes-btn" onclick="filtrarMes(0)">Ene</button>
-            <button class="mes-btn" onclick="filtrarMes(1)">Feb</button>
-            <button class="mes-btn" onclick="filtrarMes(2)">Mar</button>
-            <button class="mes-btn" onclick="filtrarMes(3)">Abr</button>
-            <button class="mes-btn" onclick="filtrarMes(4)">May</button>
-            <button class="mes-btn" onclick="filtrarMes(5)">Jun</button>
-            <button class="mes-btn" onclick="filtrarMes(6)">Jul</button>
-            <button class="mes-btn" onclick="filtrarMes(7)">Ago</button>
-            <button class="mes-btn" onclick="filtrarMes(8)">Sep</button>
-            <button class="mes-btn" onclick="filtrarMes(9)">Oct</button>
-            <button class="mes-btn" onclick="filtrarMes(10)">Nov</button>
-            <button class="mes-btn" onclick="filtrarMes(11)">Dic</button>
-            <button class="ver-todo" onclick="limpiarFiltroMes()">✦ Ver Todo el Año</button>
+        <div class="year-selector">
+            <span>📅 Año:</span>
+            <select id="yearSelect" onchange="cambiarAnio()">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
         </div>
     </div>
 
-    <!-- STATUS BAR -->
-    <div class="status-bar">
-        <span>✏️ Click en tarjetas o meses para filtrar gráficos</span>
-        <span class="lock-status" id="lockStatus">🔒 Solo lectura</span>
-        <span id="lastUpdate" style="color:var(--text2)">-</span>
-    </div>
-
-    <!-- TARJETAS INTERACTIVAS -->
-    <div class="cards-grid">
-        <div class="card c1" onclick="filtrarCard('elasticosO')" id="cardElasticosO">
-            <div class="value" id="vElasticosO">0</div>
-            <div class="label">🔧 Elásticos ORIG</div>
+    <div class="filtro-meses">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="color: #38B6B2; margin: 0; font-size: 1rem;">📅 FILTRAR POR MES</h3>
+            <button class="btn-ver-todo" onclick="limpiarFiltroMes()">Ver Todo el Año</button>
         </div>
-        <div class="card c2" onclick="filtrarCard('elasticosF')" id="cardElasticosF">
-            <div class="value" id="vElasticosF">0</div>
-            <div class="label"> Elásticos FAB</div>
-        </div>
-        <div class="card c3" onclick="filtrarCard('mazasN')" id="cardMazasN">
-            <div class="value" id="vMazasN">0</div>
-            <div class="label">️ Mazas NUEVAS</div>
-        </div>
-        <div class="card c4" onclick="filtrarCard('mazasR')" id="cardMazasR">
-            <div class="value" id="vMazasR">0</div>
-            <div class="label">️ Mazas REPAR</div>
-        </div>
-        <div class="card c5" onclick="filtrarCard('bulonTuerca')" id="cardBulonTuerca">
-            <div class="value" id="vBulonTuerca">0</div>
-            <div class="label">🔩 Bulón y Tuerca</div>
-        </div>
-        <div class="card c6" onclick="filtrarCard('neumaticoNuevo')" id="cardNeumaticoNuevo">
-            <div class="value" id="vNeumaticoNuevo">0</div>
-            <div class="label">🛞 Neumático NUEVO</div>
-        </div>
-        <div class="card c7" onclick="filtrarCard('neumaticoUsado')" id="cardNeumaticoUsado">
-            <div class="value" id="vNeumaticoUsado">0</div>
-            <div class="label">🛞 Neumático USADO</div>
-        </div>
-        <div class="card c8" onclick="filtrarCard('patinFrenoNuevo')" id="cardPatinFrenoNuevo">
-            <div class="value" id="vPatinFrenoNuevo">0</div>
-            <div class="label">🛞 Patín NUEVO</div>
-        </div>
-        <div class="card c9" onclick="filtrarCard('patinFrenoReparado')" id="cardPatinFrenoReparado">
-            <div class="value" id="vPatinFrenoReparado">0</div>
-            <div class="label"> Patín REPAR</div>
-        </div>
-        <div class="card c10" onclick="filtrarCard('levaFreno')" id="cardLevaFreno">
-            <div class="value" id="vLevaFreno">0</div>
-            <div class="label">⚙️ Leva de Freno</div>
-        </div>
-        <div class="card c11" onclick="filtrarCard('pulmonFrenoNuevo')" id="cardPulmonFrenoNuevo">
-            <div class="value" id="vPulmonFrenoNuevo">0</div>
-            <div class="label">💨 Pulmón NUEVO</div>
-        </div>
-        <div class="card c12" onclick="filtrarCard('pulmonFrenoReparado')" id="cardPulmonFrenoReparado">
-            <div class="value" id="vPulmonFrenoReparado">0</div>
-            <div class="label">💨 Pulmón REPAR</div>
-        </div>
-        <div class="card c13" onclick="filtrarCard('llantas')" id="cardLlantas">
-            <div class="value" id="vLlantas">0</div>
-            <div class="label">⭕ Llantas Rotas</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 8px;">
+            <button class="mes-btn" onclick="cambiarMes(0)">Ene</button>
+            <button class="mes-btn" onclick="cambiarMes(1)">Feb</button>
+            <button class="mes-btn" onclick="cambiarMes(2)">Mar</button>
+            <button class="mes-btn" onclick="cambiarMes(3)">Abr</button>
+            <button class="mes-btn" onclick="cambiarMes(4)">May</button>
+            <button class="mes-btn" onclick="cambiarMes(5)">Jun</button>
+            <button class="mes-btn" onclick="cambiarMes(6)">Jul</button>
+            <button class="mes-btn" onclick="cambiarMes(7)">Ago</button>
+            <button class="mes-btn" onclick="cambiarMes(8)">Sep</button>
+            <button class="mes-btn" onclick="cambiarMes(9)">Oct</button>
+            <button class="mes-btn" onclick="cambiarMes(10)">Nov</button>
+            <button class="mes-btn" onclick="cambiarMes(11)">Dic</button>
         </div>
     </div>
 
-    <!-- GRÁFICOS -->
-    <div class="charts-grid">
-        <div class="chart-box">
-            <h4 id="chartLineTitle">📈 Evolución Mensual - Consumo Total</h4>
+    <div class="alert">✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar. 
+        <span id="lock-indicator" style="margin-left: auto; color: var(--danger); font-weight: 700;">🔒 Solo lectura</span>
+    </div>
+
+    <div class="summary-grid">
+        <div class="stat-card" onclick="filtrarGrafico('elasticosO')"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('elasticosF')"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('mazasN')"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('mazasR')"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('bulonTuerca')"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón y Tuerca</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('neumaticoNuevo')"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('neumaticoUsado')"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('patinFrenoNuevo')"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('patinFrenoReparado')"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('levaFreno')"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva de Freno</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoNuevo')"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('pulmonFrenoReparado')"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
+        <div class="stat-card" onclick="filtrarGrafico('llantas')"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas Rotas</div></div>
+    </div>
+
+    <div class="charts-section">
+        <div class="chart-card">
+            <h4>📈 Evolución Mensual</h4>
             <div class="chart-container"><canvas id="chartLine"></canvas></div>
         </div>
-        <div class="chart-box">
-            <h4 id="chartBarTitle">📊 Top 5 Equipos - Consumo Total</h4>
+        <div class="chart-card">
+            <h4>📊 Top 5 Equipos</h4>
             <div class="chart-container"><canvas id="chartBar"></canvas></div>
         </div>
-        <div class="chart-box">
-            <h4 id="chartDoughnutTitle">🎯 Distribución por Categoría</h4>
+        <div class="chart-card">
+            <h4>🎯 Distribución por Categoría</h4>
             <div class="chart-container"><canvas id="chartDoughnut"></canvas></div>
         </div>
     </div>
 
-    <!-- SECCIÓN EDITABLE (oculta en lectura) -->
-    <div class="edit-section" id="editSection">
-        <h3>📝 DATOS POR EQUIPO Y MES</h3>
-        <div id="editTables"></div>
+    <!-- ACORDEONES -->
+    <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')">
+        <div class="section-title">📦 Paquetes Elásticos ORIGINALES</div>
+        <div class="accordion-icon" id="iconElasticosO">▼</div>
+    </div>
+    <div id="accordionElasticosO" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div>
+    </div>
+    
+    <div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')">
+        <div class="section-title">📦 Paquetes Elásticos FABRICADOS</div>
+        <div class="accordion-icon" id="iconElasticosF">▼</div>
+    </div>
+    <div id="accordionElasticosF" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')">
+        <div class="section-title">⚙️ Mazas NUEVAS</div>
+        <div class="accordion-icon" id="iconMazasN">▼</div>
+    </div>
+    <div id="accordionMazasN" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')">
+        <div class="section-title">⚙️ Mazas REPARADAS</div>
+        <div class="accordion-icon" id="iconMazasR">▼</div>
+    </div>
+    <div id="accordionMazasR" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')">
+        <div class="section-title">🔩 Bulón y Tuerca Scania</div>
+        <div class="accordion-icon" id="iconBulonTuerca">▼</div>
+    </div>
+    <div id="accordionBulonTuerca" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')">
+        <div class="section-title">🛞 Neumático NUEVO</div>
+        <div class="accordion-icon" id="iconNeumaticoNuevo">▼</div>
+    </div>
+    <div id="accordionNeumaticoNuevo" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaNeumaticoNuevo"><thead id="theadNeumaticoNuevo"></thead><tbody id="tbodyNeumaticoNuevo"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoUsado')">
+        <div class="section-title">🛞 Neumático USADO (solo consumo)</div>
+        <div class="accordion-icon" id="iconNeumaticoUsado">▼</div>
+    </div>
+    <div id="accordionNeumaticoUsado" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaNeumaticoUsado"><thead id="theadNeumaticoUsado"></thead><tbody id="tbodyNeumaticoUsado"></tbody></table></div>
+    </div>
+
+    <!-- ✅ CORREGIDO: accordionPatinFrenoNuevo -->
+    <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')">
+        <div class="section-title">🛞 Patín de Freno NUEVO</div>
+        <div class="accordion-icon" id="iconPatinFrenoNuevo">▼</div>
+    </div>
+    <div id="accordionPatinFrenoNuevo" class="accordion-content">
+        <div style="overflow-x:auto;">
+            <table id="tablaPatinFrenoNuevo">
+                <thead id="theadPatinFrenoNuevo"></thead>
+                <tbody id="tbodyPatinFrenoNuevo"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')">
+        <div class="section-title">🛞 Patín de Freno REPARADO</div>
+        <div class="accordion-icon" id="iconPatinFrenoReparado">▼</div>
+    </div>
+    <div id="accordionPatinFrenoReparado" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')">
+        <div class="section-title">⚙️ Leva de Freno</div>
+        <div class="accordion-icon" id="iconLevaFreno">▼</div>
+    </div>
+    <div id="accordionLevaFreno" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div>
+    </div>
+
+    <!-- ✅ CORREGIDO: accordionPulmonFrenoNuevo -->
+    <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')">
+        <div class="section-title">💨 Pulmón de Freno NUEVO</div>
+        <div class="accordion-icon" id="iconPulmonFrenoNuevo">▼</div>
+    </div>
+    <div id="accordionPulmonFrenoNuevo" class="accordion-content">
+        <div style="overflow-x:auto;">
+            <table id="tablaPulmonFrenoNuevo">
+                <thead id="theadPulmonFrenoNuevo"></thead>
+                <tbody id="tbodyPulmonFrenoNuevo"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')">
+        <div class="section-title">💨 Pulmón de Freno REPARADO</div>
+        <div class="accordion-icon" id="iconPulmonFrenoReparado">▼</div>
+    </div>
+    <div id="accordionPulmonFrenoReparado" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div>
+    </div>
+
+    <div class="accordion-header" onclick="toggleAccordion('accordionLlantas')">
+        <div class="section-title">⭕ Llantas Rotas</div>
+        <div class="accordion-icon" id="iconLlantas">▼</div>
+    </div>
+    <div id="accordionLlantas" class="accordion-content">
+        <div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div>
     </div>
 
     <!-- VALORES ECONÓMICOS -->
     <div class="values-section">
-        <h3>💰 VALORES ECONÓMICOS <span id="filterLabel" style="color:var(--green);font-size:0.8rem;"></span></h3>
+        <h3>💰 VALORES ECONÓMICOS DEL PERÍODO <span id="filterIndicator" class="filter-badge"></span></h3>
         <table class="values-table">
-            <thead><tr><th>Concepto</th><th>Cantidad</th><th>Valor Unitario ($)</th><th>Total ($)</th></tr></thead>
-            <tbody id="valuesBody"></tbody>
+            <thead>
+                <tr><th>Concepto</th><th>Cantidad</th><th>Valor Unitario ($)</th><th>Total ($)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>🔧 Elásticos ORIGINALES</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
+                <tr><td><strong>🔧 Elásticos FABRICADOS</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+                <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
+                <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
+                <tr><td><strong>🔩 Bulón (Scania)</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
+                <tr><td><strong>🔩 Tuerca (Scania)</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+                <tr><td><strong>🛞 Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
+                <tr><td><strong>🛞 Neumático USADO</strong></td><td id="cantNeumaticoUsado">0</td><td colspan="2" style="text-align:center; color:#888;">SIN VALOR ECONÓMICO</td></tr>
+                <tr><td><strong>🛞 Patín de Freno NUEVO</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
+                <tr><td><strong>🛞 Patín de Freno REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
+                <tr><td><strong>⚙️ Leva de Freno</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
+                <tr><td><strong>💨 Pulmón de Freno NUEVO</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
+                <tr><td><strong>💨 Pulmón de Freno REPARADO</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
+                <tr><td><strong>⭕ Llantas Rotas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+            </tbody>
         </table>
-    </div>
-
-    <!-- FOOTER -->
-    <div class="footer">
-        <p>📋 Informe generado automáticamente • Datos sincronizados en la nube ☁️</p>
-        <p>© 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management</p>
-    </div>
-</div>
-
-<!-- BOTONES FLOTANTES -->
-<button class="float-btn edit-btn" onclick="abrirModal()">🔒 Iniciar Edición</button>
-<button class="float-btn save-btn" onclick="guardarYBloquear()">💾 Guardar y Bloquear</button>
-
-<!-- MODAL -->
-<div class="modal-overlay" id="modal">
-    <div class="modal">
-        <h2>🔐 Acceso Restringido</h2>
-        <p>Ingrese contraseña para editar los datos</p>
-        <input type="password" id="passInput" placeholder="••••••" autocomplete="off">
-        <div class="modal-btns">
-            <button class="modal-btn primary" onclick="verificarPass()">Desbloquear</button>
-            <button class="modal-btn secondary" onclick="cerrarModal()">Cancelar</button>
+        
+        <div class="hours-section">
+            <h4>👷 HORAS HOMBRE - Mano de Obra</h4>
+            <table class="values-table">
+                <thead><tr><th>Concepto</th><th>Horas</th><th>Valor/Hora ($)</th><th>Total ($)</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>👨‍ Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                    <tr><td><strong>🔧 CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
+                    <tr><td><strong>🔥 CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
+                    <tr><td><strong>👥 CARRIZO - Mecánica</strong></td><td><input type="text" id="horasCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCarrizo" readonly></td></tr>
+                    <tr><td><strong>🔥 PATIÑO - Soldador</strong></td><td><input type="text" id="horasPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatino" readonly></td></tr>
+                    <tr class="grand-total"><td><strong>💰 TOTAL MANO DE OBRA</strong></td><td colspan="2" style="text-align:right;">SUMA:</td><td><input type="text" id="totalManoObra" readonly></td></tr>
+                    <tr class="grand-total"><td><strong>🎯 TOTAL GENERAL</strong></td><td colspan="2" style="text-align:right;">REPUESTOS + MO:</td><td><input type="text" id="totalGeneral" readonly></td></tr>
+                </tbody>
+            </table>
         </div>
     </div>
+    
+    <div style="text-align:center; margin-top:32px; padding:20px; color:var(--text-secondary); font-size:0.8rem; font-weight:600;">
+        <p>📋 Informe generado automáticamente • Datos sincronizados en la nube ☁️ • Última actualización: <span id="lastUpdate">-</span></p>
+        <p>© 2026 Minerar - Operaciones Mineras • Scania G500 Fleet Management</p>
+    </div>
+    
+    <div class="footer-print">
+        Informe Gerencial MINERAR • Confidencial • Generado: <span id="printDate"></span>
+    </div>
 </div>
 
-<!-- TOAST -->
-<div class="toast" id="toast"></div>
+<div class="floating-controls">
+    <button id="unlock-btn" onclick="abrirModal()">🔒 Iniciar Edición</button>
+    <button id="save-lock-btn" onclick="guardarYBloquear()">💾 Guardar y Bloquear</button>
+</div>
+
+<div class="security-overlay" id="securityModal">
+    <div class="security-modal">
+        <h2>🔐 Acceso Restringido</h2>
+        <p>Ingrese contraseña para editar</p>
+        <input type="password" id="passwordInput" placeholder="••••••" autocomplete="off">
+        <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
+        <button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
+    </div>
+</div>
+
+<div id="toast" class="toast">✅ Listo</div>
 
 <script>
-// ========== FIREBASE ==========
+// 🔥 FIREBASE CONFIG
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -492,335 +1602,1146 @@ const firebaseConfig = {
     messagingSenderId: "470761239890",
     appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const COL = "repuestos_minerar";
+const COLECCION = "repuestos_minerar";
 let firebaseOK = true;
 
-// ========== CONFIG ==========
-const EQUIPOS = ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"];
-const MESES = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
-const TIPOS = ['elasticosO','elasticosF','mazasN','mazasR','bulonTuerca','neumaticoNuevo','neumaticoUsado','patinFrenoNuevo','patinFrenoReparado','levaFreno','pulmonFrenoNuevo','pulmonFrenoReparado','llantas'];
-const LABELS = {
-    elasticosO:'Elásticos ORIG', elasticosF:'Elásticos FAB', mazasN:'Mazas NUEVAS',
-    mazasR:'Mazas REPAR', bulonTuerca:'Bulón/Tuerca', neumaticoNuevo:'Neumático NUEVO',
-    neumaticoUsado:'Neumático USADO', patinFrenoNuevo:'Patín NUEVO', patinFrenoReparado:'Patín REPAR',
-    levaFreno:'Leva de Freno', pulmonFrenoNuevo:'Pulmón NUEVO', pulmonFrenoReparado:'Pulmón REPAR', llantas:'Llantas Rotas'
+// ===== EQUIPOS ACTUALIZADOS CON M454 =====
+const CONFIG = {
+    equipos: ["M442","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"],
+    meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
+    passwordAdmin: "abrir",
+    passwordReset: "NOTOCAR",
+    storageKey: "minerar_repuestos_v16"
 };
-const ICONS = {
-    elasticosO:'', elasticosF:'🔧', mazasN:'⚙️', mazasR:'⚙️', bulonTuerca:'',
-    neumaticoNuevo:'', neumaticoUsado:'🛞', patinFrenoNuevo:'🛞', patinFrenoReparado:'🛞',
-    levaFreno:'⚙️', pulmonFrenoNuevo:'💨', pulmonFrenoReparado:'💨', llantas:''
-};
-const PASSWORD = "abrir";
 
-// ========== ESTADO ==========
-let año = 2026;
-let datos = {};
+let añoActual = 2026;
+let datosPorAnio = {};
 let charts = {};
-let mesFiltro = null;       // null = todo el año, 0-11 = mes específico
-let cardFiltro = null;      // null = todas las categorías, 'elasticosO' = solo esa
-let editing = false;
-let unsubscribe = null;
+let modoEdicionActivo = false;
+let categoriaFiltrada = null;
+let mesFiltrado = null;
 
-// ========== INICIALIZACIÓN ==========
+// ===== DATOS INICIALES CON M454 AGREGADO (con ceros para empezar) =====
+const datosIncrustados = {
+    elasticosO: {
+        "M442":[2,1,0,3,2,1,0,2,1,0,1,2],
+        "M444":[0,1,2,0,1,0,2,1,0,1,0,1],
+        "M445":[1,0,2,1,2,0,1,0,2,1,0,0],
+        "M446":[2,1,3,0,1,2,0,1,0,2,1,0],
+        "M447":[0,0,1,1,1,0,0,1,0,0,1,0],
+        "M448":[0,1,0,0,1,0,0,0,1,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[2,2,1,2,2,0,1,2,1,0,1,2],
+        "M452":[0,2,2,2,2,1,0,2,1,0,0,1],
+        "M453":[0,1,2,1,1,0,1,0,2,1,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[1,2,1,1,2,0,1,0,1,2,0,1],
+        "M456":[2,0,1,2,1,0,0,1,0,2,1,0]
+    },
+    elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    mazasN: {
+        "M442":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444":[0,0,0,2,1,0,0,0,0,0,0,0],
+        "M445":[0,0,0,1,1,0,0,0,0,0,0,0],
+        "M446":[0,0,0,2,2,0,0,0,0,0,0,0],
+        "M447":[0,0,0,1,1,0,0,0,0,0,0,0],
+        "M448":[1,0,2,0,0,0,0,0,0,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452":[0,0,1,2,2,0,0,0,0,0,0,0],
+        "M453":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[0,1,0,1,1,0,0,0,0,0,0,0],
+        "M456":[0,0,0,0,0,0,0,0,0,0,0,0]
+    },
+    mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    bulonTuerca: {
+        "M442":[2,0,0,0,0,0,0,0,0,0,0,0],
+        "M444":[10,20,10,30,20,0,0,0,0,0,0,0],
+        "M445":[0,0,3,10,20,0,0,0,0,0,0,0],
+        "M446":[2,2,10,12,12,0,0,0,0,0,0,0],
+        "M447":[0,10,0,30,30,0,0,0,0,0,0,0],
+        "M448":[20,0,2,10,10,0,0,0,0,0,0,0],
+        "M450":[0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451":[2,0,0,20,10,0,0,0,0,0,0,0],
+        "M452":[10,10,19,32,25,0,0,0,0,0,0,0],
+        "M453":[4,0,10,15,10,0,0,0,0,0,0,0],
+        "M454":Array(12).fill(0),
+        "M455":[0,10,0,10,20,0,0,0,0,0,0,0],
+        "M456":[20,10,10,10,10,0,0,0,0,0,0,0]
+    },
+    neumaticoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    patinFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    patinFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    levaFreno: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    pulmonFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
+};
+
+function cardLabel(categoria) {
+    const map = {
+        'elasticosO': 'Elásticos ORIG', 'elasticosF': 'Elásticos FAB',
+        'mazasN': 'Mazas NUEVAS', 'mazasR': 'Mazas REPARADAS',
+        'bulonTuerca': 'Bulón/Tuerca',
+        'neumaticoNuevo': 'Neumático NUEVO', 'neumaticoUsado': 'Neumático USADO',
+        'patinFrenoNuevo': 'Patín NUEVO', 'patinFrenoReparado': 'Patín REPARADO',
+        'levaFreno': 'Leva de Freno',
+        'pulmonFrenoNuevo': 'Pulmón NUEVO', 'pulmonFrenoReparado': 'Pulmón REPARADO',
+        'llantas': 'Llantas Rotas'
+    };
+    return map[categoria] || categoria;
+}
+
 async function init() {
-    console.log("🚀 Dashboard iniciando...");
+    console.log("🔄 Iniciando app con M454 incluido...");
     
-    // Intentar cargar de Firebase
-    if (firebaseOK) {
+    if(firebaseOK) {
         try {
-            const doc = await db.collection(COL).doc(`datos_${año}`).get();
-            if (doc.exists) {
-                const d = doc.data();
-                año = d.año || 2026;
-                datos = d.datos || {};
-                
-                // Asegurar estructura
-                TIPOS.forEach(t => {
-                    if (!datos[t]) datos[t] = {};
-                    EQUIPOS.forEach(e => {
-                        if (!datos[t][e]) datos[t][e] = Array(12).fill(0);
-                        if (datos[t][e].length < 12) datos[t][e] = [...datos[t][e], ...Array(12 - datos[t][e].length).fill(0)];
-                    });
-                });
-                
-                document.getElementById('yearSelect').value = año;
-                document.getElementById('lastUpdate').textContent = '️ ' + (d.updatedAt?.toDate?.()?.toLocaleString() || 'N/A');
-                
-                // Escuchar cambios en tiempo real
-                iniciarEscucha();
-                actualizarTodo();
-                toast('☁️ Conectado a Firebase', 'success');
-                return;
-            }
-        } catch(e) {
-            console.warn("Firebase no disponible:", e);
-            firebaseOK = false;
-        }
-    }
-    
-    // Fallback: datos vacíos
-    TIPOS.forEach(t => {
-        datos[t] = {};
-        EQUIPOS.forEach(e => { datos[t][e] = Array(12).fill(0); });
-    });
-    actualizarTodo();
-}
-
-function crearEstructuraVacia() {
-    const d = {};
-    TIPOS.forEach(t => { d[t] = {}; EQUIPOS.forEach(e => { d[t][e] = Array(12).fill(0); }); });
-    return d;
-}
-
-// ========== TIEMPO REAL ==========
-function iniciarEscucha() {
-    if (!firebaseOK) return;
-    if (unsubscribe) unsubscribe();
-    
-    unsubscribe = db.collection(COL).doc(`datos_${año}`).onSnapshot(doc => {
-        if (doc.exists) {
-            const d = doc.data();
-            const nuevos = d.datos || {};
-            let hayCambios = false;
-            
-            TIPOS.forEach(t => {
-                if (nuevos[t]) {
-                    EQUIPOS.forEach(e => {
-                        if (nuevos[t][e] && JSON.stringify(nuevos[t][e]) !== JSON.stringify(datos[t]?.[e])) {
-                            if (!datos[t]) datos[t] = {};
-                            datos[t][e] = nuevos[t][e];
-                            hayCambios = true;
+            const doc = await db.collection(COLECCION).doc(`datos_${añoActual}`).get();
+            if(doc.exists) {
+                const data = doc.data();
+                añoActual = data.añoActual || 2026;
+                [2024,2025,2026,2027,2028].forEach(año => { datosPorAnio[año] = crearEstructuraVacia(); });
+                if(data.datosPorAnio && data.datosPorAnio[añoActual]) {
+                    const tipos = ['elasticosO','elasticosF','mazasN','mazasR','bulonTuerca',
+                                   'neumaticoNuevo','neumaticoUsado','patinFrenoNuevo',
+                                   'patinFrenoReparado','levaFreno','pulmonFrenoNuevo',
+                                   'pulmonFrenoReparado','llantas'];
+                    tipos.forEach(tipo => {
+                        if(data.datosPorAnio[añoActual][tipo]) {
+                            CONFIG.equipos.forEach(eq => {
+                                if(data.datosPorAnio[añoActual][tipo][eq]) {
+                                    datosPorAnio[añoActual][tipo][eq] = data.datosPorAnio[añoActual][tipo][eq];
+                                } else if (eq === "M454") {
+                                    datosPorAnio[añoActual][tipo][eq] = Array(12).fill(0);
+                                }
+                            });
                         }
                     });
                 }
+                if(data.precios) {
+                    for(let key in data.precios) {
+                        let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                        let el = document.getElementById(elId);
+                        if(el && data.precios[key] !== undefined) el.value = data.precios[key];
+                    }
+                }
+                if(data.horas) {
+                    for(let key in data.horas) {
+                        let el = document.getElementById(key);
+                        if(el && data.horas[key] !== undefined) el.value = data.horas[key];
+                    }
+                }
+                document.getElementById("yearSelect").value = añoActual;
+                document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
+                actualizarTodo();
+                mostrarToast("☁️ Datos cargados desde Firebase");
+                setInterval(() => guardarTodosLosDatos(), 30000);
+                return;
+            }
+        } catch(e) { 
+            console.warn("⚠️ Firebase no disponible:", e); 
+            firebaseOK = false; 
+        }
+    }
+    
+    const guardado = localStorage.getItem(CONFIG.storageKey);
+    if(guardado) {
+        try {
+            const data = JSON.parse(guardado);
+            datosPorAnio = data.datosPorAnio || {};
+            añoActual = data.añoActual || 2026;
+            if(data.precios) {
+                for(let key in data.precios) {
+                    let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                    let el = document.getElementById(elId);
+                    if(el) el.value = data.precios[key];
+                }
+            }
+            if(data.horas) {
+                for(let key in data.horas) {
+                    let el = document.getElementById(key);
+                    if(el) el.value = data.horas[key];
+                }
+            }
+            mostrarToast("💾 Datos cargados localmente");
+        } catch(e) { console.error(e); }
+    }
+    
+    [2024,2025,2026,2027,2028].forEach(año => { 
+        if(!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia(); 
+    });
+    
+    if(!datosPorAnio[2026].elasticosO.M442 || datosPorAnio[2026].elasticosO.M442.every(v => v === 0)) {
+        datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
+    }
+    
+    document.getElementById("yearSelect").value = añoActual;
+    actualizarTodo();
+    setInterval(() => guardarTodosLosDatos(), 30000);
+}
+
+async function guardarEnFirebase() {
+    if(!firebaseOK) return false;
+    const data = {
+        añoActual, datosPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        },
+        ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    try {
+        await db.collection(COLECCION).doc(`datos_${añoActual}`).set(data, { merge: true });
+        return true;
+    } catch(e) {
+        console.error("❌ Error guardando en Firebase:", e);
+        firebaseOK = false;
+        return false;
+    }
+}
+
+function guardarEnLocalStorage() {
+    const data = {
+        añoActual, datosPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        }
+    };
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
+}
+
+async function guardarTodosLosDatos(event) {
+    const guardadoFirebase = firebaseOK ? await guardarEnFirebase() : false;
+    if(!guardadoFirebase) guardarEnLocalStorage();
+    document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
+    if(event && event.type) {
+        mostrarToast(guardadoFirebase ? "☁️ Sincronizado en la nube" : "💾 Guardado localmente");
+    }
+}
+
+function crearEstructuraVacia() {
+    const estructura = {
+        elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        mazasN: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        bulonTuerca: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        neumaticoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        patinFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        patinFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        levaFreno: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        pulmonFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+        llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
+    };
+    return estructura;
+}
+
+function obtenerDatosActual() {
+    if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
+    return datosPorAnio[añoActual];
+}
+
+function abrirModal() {
+    document.getElementById('securityModal').classList.add('show');
+    document.getElementById('passwordInput').value = '';
+    document.getElementById('passwordInput').focus();
+}
+function cerrarModal() { document.getElementById('securityModal').classList.remove('show'); }
+function verificarPassword() {
+    if(document.getElementById('passwordInput').value === CONFIG.passwordAdmin) {
+        cerrarModal();
+        modoEdicionActivo = true;
+        document.body.classList.remove('read-only-mode');
+        document.body.classList.add('editing-mode');
+        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición activo';
+        document.getElementById('lock-indicator').style.color = 'var(--success)';
+        document.querySelectorAll('.cell-input').forEach(input => {
+            input.removeAttribute('readonly');
+            input.style.background = '#fffef7';
+        });
+        actualizarTodo();
+        mostrarToast("🔓 Bienvenido - Modo edición activado");
+    } else {
+        mostrarToast("❌ Contraseña incorrecta", true);
+    }
+}
+function guardarYBloquear() {
+    guardarTodosLosDatos();
+    modoEdicionActivo = false;
+    document.body.classList.remove('editing-mode');
+    document.body.classList.add('read-only-mode');
+    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
+    document.getElementById('lock-indicator').style.color = 'var(--danger)';
+    document.querySelectorAll('.cell-input').forEach(input => {
+        input.setAttribute('readonly', true);
+        input.style.background = '#f8f9fa';
+    });
+    actualizarTodo();
+    mostrarToast("💾 Guardado y bloqueado");
+}
+
+function generarEncabezados() {
+    let html = "<tr><th>Equipo</th>";
+    CONFIG.meses.forEach(m => html += `<th>${m}</th>`);
+    html += "<th>TOTAL</th></tr>";
+    return html;
+}
+
+function generarTabla(datos, tbodyId, tipo) {
+    const tbody = document.getElementById(tbodyId);
+    if(!tbody) return;
+    tbody.innerHTML = "";
+    
+    CONFIG.equipos.forEach(eq => {
+        if(!datos[eq]) return;
+        let fila = `<tr><td class="equipo-col">${eq}</td>`;
+        let suma = 0;
+        for(let i=0; i<12; i++) {
+            const val = datos[eq][i] || 0;
+            suma += val;
+            const readonly = !modoEdicionActivo ? 'readonly' : '';
+            fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" 
+                data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" class="cell-input" ${readonly} style="width:60px;"></td>`;
+        }
+        fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
+        tbody.insertAdjacentHTML("beforeend", fila);
+    });
+    
+    let totales = Array(12).fill(0);
+    CONFIG.equipos.forEach(eq => { if(datos[eq]) for(let i=0;i<12;i++) totales[i] += datos[eq][i]||0; });
+    let totalGral = totales.reduce((a,b)=>a+b,0);
+    let row = `<tr class="total-row"><td><strong>TOTAL</strong></td>`;
+    totales.forEach(t => row += `<td><strong>${t}</strong></td>`);
+    row += `<td><strong>${totalGral}</strong></td></tr>`;
+    tbody.insertAdjacentHTML("beforeend", row);
+    
+    document.querySelectorAll('.cell-input').forEach(inp => {
+        inp.onchange = () => handleCellChange(inp);
+    });
+}
+
+function handleCellChange(input) {
+    if(!modoEdicionActivo) return;
+    const {eq, mes, tipo} = input.dataset;
+    let val = parseInt(input.value)||0;
+    if(val<0) val=0;
+    const d = obtenerDatosActual();
+    if(d[tipo] && d[tipo][eq]) {
+        d[tipo][eq][mes] = val;
+        actualizarTodo();
+    }
+}
+
+function obtenerCantidadFiltrada(categoria) {
+    const d = obtenerDatosActual();
+    const data = d[categoria];
+    if(!data) return 0;
+    
+    if (categoriaFiltrada === categoria && mesFiltrado !== null) {
+        let total = 0;
+        CONFIG.equipos.forEach(eq => {
+            if(data[eq] && data[eq][mesFiltrado]) {
+                total += data[eq][mesFiltrado];
+            }
+        });
+        return total;
+    }
+    else if (categoriaFiltrada === categoria && mesFiltrado === null) {
+        let total = 0;
+        CONFIG.equipos.forEach(eq => {
+            if(data[eq]) {
+                total += data[eq].reduce((a,b) => a + b, 0);
+            }
+        });
+        return total;
+    }
+    else if (categoriaFiltrada === null && mesFiltrado !== null) {
+        let total = 0;
+        CONFIG.equipos.forEach(eq => {
+            if(data[eq] && data[eq][mesFiltrado]) {
+                total += data[eq][mesFiltrado];
+            }
+        });
+        return total;
+    }
+    else {
+        let total = 0;
+        CONFIG.equipos.forEach(eq => {
+            if(data[eq]) {
+                total += data[eq].reduce((a,b) => a + b, 0);
+            }
+        });
+        return total;
+    }
+}
+
+function actualizarTodo() {
+    const d = obtenerDatosActual();
+    
+    const tablas = [
+        "theadElasticosO","theadElasticosF","theadMazasN","theadMazasR",
+        "theadBulonTuerca","theadNeumaticoNuevo","theadNeumaticoUsado",
+        "theadPatinFrenoNuevo","theadPatinFrenoReparado","theadLevaFreno",
+        "theadPulmonFrenoNuevo","theadPulmonFrenoReparado","theadLlantas"
+    ];
+    tablas.forEach(id => { 
+        const el = document.getElementById(id); 
+        if(el) el.innerHTML = generarEncabezados(); 
+    });
+    
+    generarTabla(d.elasticosO, "tbodyElasticosO", "elasticosO");
+    generarTabla(d.elasticosF, "tbodyElasticosF", "elasticosF");
+    generarTabla(d.mazasN, "tbodyMazasN", "mazasN");
+    generarTabla(d.mazasR, "tbodyMazasR", "mazasR");
+    generarTabla(d.bulonTuerca, "tbodyBulonTuerca", "bulonTuerca");
+    generarTabla(d.neumaticoNuevo, "tbodyNeumaticoNuevo", "neumaticoNuevo");
+    generarTabla(d.neumaticoUsado, "tbodyNeumaticoUsado", "neumaticoUsado");
+    generarTabla(d.patinFrenoNuevo, "tbodyPatinFrenoNuevo", "patinFrenoNuevo");
+    generarTabla(d.patinFrenoReparado, "tbodyPatinFrenoReparado", "patinFrenoReparado");
+    generarTabla(d.levaFreno, "tbodyLevaFreno", "levaFreno");
+    generarTabla(d.pulmonFrenoNuevo, "tbodyPulmonFrenoNuevo", "pulmonFrenoNuevo");
+    generarTabla(d.pulmonFrenoReparado, "tbodyPulmonFrenoReparado", "pulmonFrenoReparado");
+    generarTabla(d.llantas, "tbodyLlantas", "llantas");
+    
+    actualizarTarjetas();
+    actualizarGraficos();
+    calcularEconomico();
+}
+
+function actualizarTarjetas() {
+    const d = obtenerDatosActual();
+    
+    const calcConFiltros = (categoria) => {
+        const data = d[categoria];
+        if(!data) return 0;
+        
+        if (mesFiltrado !== null) {
+            let total = 0;
+            CONFIG.equipos.forEach(eq => {
+                if(data[eq] && data[eq][mesFiltrado]) {
+                    total += data[eq][mesFiltrado];
+                }
+            });
+            return total;
+        } else {
+            let total = 0;
+            CONFIG.equipos.forEach(eq => {
+                if(data[eq]) {
+                    total += data[eq].reduce((a,b) => a + b, 0);
+                }
+            });
+            return total;
+        }
+    };
+    
+    document.getElementById("totalElasticosO").textContent = calcConFiltros("elasticosO");
+    document.getElementById("totalElasticosF").textContent = calcConFiltros("elasticosF");
+    document.getElementById("totalMazasN").textContent = calcConFiltros("mazasN");
+    document.getElementById("totalMazasR").textContent = calcConFiltros("mazasR");
+    document.getElementById("totalBulonTuerca").textContent = calcConFiltros("bulonTuerca");
+    document.getElementById("totalNeumaticoNuevo").textContent = calcConFiltros("neumaticoNuevo");
+    document.getElementById("totalNeumaticoUsado").textContent = calcConFiltros("neumaticoUsado");
+    document.getElementById("totalPatinFrenoNuevo").textContent = calcConFiltros("patinFrenoNuevo");
+    document.getElementById("totalPatinFrenoReparado").textContent = calcConFiltros("patinFrenoReparado");
+    document.getElementById("totalLevaFreno").textContent = calcConFiltros("levaFreno");
+    document.getElementById("totalPulmonFrenoNuevo").textContent = calcConFiltros("pulmonFrenoNuevo");
+    document.getElementById("totalPulmonFrenoReparado").textContent = calcConFiltros("pulmonFrenoReparado");
+    document.getElementById("totalLlantas").textContent = calcConFiltros("llantas");
+}
+
+function calcularEconomico() {
+    const cant = {
+        elastO: obtenerCantidadFiltrada("elasticosO"),
+        elastF: obtenerCantidadFiltrada("elasticosF"),
+        mazaN: obtenerCantidadFiltrada("mazasN"),
+        mazaR: obtenerCantidadFiltrada("mazasR"),
+        bulon: obtenerCantidadFiltrada("bulonTuerca"),
+        tuerca: obtenerCantidadFiltrada("bulonTuerca"),
+        neumaticoNuevo: obtenerCantidadFiltrada("neumaticoNuevo"),
+        neumaticoUsado: obtenerCantidadFiltrada("neumaticoUsado"),
+        patinFrenoNuevo: obtenerCantidadFiltrada("patinFrenoNuevo"),
+        patinFrenoReparado: obtenerCantidadFiltrada("patinFrenoReparado"),
+        levaFreno: obtenerCantidadFiltrada("levaFreno"),
+        pulmonFrenoNuevo: obtenerCantidadFiltrada("pulmonFrenoNuevo"),
+        pulmonFrenoReparado: obtenerCantidadFiltrada("pulmonFrenoReparado"),
+        llantas: obtenerCantidadFiltrada("llantas")
+    };
+    
+    document.getElementById("cantElasticosO").textContent = cant.elastO;
+    document.getElementById("cantElasticosF").textContent = cant.elastF;
+    document.getElementById("cantMazasN").textContent = cant.mazaN;
+    document.getElementById("cantMazasR").textContent = cant.mazaR;
+    document.getElementById("cantBulon").textContent = cant.bulon;
+    document.getElementById("cantTuerca").textContent = cant.tuerca;
+    document.getElementById("cantNeumaticoNuevo").textContent = cant.neumaticoNuevo;
+    document.getElementById("cantNeumaticoUsado").textContent = cant.neumaticoUsado;
+    document.getElementById("cantPatinFrenoNuevo").textContent = cant.patinFrenoNuevo;
+    document.getElementById("cantPatinFrenoReparado").textContent = cant.patinFrenoReparado;
+    document.getElementById("cantLevaFreno").textContent = cant.levaFreno;
+    document.getElementById("cantPulmonFrenoNuevo").textContent = cant.pulmonFrenoNuevo;
+    document.getElementById("cantPulmonFrenoReparado").textContent = cant.pulmonFrenoReparado;
+    document.getElementById("cantLlantas").textContent = cant.llantas;
+    
+    const filterIndicator = document.getElementById("filterIndicator");
+    if (categoriaFiltrada !== null && mesFiltrado !== null) {
+        filterIndicator.textContent = `📌 Filtro: ${cardLabel(categoriaFiltrada)} - ${CONFIG.meses[mesFiltrado]}`;
+    } else if (categoriaFiltrada !== null) {
+        filterIndicator.textContent = `📌 Filtro: ${cardLabel(categoriaFiltrada)} (Año completo)`;
+    } else if (mesFiltrado !== null) {
+        filterIndicator.textContent = `📌 Filtro: Mes de ${CONFIG.meses[mesFiltrado]}`;
+    } else {
+        filterIndicator.textContent = `📌 Año completo - TOTALES ANUALES`;
+    }
+    
+    const prec = {
+        elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
+        elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
+        mazaN: parseFloat(document.getElementById("precioMazaN").value) || 0,
+        mazaR: parseFloat(document.getElementById("precioMazaR").value) || 0,
+        bulon: parseFloat(document.getElementById("precioBulon").value) || 0,
+        tuerca: parseFloat(document.getElementById("precioTuerca").value) || 0,
+        neumaticoNuevo: parseFloat(document.getElementById("precioNeumaticoNuevo").value) || 0,
+        patinFrenoNuevo: parseFloat(document.getElementById("precioPatinFrenoNuevo").value) || 0,
+        patinFrenoReparado: parseFloat(document.getElementById("precioPatinFrenoReparado").value) || 0,
+        levaFreno: parseFloat(document.getElementById("precioLevaFreno").value) || 0,
+        pulmonFrenoNuevo: parseFloat(document.getElementById("precioPulmonFrenoNuevo").value) || 0,
+        pulmonFrenoReparado: parseFloat(document.getElementById("precioPulmonFrenoReparado").value) || 0,
+        llanta: parseFloat(document.getElementById("precioLlanta").value) || 0
+    };
+    
+    const setVal = (id, v) => { const el = document.getElementById(id); if(el) el.value = v ? formatMoney(v) : ""; };
+    
+    setVal("totalElasticoO", cant.elastO * prec.elastO);
+    setVal("totalElasticoF", cant.elastF * prec.elastF);
+    setVal("totalMazaN", cant.mazaN * prec.mazaN);
+    setVal("totalMazaR", cant.mazaR * prec.mazaR);
+    setVal("totalBulon", cant.bulon * prec.bulon);
+    setVal("totalTuerca", cant.tuerca * prec.tuerca);
+    setVal("totalNeumaticoNuevo", cant.neumaticoNuevo * prec.neumaticoNuevo);
+    setVal("totalPatinFrenoNuevo", cant.patinFrenoNuevo * prec.patinFrenoNuevo);
+    setVal("totalPatinFrenoReparado", cant.patinFrenoReparado * prec.patinFrenoReparado);
+    setVal("totalLevaFreno", cant.levaFreno * prec.levaFreno);
+    setVal("totalPulmonFrenoNuevo", cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo);
+    setVal("totalPulmonFrenoReparado", cant.pulmonFrenoReparado * prec.pulmonFrenoReparado);
+    setVal("totalLlanta", cant.llantas * prec.llanta);
+    
+    const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
+    const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
+    const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
+    const hCarrizo = (parseFloat(document.getElementById("horasCarrizo").value) || 0) * (parseFloat(document.getElementById("valorHoraCarrizo").value) || 0);
+    const hPatino = (parseFloat(document.getElementById("horasPatino").value) || 0) * (parseFloat(document.getElementById("valorHoraPatino").value) || 0);
+    
+    const totalMO = hPropio + hCoriaM + hCoriaS + hCarrizo + hPatino;
+    const totalRep = (cant.elastO * prec.elastO) + (cant.elastF * prec.elastF) + (cant.mazaN * prec.mazaN) + 
+                     (cant.mazaR * prec.mazaR) + (cant.bulon * prec.bulon) + (cant.tuerca * prec.tuerca) +
+                     (cant.neumaticoNuevo * prec.neumaticoNuevo) + (cant.patinFrenoNuevo * prec.patinFrenoNuevo) +
+                     (cant.patinFrenoReparado * prec.patinFrenoReparado) + (cant.levaFreno * prec.levaFreno) +
+                     (cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo) + (cant.pulmonFrenoReparado * prec.pulmonFrenoReparado) +
+                     (cant.llantas * prec.llanta);
+    const totalGral = totalRep + totalMO;
+    
+    document.getElementById("totalPropio").value = hPropio ? formatMoney(hPropio) : "";
+    document.getElementById("totalCoriaMecanico").value = hCoriaM ? formatMoney(hCoriaM) : "";
+    document.getElementById("totalCoriaSoldador").value = hCoriaS ? formatMoney(hCoriaS) : "";
+    document.getElementById("totalCarrizo").value = hCarrizo ? formatMoney(hCarrizo) : "";
+    document.getElementById("totalPatino").value = hPatino ? formatMoney(hPatino) : "";
+    document.getElementById("totalManoObra").value = totalMO ? formatMoney(totalMO) : "";
+    document.getElementById("totalGeneral").value = totalGral ? formatMoney(totalGral) : "";
+}
+
+function formatMoney(val) {
+    return new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', minimumFractionDigits:0}).format(val);
+}
+
+function formatMoneySimple(val) {
+    return new Intl.NumberFormat('es-AR', {style:'currency', currency:'ARS', minimumFractionDigits:0}).format(val);
+}
+
+function exportarCSV() {
+    const d = obtenerDatosActual();
+    let csv = "MINERAR - INFORME DE REPUESTOS CRÍTICOS " + añoActual + "\n";
+    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
+    
+    const categoriasCSV = [
+        { key: 'elasticosO', title: '📦 PAQUETES ELÁSTICOS ORIGINALES' },
+        { key: 'elasticosF', title: '📦 PAQUETES ELÁSTICOS FABRICADOS' },
+        { key: 'mazasN', title: '⚙️ MAZAS NUEVAS' },
+        { key: 'mazasR', title: '⚙️ MAZAS REPARADAS' },
+        { key: 'bulonTuerca', title: '🔩 BULÓN Y TUERCA SCANIA' },
+        { key: 'neumaticoNuevo', title: '🛞 NEUMÁTICO NUEVO' },
+        { key: 'neumaticoUsado', title: '🛞 NEUMÁTICO USADO (SOLO CONSUMO)' },
+        { key: 'patinFrenoNuevo', title: '🛞 PATÍN DE FRENO NUEVO' },
+        { key: 'patinFrenoReparado', title: '🛞 PATÍN DE FRENO REPARADO' },
+        { key: 'levaFreno', title: '⚙️ LEVA DE FRENO' },
+        { key: 'pulmonFrenoNuevo', title: '💨 PULMÓN DE FRENO NUEVO' },
+        { key: 'pulmonFrenoReparado', title: '💨 PULMÓN DE FRENO REPARADO' },
+        { key: 'llantas', title: '⭕ LLANTAS ROTAS' }
+    ];
+    
+    categoriasCSV.forEach(cat => {
+        csv += "═══════════════════════════════════════════════════════\n";
+        csv += cat.title + "\n";
+        csv += "═══════════════════════════════════════════════════════\n";
+        csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
+        CONFIG.equipos.forEach(eq => {
+            let row = `${eq};`;
+            let total = 0;
+            for(let i=0; i<12; i++) {
+                let val = d[cat.key][eq][i];
+                row += `${val};`;
+                total += val;
+            }
+            csv += row + `${total}\n`;
+        });
+        csv += "\n";
+    });
+    
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "💰 RESUMEN ECONÓMICO\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Cantidad;Valor Unitario;Total\n";
+    
+    const cant = {
+        elastO: document.getElementById("cantElasticosO").textContent,
+        elastF: document.getElementById("cantElasticosF").textContent,
+        mazaN: document.getElementById("cantMazasN").textContent,
+        mazaR: document.getElementById("cantMazasR").textContent,
+        bulon: document.getElementById("cantBulon").textContent,
+        tuerca: document.getElementById("cantTuerca").textContent,
+        neumaticoNuevo: document.getElementById("cantNeumaticoNuevo").textContent,
+        neumaticoUsado: document.getElementById("cantNeumaticoUsado").textContent || "0",
+        patinFrenoNuevo: document.getElementById("cantPatinFrenoNuevo").textContent,
+        patinFrenoReparado: document.getElementById("cantPatinFrenoReparado").textContent,
+        levaFreno: document.getElementById("cantLevaFreno").textContent,
+        pulmonFrenoNuevo: document.getElementById("cantPulmonFrenoNuevo").textContent,
+        pulmonFrenoReparado: document.getElementById("cantPulmonFrenoReparado").textContent,
+        llantas: document.getElementById("cantLlantas").textContent
+    };
+    
+    const prec = {
+        elastO: document.getElementById("precioElasticoO").value || "0",
+        elastF: document.getElementById("precioElasticoF").value || "0",
+        mazaN: document.getElementById("precioMazaN").value || "0",
+        mazaR: document.getElementById("precioMazaR").value || "0",
+        bulon: document.getElementById("precioBulon").value || "0",
+        tuerca: document.getElementById("precioTuerca").value || "0",
+        neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value || "0",
+        patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value || "0",
+        patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value || "0",
+        levaFreno: document.getElementById("precioLevaFreno").value || "0",
+        pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value || "0",
+        pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value || "0",
+        llanta: document.getElementById("precioLlanta").value || "0"
+    };
+    
+    csv += `Elásticos Originales;${cant.elastO};${prec.elastO};${formatMoneySimple(parseInt(cant.elastO) * parseFloat(prec.elastO))}\n`;
+    csv += `Elásticos Fabricados;${cant.elastF};${prec.elastF};${formatMoneySimple(parseInt(cant.elastF) * parseFloat(prec.elastF))}\n`;
+    csv += `Mazas Nuevas;${cant.mazaN};${prec.mazaN};${formatMoneySimple(parseInt(cant.mazaN) * parseFloat(prec.mazaN))}\n`;
+    csv += `Mazas Reparadas;${cant.mazaR};${prec.mazaR};${formatMoneySimple(parseInt(cant.mazaR) * parseFloat(prec.mazaR))}\n`;
+    csv += `Bulón Scania;${cant.bulon};${prec.bulon};${formatMoneySimple(parseInt(cant.bulon) * parseFloat(prec.bulon))}\n`;
+    csv += `Tuerca Scania;${cant.tuerca};${prec.tuerca};${formatMoneySimple(parseInt(cant.tuerca) * parseFloat(prec.tuerca))}\n`;
+    csv += `Neumático Nuevo;${cant.neumaticoNuevo};${prec.neumaticoNuevo};${formatMoneySimple(parseInt(cant.neumaticoNuevo) * parseFloat(prec.neumaticoNuevo))}\n`;
+    csv += `Neumático Usado;${cant.neumaticoUsado};SIN VALOR;SIN VALOR\n`;
+    csv += `Patín Freno Nuevo;${cant.patinFrenoNuevo};${prec.patinFrenoNuevo};${formatMoneySimple(parseInt(cant.patinFrenoNuevo) * parseFloat(prec.patinFrenoNuevo))}\n`;
+    csv += `Patín Freno Reparado;${cant.patinFrenoReparado};${prec.patinFrenoReparado};${formatMoneySimple(parseInt(cant.patinFrenoReparado) * parseFloat(prec.patinFrenoReparado))}\n`;
+    csv += `Leva de Freno;${cant.levaFreno};${prec.levaFreno};${formatMoneySimple(parseInt(cant.levaFreno) * parseFloat(prec.levaFreno))}\n`;
+    csv += `Pulmón Freno Nuevo;${cant.pulmonFrenoNuevo};${prec.pulmonFrenoNuevo};${formatMoneySimple(parseInt(cant.pulmonFrenoNuevo) * parseFloat(prec.pulmonFrenoNuevo))}\n`;
+    csv += `Pulmón Freno Reparado;${cant.pulmonFrenoReparado};${prec.pulmonFrenoReparado};${formatMoneySimple(parseInt(cant.pulmonFrenoReparado) * parseFloat(prec.pulmonFrenoReparado))}\n`;
+    csv += `Llantas Rotas;${cant.llantas};${prec.llanta};${formatMoneySimple(parseInt(cant.llantas) * parseFloat(prec.llanta))}\n`;
+    csv += `\n`;
+    
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "👷 HORAS HOMBRE\n";
+    csv += "═══════════════════════════════════════════════════════\n";
+    csv += "Concepto;Horas;Valor/Hora;Total\n";
+    csv += `Personal Propio;${document.getElementById("horasPropio").value || 0};${document.getElementById("valorHoraPropio").value || 0};${document.getElementById("totalPropio").value || 0}\n`;
+    csv += `CORIA - Mecánico;${document.getElementById("horasCoriaMecanico").value || 0};${document.getElementById("valorHoraCoriaMecanico").value || 0};${document.getElementById("totalCoriaMecanico").value || 0}\n`;
+    csv += `CORIA - Soldador;${document.getElementById("horasCoriaSoldador").value || 0};${document.getElementById("valorHoraCoriaSoldador").value || 0};${document.getElementById("totalCoriaSoldador").value || 0}\n`;
+    csv += `CARRIZO - Mecánica;${document.getElementById("horasCarrizo").value || 0};${document.getElementById("valorHoraCarrizo").value || 0};${document.getElementById("totalCarrizo").value || 0}\n`;
+    csv += `PATIÑO - Soldador;${document.getElementById("horasPatino").value || 0};${document.getElementById("valorHoraPatino").value || 0};${document.getElementById("totalPatino").value || 0}\n`;
+    csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
+    csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
+    
+    const blob = new Blob(["\ufeff" + csv], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `Minerar_Repuestos_Detallado_${añoActual}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    mostrarToast("📊 Exportado informe detallado a CSV");
+}
+
+function importarCSV(event) {
+    const file = event.target.files[0];
+    if(!file) return;
+    
+    if(!confirm("⚠️ Esto reemplazará los datos actuales con los del archivo seleccionado. ¿Continuar?")) {
+        event.target.value = ""; 
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const text = e.target.result;
+            const lines = text.split('\n');
+            const d = obtenerDatosActual(); 
+            
+            let categoriaActual = null;
+            let mapCategoria = {
+                'PAQUETES ELÁSTICOS ORIGINALES': 'elasticosO',
+                'PAQUETES ELÁSTICOS FABRICADOS': 'elasticosF',
+                'MAZAS NUEVAS': 'mazasN',
+                'MAZAS REPARADAS': 'mazasR',
+                'BULÓN Y TUERCA SCANIA': 'bulonTuerca',
+                'NEUMÁTICO NUEVO': 'neumaticoNuevo',
+                'NEUMÁTICO USADO (SOLO CONSUMO)': 'neumaticoUsado',
+                'PATÍN DE FRENO NUEVO': 'patinFrenoNuevo',
+                'PATÍN DE FRENO REPARADO': 'patinFrenoReparado',
+                'LEVA DE FRENO': 'levaFreno',
+                'PULMÓN DE FRENO NUEVO': 'pulmonFrenoNuevo',
+                'PULMÓN DE FRENO REPARADO': 'pulmonFrenoReparado',
+                'LLANTAS ROTAS': 'llantas'
+            };
+            
+            let filasProcesadas = 0;
+
+            lines.forEach(line => {
+                line = line.trim();
+                if(!line) return;
+
+                for(let key in mapCategoria) {
+                    if(line.includes(key)) {
+                        categoriaActual = mapCategoria[key];
+                        return; 
+                    }
+                }
+
+                if(categoriaActual && line.match(/^M\d{3,4};/)) {
+                    const parts = line.split(';');
+                    const equipo = parts[0];
+                    
+                    if(CONFIG.equipos.includes(equipo) && parts.length >= 13) {
+                        for(let i=0; i<12; i++) {
+                            let val = parseInt(parts[i+1]);
+                            if(isNaN(val)) val = 0; 
+                            
+                            if(d[categoriaActual] && d[categoriaActual][equipo]) {
+                                d[categoriaActual][equipo][i] = val;
+                            }
+                        }
+                        filasProcesadas++;
+                    }
+                }
             });
             
-            if (hayCambios) {
+            if(filasProcesadas > 0) {
                 actualizarTodo();
-                toast(' Actualizado desde otra PC', 'info');
+                guardarTodosLosDatos();
+                mostrarToast(`✅ Importados ${filasProcesadas} registros exitosamente`);
+            } else {
+                mostrarToast("⚠️ No se encontraron datos válidos en el archivo", true);
             }
-            
-            document.getElementById('lastUpdate').textContent = '⏱️ ' + (d.updatedAt?.toDate?.()?.toLocaleString() || 'N/A');
+        } catch(err) {
+            console.error(err);
+            mostrarToast("❌ Error al procesar el archivo", true);
         }
-    });
+    };
+    reader.readAsText(file);
+    event.target.value = ""; 
 }
 
-// ========== GUARDAR CAMBIO INMEDIATO ==========
-async function guardarCelda(tipo, equipo, mes, valor) {
-    if (!firebaseOK) return;
-    try {
-        await db.collection(COL).doc(`datos_${año}`).set({
-            [`datos.${tipo}.${equipo}.${mes}`]: valor,
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-    } catch(e) { console.error(e); }
+async function resetearDatosCompletos() {
+    if(!confirm("⚠️ ¿Resetear TODOS los datos?")) return;
+    const pass = prompt("🔒 Contraseña para resetear:");
+    if(pass === CONFIG.passwordReset) {
+        if(confirm("✅ ¿Confirmar? Esto borrará los datos en la NUBE también")) {
+            if(firebaseOK) {
+                try {
+                    await db.collection(COLECCION).doc(`datos_${añoActual}`).delete();
+                } catch(e) { console.error(e); }
+            }
+            localStorage.removeItem(CONFIG.storageKey);
+            location.reload();
+        }
+    } else mostrarToast("❌ Contraseña incorrecta (debe ser NOTOCAR)", true);
 }
 
-// ========== OBTENER DATOS FILTRADOS ==========
-function getValor(tipo, equipo) {
-    if (mesFiltro !== null) {
-        return (datos[tipo]?.[equipo]?.[mesFiltro]) || 0;
-    }
-    return (datos[tipo]?.[equipo] || []).reduce((a, b) => a + b, 0);
+function cambiarAnio() {
+    añoActual = parseInt(document.getElementById("yearSelect").value);
+    if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
+    actualizarTodo();
+    mostrarToast(`📅 Año ${añoActual}`);
 }
 
-function getTotal(tipo) {
-    return EQUIPOS.reduce((sum, eq) => sum + getValor(tipo, eq), 0);
-}
-
-function getMesTotal(tipo, mesIdx) {
-    return EQUIPOS.reduce((sum, eq) => sum + (datos[tipo]?.[eq]?.[mesIdx] || 0), 0);
-}
-
-// ========== ACTUALIZAR TARJETAS ==========
-function actualizarTarjetas() {
-    TIPOS.forEach(tipo => {
-        const el = document.getElementById('v' + capitalize(tipo));
-        if (el) el.textContent = getTotal(tipo);
-    });
-}
-
-function capitalize(s) {
-    return s.charAt(0).toUpperCase() + s.slice(1).replace(/([A-Z])/g, m => m);
-}
-
-// ========== ACTUALIZAR GRÁFICOS ==========
-function actualizarGraficos() {
-    const dark = true;
-    const gridColor = 'rgba(0,212,255,0.1)';
-    const textColor = '#7dd3fc';
-    
-    // === GRÁFICO DE LÍNEA ===
-    let lineData, lineTitle;
-    
-    if (cardFiltro) {
-        // Filtrado por categoría
-        const datosFiltrados = MESES.map((_, i) => getMesTotal(cardFiltro, i));
-        lineData = [{
-            label: LABELS[cardFiltro],
-            data: datosFiltrados,
-            borderColor: '#00d4ff',
-            backgroundColor: 'rgba(0,212,255,0.1)',
-            tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 8, borderWidth: 3
-        }];
-        lineTitle = `📈 ${LABELS[cardFiltro]} - Evolución Mensual${mesFiltro !== null ? ' (' + MESES[mesFiltro] + ')' : ''}`;
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    if(isDark) {
+        body.removeAttribute('data-theme');
     } else {
-        // Todas las categorías sumadas
-        const totales = MESES.map((_, i) => {
-            return TIPOS.reduce((sum, t) => sum + getMesTotal(t, i), 0);
+        body.setAttribute('data-theme', 'dark');
+    }
+    actualizarGraficos();
+}
+
+function mostrarToast(msg, error=false) {
+    const toast = document.getElementById("toast");
+    toast.textContent = msg;
+    toast.className = 'toast show' + (error ? ' error' : '');
+    setTimeout(() => toast.className = 'toast', 3000);
+}
+
+function filtrarGrafico(categoria) {
+    const card = event.currentTarget;
+    
+    if (categoriaFiltrada === categoria) {
+        categoriaFiltrada = null;
+        document.querySelectorAll('.stat-card').forEach(c => {
+            c.classList.remove('active');
+            c.style.opacity = '1';
+            c.style.transform = 'scale(1)';
+        });
+        mostrarToast('📊 Vista completa restaurada - Mostrando TOTALES ANUALES');
+    } else {
+        categoriaFiltrada = categoria;
+        document.querySelectorAll('.stat-card').forEach(c => {
+            c.classList.remove('active');
+            c.style.opacity = '0.65';
+            c.style.transform = 'scale(0.97)';
+        });
+        card.classList.add('active');
+        card.style.opacity = '1';
+        card.style.transform = 'scale(1.07)';
+        
+        const label = card.querySelector('.stat-label').innerText;
+        if (mesFiltrado !== null) {
+            mostrarToast(`🔍 Filtrando: ${label} - Mes de ${CONFIG.meses[mesFiltrado]}`);
+        } else {
+            mostrarToast(`🔍 Filtrando: ${label} (Año completo)`);
+        }
+    }
+    
+    setTimeout(() => {
+        actualizarGraficos();
+        calcularEconomico();
+        actualizarTarjetas();
+    }, 100);
+}
+
+function actualizarGraficos() {
+    const d = obtenerDatosActual();
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    
+    const colors = {
+        primary: isDark ? 'rgba(0, 212, 255, 0.95)' : 'rgba(54, 162, 235, 0.95)',
+        secondary: isDark ? 'rgba(255, 215, 0, 0.8)' : 'rgba(255, 159, 64, 0.8)',
+        success: isDark ? 'rgba(0, 255, 136, 0.9)' : 'rgba(75, 192, 192, 0.9)',
+        danger: isDark ? 'rgba(255, 107, 107, 0.9)' : 'rgba(255, 99, 132, 0.9)',
+        purple: isDark ? 'rgba(168, 85, 247, 0.9)' : 'rgba(153, 102, 255, 0.9)',
+        grid: isDark ? 'rgba(0, 212, 255, 0.15)' : 'rgba(0,0,0,0.06)',
+        text: isDark ? '#e0f2fe' : '#2c3e50',
+        muted: isDark ? 'rgba(125, 211, 252, 0.5)' : 'rgba(127, 140, 141, 0.7)'
+    };
+
+    let lineData, lineLabel;
+    
+    if (categoriaFiltrada) {
+        const datosFiltrados = Array(12).fill(0);
+        CONFIG.equipos.forEach(eq => {
+            for(let i=0; i<12; i++) {
+                datosFiltrados[i] += d[categoriaFiltrada][eq][i] || 0;
+            }
+        });
+        
+        let datosComparacion = null;
+        if (categoriaFiltrada.includes('elasticos')) {
+            const otra = categoriaFiltrada === 'elasticosO' ? 'elasticosF' : 'elasticosO';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('mazas')) {
+            const otra = categoriaFiltrada === 'mazasN' ? 'mazasR' : 'mazasN';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('neumatico')) {
+            const otra = categoriaFiltrada === 'neumaticoNuevo' ? 'neumaticoUsado' : 'neumaticoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('patinFreno')) {
+            const otra = categoriaFiltrada === 'patinFrenoNuevo' ? 'patinFrenoReparado' : 'patinFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('pulmonFreno')) {
+            const otra = categoriaFiltrada === 'pulmonFrenoNuevo' ? 'pulmonFrenoReparado' : 'pulmonFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for(let i=0; i<12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        }
+        
+        lineData = [{
+            label: cardLabel(categoriaFiltrada),
+            data: datosFiltrados,
+            borderColor: colors.primary,
+            backgroundColor: colors.primary.replace('0.95', '0.25'),
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointHoverRadius: 8,
+            borderWidth: 3
+        }];
+        
+        if (datosComparacion) {
+            lineData.push({
+                label: 'Comparación',
+                data: datosComparacion,
+                borderColor: colors.muted,
+                borderDash: [5, 5],
+                tension: 0.4,
+                fill: false,
+                pointRadius: 3,
+                borderWidth: 2
+            });
+        }
+        lineLabel = `${cardLabel(categoriaFiltrada)} - Evolución ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Anual'}`;
+    } else {
+        const totales = Array(12).fill(0);
+        CONFIG.equipos.forEach(eq => {
+            for(let i=0; i<12; i++) {
+                totales[i] += Object.values(d).flatMap(cat => cat[eq] || [])[i] || 0;
+            }
         });
         lineData = [{
             label: 'Consumo Total',
             data: totales,
-            borderColor: '#00d4ff',
-            backgroundColor: 'rgba(0,212,255,0.1)',
-            tension: 0.4, fill: true, pointRadius: 5, pointHoverRadius: 8, borderWidth: 3
+            borderColor: colors.primary,
+            backgroundColor: colors.primary.replace('0.95', '0.25'),
+            tension: 0.4,
+            fill: true,
+            pointRadius: 5,
+            pointHoverRadius: 8
         }];
-        lineTitle = `📈 Evolución Mensual - Consumo Total${mesFiltro !== null ? ' (' + MESES[mesFiltro] + ')' : ''}`;
+        lineLabel = '📈 Consumo Total - Evolución Mensual';
     }
-    
-    document.getElementById('chartLineTitle').textContent = lineTitle;
-    
+
     if (charts.line) charts.line.destroy();
     charts.line = new Chart(document.getElementById('chartLine'), {
         type: 'line',
-        data: { labels: MESES, datasets: lineData },
+        data: { labels: CONFIG.meses, datasets: lineData },
         options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-                legend: { labels: { color: textColor, font: { size: 11 } } },
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { 
+                legend: { position: 'top', labels: { color: colors.text, font: { size: 11 } } },
+                title: { display: true, text: lineLabel, color: colors.text, font: { size: 13, weight: '700' } },
                 tooltip: {
                     callbacks: {
-                        label: ctx => {
-                            const v = ctx.parsed.y || 0;
-                            const total = ctx.dataset.data.reduce((a,b) => a + b, 0);
-                            const pct = total > 0 ? ((v/total)*100).toFixed(1) : 0;
-                            return `${ctx.dataset.label}: ${v} unidades (${pct}%)`;
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a,b) => a + (b||0), 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
                         }
                     }
                 }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-                x: { grid: { display: false }, ticks: { color: textColor } }
+                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                x: { grid: { display: false }, ticks: { color: colors.text } }
             }
         }
     });
 
-    // === GRÁFICO DE BARRAS ===
-    let barData, barTitle;
+    let barLabels = [], barData = [], barColors = [];
     
-    if (cardFiltro) {
-        const porEquipo = EQUIPOS.map(eq => ({ name: eq, val: getValor(cardFiltro, eq) }));
-        porEquipo.sort((a,b) => b.val - a.val);
-        const top5 = porEquipo.slice(0, 5);
-        barData = top5.map(p => p.val);
-        barTitle = `📊 Top 5 Equipos - ${LABELS[cardFiltro]}`;
-        
-        if (charts.bar) charts.bar.destroy();
-        charts.bar = new Chart(document.getElementById('chartBar'), {
-            type: 'bar',
-            data: {
-                labels: top5.map(p => p.name),
-                datasets: [{
-                    label: LABELS[cardFiltro],
-                    data: barData,
-                    backgroundColor: ['#00d4ff','#00ff88','#ffd700','#a855f7','#ff8c42'],
-                    borderRadius: 8, borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: ctx => {
-                                const v = ctx.parsed.y || 0;
-                                const total = barData.reduce((a,b) => a + b, 0);
-                                const pct = total > 0 ? ((v/total)*100).toFixed(1) : 0;
-                                return `${ctx.label}: ${v} unidades (${pct}%)`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-                    x: { grid: { display: false }, ticks: { color: textColor } }
-                }
-            }
+    if (categoriaFiltrada) {
+        const porEquipo = {};
+        CONFIG.equipos.forEach(eq => {
+            porEquipo[eq] = mesFiltrado !== null 
+                ? (d[categoriaFiltrada][eq]?.[mesFiltrado] || 0)
+                : (d[categoriaFiltrada][eq]?.reduce((a,b)=>a+b,0) || 0);
         });
+        
+        const top5 = Object.entries(porEquipo).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        barLabels = top5.map(e => e[0]);
+        barData = top5.map(e => e[1]);
+        barColors = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
     } else {
-        // Consumo total por equipo
-        const porEquipo = EQUIPOS.map(eq => {
-            const val = TIPOS.reduce((sum, t) => sum + getValor(t, eq), 0);
-            return { name: eq, val };
+        const porEquipo = {};
+        CONFIG.equipos.forEach(eq => {
+            porEquipo[eq] = mesFiltrado !== null
+                ? Object.values(d).flatMap(cat => cat[eq] || [])[mesFiltrado] || 0
+                : Object.values(d).flatMap(cat => cat[eq] || []).reduce((a,b)=>a+b,0);
         });
-        porEquipo.sort((a,b) => b.val - a.val);
-        const top5 = porEquipo.slice(0, 5);
-        
-        barTitle = ` Top 5 Equipos - Consumo Total`;
-        
-        if (charts.bar) charts.bar.destroy();
-        charts.bar = new Chart(document.getElementById('chartBar'), {
-            type: 'bar',
-            data: {
-                labels: top5.map(p => p.name),
-                datasets: [{
-                    label: 'Consumo Total',
-                    data: top5.map(p => p.val),
-                    backgroundColor: ['#00d4ff','#00ff88','#ffd700','#a855f7','#ff8c42'],
-                    borderRadius: 8, borderWidth: 0
-                }]
-            },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: ctx => {
-                                const v = ctx.parsed.y || 0;
-                                const total = top5.reduce((a,b) => a + b.val, 0);
-                                const pct = total > 0 ? ((v/total)*100).toFixed(1) : 0;
-                                return `${ctx.label}: ${v} unidades (${pct}%)`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor } },
-                    x: { grid: { display: false }, ticks: { color: textColor } }
-                }
-            }
-        });
+        const top5 = Object.entries(porEquipo).sort((a,b) => b[1] - a[1]).slice(0, 5);
+        barLabels = top5.map(e => e[0]);
+        barData = top5.map(e => e[1]);
+        barColors = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
     }
-    
-    document.getElementById('chartBarTitle').textContent = barTitle;
 
-    // === GRÁFICO DOUGHNUT ===
-    let doughnutData, doughnutLabels, doughnutColors, doughnutTitle;
+    if (charts.bar) charts.bar.destroy();
+    charts.bar = new Chart(document.getElementById('chartBar'), {
+        type: 'bar',
+        data: {
+            labels: barLabels,
+            datasets: [{
+                label: categoriaFiltrada ? cardLabel(categoriaFiltrada) : 'Consumo Total',
+                data: barData,
+                backgroundColor: barColors,
+                borderColor: barColors.map(c => c.replace(/[\d.]+\)$/, '1)')),
+                borderWidth: 2,
+                borderRadius: 8
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: { duration: 400 },
+            plugins: { 
+                legend: { display: false },
+                title: { display: true, text: '📊 Top 5 Equipos', color: colors.text, font: { size: 13, weight: '700' } },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a,b) => a + (b||0), 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
+                x: { grid: { display: false }, ticks: { color: colors.text } }
+            }
+        }
+    });
+
+    let doughnutLabels = [], doughnutData = [], doughnutColors = [];
     
-    if (mesFiltro !== null) {
-        // Filtrado por mes: mostrar distribución por categoría en ese mes
-        const mesTotal = TIPOS.map(t => getMesTotal(t, mesFiltro));
-        doughnutData = mesTotal;
-        doughnutLabels = TIPOS.map(t => LABELS[t]);
-        doughnutColors = ['#ff6b6b','#ff8c42','#4ecdc4','#45b7d1','#96ceb4','#f4d03f','#bdc3c7','#9b59b6','#a569bd','#1abc9c','#3498db','#5dade2','#e74c3c'];
-        doughnutTitle = `🎯 Distribución por Categoría - ${MESES[mesFiltro]} ${año}`;
+    if (categoriaFiltrada) {
+        if (categoriaFiltrada === 'elasticosO' || categoriaFiltrada === 'elasticosF') {
+            doughnutLabels = ['Elásticos ORIG', 'Elásticos FAB'];
+            doughnutData = [
+                Object.values(d.elasticosO).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.elasticosF).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.secondary];
+        } else if (categoriaFiltrada === 'mazasN' || categoriaFiltrada === 'mazasR') {
+            doughnutLabels = ['Mazas NUEVAS', 'Mazas REPARADAS'];
+            doughnutData = [
+                Object.values(d.mazasN).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.mazasR).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.success, colors.danger];
+        } else if (categoriaFiltrada === 'neumaticoNuevo' || categoriaFiltrada === 'neumaticoUsado') {
+            doughnutLabels = ['Neumático NUEVO', 'Neumático USADO'];
+            doughnutData = [
+                Object.values(d.neumaticoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.neumaticoUsado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.muted];
+        } else if (categoriaFiltrada === 'patinFrenoNuevo' || categoriaFiltrada === 'patinFrenoReparado') {
+            doughnutLabels = ['Patín NUEVO', 'Patín REPARADO'];
+            doughnutData = [
+                Object.values(d.patinFrenoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.patinFrenoReparado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.success, colors.purple];
+        } else if (categoriaFiltrada === 'pulmonFrenoNuevo' || categoriaFiltrada === 'pulmonFrenoReparado') {
+            doughnutLabels = ['Pulmón NUEVO', 'Pulmón REPARADO'];
+            doughnutData = [
+                Object.values(d.pulmonFrenoNuevo).flat().reduce((a,b)=>a+b,0),
+                Object.values(d.pulmonFrenoReparado).flat().reduce((a,b)=>a+b,0)
+            ];
+            doughnutColors = [colors.primary, colors.secondary];
+        } else {
+            const valorFiltrado = Object.values(d[categoriaFiltrada]).flat().reduce((a,b)=>a+b,0);
+            const resto = Object.entries(d).filter(([k]) => k !== categoriaFiltrada)
+                .flatMap(([_, cat]) => Object.values(cat).flat()).reduce((a,b)=>a+b,0);
+            doughnutLabels = [cardLabel(categoriaFiltrada), 'Otras categorías'];
+            doughnutData = [valorFiltrado, resto];
+            doughnutColors = [colors.primary, colors.muted];
+        }
     } else {
-        // Sin filtro de mes: distribución anual
-        const anualTotal = TIPOS.map(t => getTotal(t));
-        doughnutData = anualTotal;
-        doughnutLabels = TIPOS.map(t => LABELS[t]);
-        doughnutColors = ['#ff6b6b','#ff8c42','#4ecdc4','#45b7d1','#96ceb4','#f4d03f','#bdc3c7','#9b59b6','#a569bd','#1abc9c','#3498db','#5dade2','#e74c3c'];
-        doughnutTitle = `🎯 Distribución por Categoría - Año ${año}`;
+        const calc = (data) => Object.values(data).flat().reduce((a,b)=>a+b,0);
+        doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tuerca', 'Neum. N', 'Neum. U', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Pulmón R', 'Llantas'];
+        doughnutData = [
+            calc(d.elasticosO), calc(d.elasticosF), calc(d.mazasN), calc(d.mazasR),
+            calc(d.bulonTuerca), calc(d.neumaticoNuevo), calc(d.neumaticoUsado),
+            calc(d.patinFrenoNuevo), calc(d.patinFrenoReparado), calc(d.levaFreno),
+            calc(d.pulmonFrenoNuevo), calc(d.pulmonFrenoReparado), calc(d.llantas)
+        ];
+        doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple, '#ffd700', colors.teal, '#ff6b6b', '#ffb347', '#4ecdc4', '#45b7d1', '#96ceb4', '#e74c3c'];
     }
-    
-    document.getElementById('chartDoughnutTitle').textContent = doughnutTitle;
-    
+
     if (charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
         type: 'doughnut',
@@ -829,299 +2750,83 @@ function actualizarGraficos() {
             datasets: [{
                 data: doughnutData,
                 backgroundColor: doughnutColors,
-                borderWidth: 2,
-                borderColor: '#0f1f3d',
+                borderWidth: 3,
+                borderColor: isDark ? '#0f1f3d' : '#fff',
                 hoverOffset: 15
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false, animation: { duration: 500 },
             plugins: {
-                legend: {
-                    position: 'right',
-                    labels: { color: textColor, font: { size: 9 }, boxWidth: 10, padding: 6 }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: ctx => {
-                            const v = ctx.parsed || 0;
-                            const total = doughnutData.reduce((a,b) => a + b, 0);
-                            const pct = total > 0 ? ((v/total)*100).toFixed(1) : 0;
-                            return `${ctx.label}: ${v} unidades (${pct}%)`;
+                legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10, weight: '600' }, color: colors.text } },
+                title: { display: true, text: categoriaFiltrada ? '🎯 Comparación de Categoría' : '🎯 Distribución General', color: colors.text, font: { size: 13, weight: '700' } },
+                tooltip: { 
+                    callbacks: { 
+                        label: function(ctx) {
+                            const label = ctx.label || '';
+                            const value = ctx.parsed || 0;
+                            const total = ctx.dataset.data.reduce((a,b) => a + b, 0);
+                            const percent = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                            return `${label}: ${value} unidades (${percent}%)`;
                         }
                     }
                 }
             },
-            cutout: '60%'
+            cutout: '65%'
         }
     });
 }
 
-// ========== ACTUALIZAR VALORES ECONÓMICOS ==========
-function actualizarValores() {
-    const precios = {
-        elasticosO: 0, elasticosF: 0, mazasN: 0, mazasR: 0,
-        bulonTuerca: 0, neumaticoNuevo: 0, neumaticoUsado: 0,
-        patinFrenoNuevo: 0, patinFrenoReparado: 0, levaFreno: 0,
-        pulmonFrenoNuevo: 0, pulmonFrenoReparado: 0, llantas: 0
-    };
-    
-    // Cargar precios de inputs si existen
-    TIPOS.forEach(t => {
-        const inp = document.getElementById('precio_' + t);
-        if (inp) precios[t] = parseFloat(inp.value) || 0;
-    });
-    
-    const tbody = document.getElementById('valuesBody');
-    let html = '';
-    let granTotal = 0;
-    
-    TIPOS.forEach(tipo => {
-        const cant = getTotal(tipo);
-        const precio = precios[tipo];
-        const total = cant * precio;
-        granTotal += total;
-        
-        html += `<tr>
-            <td>${ICONS[tipo]} ${LABELS[tipo]}</td>
-            <td style="text-align:center;font-weight:700;">${cant}</td>
-            <td><input type="number" id="precio_${tipo}" value="${precio}" placeholder="0" onchange="actualizarValores()"></td>
-            <td><input type="text" value="${total > 0 ? formatMoney(total) : ''}" readonly></td>
-        </tr>`;
-    });
-    
-    html += `<tr class="total-general">
-        <td>💰 TOTAL GENERAL</td>
-        <td></td>
-        <td></td>
-        <td><input type="text" value="${formatMoney(granTotal)}" readonly style="font-weight:800;color:var(--green);"></td>
-    </tr>`;
-    
-    tbody.innerHTML = html;
-    
-    // Actualizar label de filtro
-    let filtroText = '';
-    if (cardFiltro && mesFiltro !== null) {
-        filtroText = `| ${LABELS[cardFiltro]} - ${MESES[mesFiltro]} ${año}`;
-    } else if (cardFiltro) {
-        filtroText = `| ${LABELS[cardFiltro]} - Año ${año}`;
-    } else if (mesFiltro !== null) {
-        filtroText = `| ${MESES[mesFiltro]} ${año}`;
-    } else {
-        filtroText = `| Año ${año} - Todas las categorías`;
+function toggleAccordion(accordionId) {
+    const content = document.getElementById(accordionId);
+    const icon = document.getElementById(accordionId.replace('accordion', 'icon'));
+    if(content) {
+        content.classList.toggle('open');
     }
-    document.getElementById('filterLabel').textContent = filtroText;
+    if(icon) {
+        icon.classList.toggle('rotated');
+    }
 }
 
-function formatMoney(v) {
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(v);
-}
-
-// ========== TABLAS EDITABLES ==========
-function generarTablasEditables() {
-    const container = document.getElementById('editTables');
-    let html = '';
-    
-    TIPOS.forEach(tipo => {
-        html += `<h3 onclick="toggleEditTable('${tipo}')">${ICONS[tipo]} ${LABELS[tipo]}</h3>`;
-        html += `<div id="edit_${tipo}" style="overflow-x:auto;margin-bottom:15px;">`;
-        html += `<table><thead><tr><th>Equipo</th>`;
-        MESES.forEach(m => { html += `<th>${m}</th>`; });
-        html += `<th>TOTAL</th></tr></thead><tbody>`;
-        
-        EQUIPOS.forEach(eq => {
-            html += `<tr><td class="team-name">${eq}</td>`;
-            let suma = 0;
-            for (let i = 0; i < 12; i++) {
-                const val = datos[tipo]?.[eq]?.[i] || 0;
-                suma += val;
-                html += `<td><input type="number" min="0" value="${val}" onchange="editarCelda('${tipo}','${eq}',${i},this.value)"></td>`;
-            }
-            html += `<td class="total-row">${suma}</td></tr>`;
-        });
-        
-        // Fila total
-        html += `<tr class="total-row"><td>TOTAL</td>`;
-        let totales = Array(12).fill(0);
-        EQUIPOS.forEach(eq => {
-            for (let i = 0; i < 12; i++) totales[i] += (datos[tipo]?.[eq]?.[i] || 0);
-        });
-        let totalGral = totales.reduce((a,b) => a + b, 0);
-        totales.forEach(t => { html += `<td>${t}</td>`; });
-        html += `<td>${totalGral}</td></tr>`;
-        
-        html += `</tbody></table></div>`;
+function cambiarMes(mesIndex) {
+    mesFiltrado = mesIndex;
+    const btns = document.querySelectorAll('.mes-btn');
+    btns.forEach((btn, idx) => {
+        if(idx === mesIndex) btn.classList.add('active');
+        else btn.classList.remove('active');
     });
     
-    container.innerHTML = html;
-}
-
-function toggleEditTable(tipo) {
-    const el = document.getElementById('edit_' + tipo);
-    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function editarCelda(tipo, equipo, mes, valor) {
-    const val = Math.max(0, parseInt(valor) || 0);
-    if (!datos[tipo]) datos[tipo] = {};
-    if (!datos[tipo][equipo]) datos[tipo][equipo] = Array(12).fill(0);
-    datos[tipo][equipo][mes] = val;
-    
-    guardarCelda(tipo, equipo, mes, val);
-    
-    // Actualizar UI sin reconstruir todo
     actualizarTarjetas();
     actualizarGraficos();
-    actualizarValores();
-}
-
-// ========== FILTROS ==========
-function filtrarMes(mesIdx) {
-    // Toggle: si ya está seleccionado, deseleccionar
-    if (mesFiltro === mesIdx) {
-        mesFiltro = null;
+    calcularEconomico();
+    
+    if (categoriaFiltrada !== null) {
+        mostrarToast(`📅 ${CONFIG.meses[mesIndex]} - Filtrando: ${cardLabel(categoriaFiltrada)}`);
     } else {
-        mesFiltro = mesIdx;
+        mostrarToast(`📅 Filtrando: Mes de ${CONFIG.meses[mesIndex]}`);
     }
-    
-    // Actualizar botones
-    document.querySelectorAll('.mes-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', i === mesFiltro);
-    });
-    
-    actualizarTodo();
-    
-    const msg = mesFiltro !== null ? `📅 ${MESES[mesFiltro]} ${año}` : '📅 Año completo';
-    toast(msg, 'info');
 }
 
 function limpiarFiltroMes() {
-    mesFiltro = null;
+    mesFiltrado = null;
     document.querySelectorAll('.mes-btn').forEach(btn => btn.classList.remove('active'));
-    actualizarTodo();
-    toast('📅 Mostrando año completo', 'info');
-}
-
-function filtrarCard(tipo) {
-    // Toggle: si ya está seleccionada, deseleccionar
-    if (cardFiltro === tipo) {
-        cardFiltro = null;
-    } else {
-        cardFiltro = tipo;
-    }
     
-    // Actualizar tarjetas activas
-    document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-    if (cardFiltro) {
-        const cardEl = document.getElementById('card' + capitalize(tipo));
-        if (cardEl) cardEl.classList.add('active');
-    }
-    
-    actualizarGraficos();
-    actualizarValores();
-    
-    const msg = cardFiltro ? `🔍 Filtrando: ${LABELS[cardFiltro]}` : '📊 Mostrando todas las categorías';
-    toast(msg, 'info');
-}
-
-// ========== ACTUALIZAR TODO ==========
-function actualizarTodo() {
     actualizarTarjetas();
     actualizarGraficos();
-    actualizarValores();
-    if (editing) generarTablasEditables();
-}
-
-// ========== CONTROLES DE EDICIÓN ==========
-function abrirModal() {
-    document.getElementById('modal').classList.add('show');
-    document.getElementById('passInput').value = '';
-    setTimeout(() => document.getElementById('passInput').focus(), 100);
-}
-
-function cerrarModal() {
-    document.getElementById('modal').classList.remove('show');
-}
-
-function verificarPass() {
-    const pass = document.getElementById('passInput').value;
-    if (pass === PASSWORD) {
-        cerrarModal();
-        editing = true;
-        document.body.classList.add('editing');
-        document.getElementById('lockStatus').innerHTML = '🔓 Modo edición';
-        document.getElementById('lockStatus').style.color = 'var(--green)';
-        generarTablasEditables();
-        toast('🔓 Modo edición activado', 'success');
+    calcularEconomico();
+    
+    if (categoriaFiltrada !== null) {
+        mostrarToast(`📅 Mostrando año completo - Filtrando: ${cardLabel(categoriaFiltrada)}`);
     } else {
-        toast('❌ Contraseña incorrecta', 'error');
+        mostrarToast(`📅 Mostrando TOTALES ANUALES`);
     }
 }
 
-async function guardarYBloquear() {
-    editing = false;
-    document.body.classList.remove('editing');
-    document.getElementById('lockStatus').innerHTML = '🔒 Solo lectura';
-    document.getElementById('lockStatus').style.color = 'var(--red)';
-    
-    // Guardar todo en Firebase
-    if (firebaseOK) {
-        try {
-            await db.collection(COL).doc(`datos_${año}`).set({
-                año, datos,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-            toast('☁️ Guardado en la nube', 'success');
-        } catch(e) {
-            console.error(e);
-            toast('❌ Error al guardar', 'error');
-        }
-    }
-}
+window.onbeforeprint = function() {
+    document.getElementById('printDate').textContent = new Date().toLocaleString('es-AR');
+};
 
-function cambiarAnio() {
-    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
-    año = parseInt(document.getElementById('yearSelect').value);
-    mesFiltro = null;
-    cardFiltro = null;
-    document.querySelectorAll('.mes-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-    
-    // Cargar datos del nuevo año
-    if (firebaseOK) {
-        db.collection(COL).doc(`datos_${año}`).get().then(doc => {
-            if (doc.exists) {
-                datos = doc.data().datos || crearEstructuraVacia();
-            } else {
-                datos = crearEstructuraVacia();
-            }
-            iniciarEscucha();
-            actualizarTodo();
-        });
-    }
-    toast(` Año ${año}`, 'info');
-}
-
-// ========== TOAST ==========
-function toast(msg, type = 'success') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = 'toast show ' + type;
-    setTimeout(() => { t.className = 'toast'; }, 2500);
-}
-
-// ========== INICIAR ==========
 document.addEventListener('DOMContentLoaded', init);
-
-// Enter en modal
-document.getElementById('passInput').addEventListener('keypress', e => {
-    if (e.key === 'Enter') verificarPass();
-});
-
-// Limpiar escucha al cerrar
-window.addEventListener('beforeunload', () => {
-    if (unsubscribe) unsubscribe();
-});
 </script>
 </body>
 </html>
