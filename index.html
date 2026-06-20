@@ -191,12 +191,6 @@ color: #00d4ff;
 min-width: 140px;
 padding: 8px !important;
 }
-.turno-grid {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 4px;
-align-items: start;
-}
 .turno-box {
 background: #f1f5f9;
 border-radius: 8px;
@@ -229,10 +223,6 @@ font-weight: 700;
 text-transform: uppercase;
 margin-bottom: 3px;
 opacity: 0.9;
-}
-.turno-horas {
-font-size: 0.9rem;
-font-weight: 800;
 }
 .turno-motivo {
 font-size: 0.65rem;
@@ -1630,7 +1620,6 @@ Informe Gerencial MINERAR • Confidencial • Generado: <span id="printDate"></
 </div>
 <div id="toast" class="toast">✅ Listo</div>
 <script>
-// ===== CONFIGURACIÓN =====
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -1646,7 +1635,6 @@ const COLECCION = "repuestos_minerar";
 let firebaseOK = true;
 
 const CONFIG = {
-    // ✅ CORRECCIÓN 1: Agregado "M443" a la lista de equipos
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
     meses: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
     passwordAdmin: "abrir",
@@ -1677,11 +1665,9 @@ CONFIG.equipos.forEach(eq => {
     };
 });
 
-// ===== DATOS INICIALES =====
 const datosIncrustados = {
     elasticosO: {
         "M442": [2, 1, 0, 3, 2, 1, 0, 2, 1, 0, 1, 2],
-        // ✅ CORRECCIÓN 1: Agregado M443
         "M443": Array(12).fill(0),
         "M444": [0, 1, 2, 0, 1, 0, 2, 1, 0, 1, 0, 1],
         "M445": [1, 0, 2, 1, 2, 0, 1, 0, 2, 1, 0, 0],
@@ -1699,7 +1685,7 @@ const datosIncrustados = {
     elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     mazasN: {
         "M442": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        "M443": Array(12).fill(0), // ✅ Agregado M443
+        "M443": Array(12).fill(0),
         "M444": [0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
         "M445": [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0],
         "M446": [0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0],
@@ -1716,7 +1702,7 @@ const datosIncrustados = {
     mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     bulonTuerca: {
         "M442": [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        "M443": Array(12).fill(0), // ✅ Agregado M443
+        "M443": Array(12).fill(0),
         "M444": [10, 20, 10, 30, 20, 0, 0, 0, 0, 0, 0, 0],
         "M445": [0, 0, 3, 10, 20, 0, 0, 0, 0, 0, 0, 0],
         "M446": [2, 2, 10, 12, 12, 0, 0, 0, 0, 0, 0, 0],
@@ -1755,7 +1741,7 @@ function cardLabel(categoria) {
 }
 
 async function init() {
-    console.log("🔄 Iniciando app con correcciones (M443 + Gráficos + Excel)...");
+    console.log("🔄 Iniciando app...");
     if (firebaseOK) {
         try {
             const doc = await db.collection(COLECCION).doc(`datos_${añoActual}`).get();
@@ -1790,7 +1776,19 @@ async function init() {
                         }
                     });
                 }
-                // ... (carga de precios y horas) ...
+                if (data.precios) {
+                    for (let key in data.precios) {
+                        let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                        let el = document.getElementById(elId);
+                        if (el && data.precios[key] !== undefined) el.value = data.precios[key];
+                    }
+                }
+                if (data.horas) {
+                    for (let key in data.horas) {
+                        let el = document.getElementById(key);
+                        if (el && data.horas[key] !== undefined) el.value = data.horas[key];
+                    }
+                }
                 document.getElementById("yearSelect").value = añoActual;
                 document.getElementById("lastUpdate").textContent = data.ultimaActualizacion?.toDate?.().toLocaleString() || new Date().toLocaleString();
                 actualizarTodo();
@@ -1803,7 +1801,6 @@ async function init() {
             firebaseOK = false;
         }
     }
-
     const guardado = localStorage.getItem(CONFIG.storageKey);
     if (guardado) {
         try {
@@ -1814,15 +1811,26 @@ async function init() {
             [2024, 2025, 2026, 2027, 2028].forEach(año => {
                 if (!escaleraPorAnio[año]) escaleraPorAnio[año] = JSON.parse(JSON.stringify(escaleraInicial));
             });
-            // ... (carga local) ...
+            if (data.precios) {
+                for (let key in data.precios) {
+                    let elId = key === 'llanta' ? 'precioLlanta' : `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                    let el = document.getElementById(elId);
+                    if (el) el.value = data.precios[key];
+                }
+            }
+            if (data.horas) {
+                for (let key in data.horas) {
+                    let el = document.getElementById(key);
+                    if (el) el.value = data.horas[key];
+                }
+            }
+            mostrarToast("💾 Datos cargados localmente");
         } catch (e) { console.error(e); }
     }
-
     [2024, 2025, 2026, 2027, 2028].forEach(año => {
         if (!datosPorAnio[año]) datosPorAnio[año] = crearEstructuraVacia();
         if (!escaleraPorAnio[año]) escaleraPorAnio[año] = JSON.parse(JSON.stringify(escaleraInicial));
     });
-
     if (!datosPorAnio[2026].elasticosO.M442 || datosPorAnio[2026].elasticosO.M442.every(v => v === 0)) {
         datosPorAnio[2026] = JSON.parse(JSON.stringify(datosIncrustados));
     }
@@ -1856,7 +1864,7 @@ function generarEscalera() {
                         <option value="operativo" ${dato.estado === 'operativo' ? 'selected' : ''}>✅ Op</option>
                         <option value="parado" ${dato.estado === 'parado' ? 'selected' : ''}>⏸️ Par</option>
                         <option value="mantenimiento" ${dato.estado === 'mantenimiento' ? 'selected' : ''}>🔧 Mant</option>
-                    </select>` : `<div class="turno-motivo">${dato.estado === 'operativo' ? '✅' : dato.estado === 'parado' ? '️' : '🔧'}</div>`}
+                    </select>` : `<div class="turno-motivo">${dato.estado === 'operativo' ? '✅' : dato.estado === 'parado' ? '⏸️' : '🔧'}</div>`}
                     ${modoEdicionActivo ? `<input type="text" class="escalera-input"
                         data-eq="${eq}" data-turno="${turno.id}" data-field="motivo"
                         value="${dato.motivo}" placeholder="Motivo..." ${readonly} style="margin-top:4px;font-size:0.65rem">` : ''}
@@ -1891,30 +1899,85 @@ function handleEscaleraChange(input) {
 
 async function guardarEnFirebase() {
     if (!firebaseOK) return false;
-    // ... (lógica de guardado Firebase) ...
+    const data = {
+        añoActual, datosPorAnio, escaleraPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        },
+        ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
+    };
     try {
-        // Simplificado para brevedad, mantiene la estructura original
-        await db.collection(COLECCION).doc(`datos_${añoActual}`).set({
-            añoActual, datosPorAnio, escaleraPorAnio,
-            precios: {}, horas: {},
-            ultimaActualizacion: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
+        await db.collection(COLECCION).doc(`datos_${añoActual}`).set(data, { merge: true });
         return true;
     } catch (e) {
+        console.error("❌ Error guardando en Firebase:", e);
         firebaseOK = false;
         return false;
     }
 }
 
 function guardarEnLocalStorage() {
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify({
-        añoActual, datosPorAnio, escaleraPorAnio
-    }));
+    const data = {
+        añoActual, datosPorAnio, escaleraPorAnio,
+        precios: {
+            elasticoO: document.getElementById("precioElasticoO").value,
+            elasticoF: document.getElementById("precioElasticoF").value,
+            mazaN: document.getElementById("precioMazaN").value,
+            mazaR: document.getElementById("precioMazaR").value,
+            bulon: document.getElementById("precioBulon").value,
+            tuerca: document.getElementById("precioTuerca").value,
+            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
+            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
+            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
+            levaFreno: document.getElementById("precioLevaFreno").value,
+            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
+            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
+            llanta: document.getElementById("precioLlanta").value
+        },
+        horas: {
+            horasPropio: document.getElementById("horasPropio").value,
+            valorHoraPropio: document.getElementById("valorHoraPropio").value,
+            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
+            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
+            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
+            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
+            horasCarrizo: document.getElementById("horasCarrizo").value,
+            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
+            horasPatino: document.getElementById("horasPatino").value,
+            valorHoraPatino: document.getElementById("valorHoraPatino").value
+        }
+    };
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify(data));
 }
 
 async function guardarTodosLosDatos(event) {
     const guardadoFirebase = firebaseOK ? await guardarEnFirebase() : false;
     if (!guardadoFirebase) guardarEnLocalStorage();
+    document.getElementById("lastUpdate").textContent = new Date().toLocaleString();
     if (event && event.type) {
         mostrarToast(guardadoFirebase ? "☁️ Sincronizado en la nube" : "💾 Guardado localmente");
     }
@@ -1967,6 +2030,10 @@ function verificarPassword() {
         document.body.classList.add('editing-mode');
         document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición activo';
         document.getElementById('lock-indicator').style.color = 'var(--success)';
+        document.querySelectorAll('.cell-input').forEach(input => {
+            input.removeAttribute('readonly');
+            input.style.background = '#fffef7';
+        });
         generarEscalera();
         actualizarTodo();
         mostrarToast("🔓 Bienvenido - Modo edición activado + Escalera visible");
@@ -1982,6 +2049,10 @@ function guardarYBloquear() {
     document.body.classList.add('read-only-mode');
     document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
     document.getElementById('lock-indicator').style.color = 'var(--danger)';
+    document.querySelectorAll('.cell-input').forEach(input => {
+        input.setAttribute('readonly', true);
+        input.style.background = '#f8f9fa';
+    });
     generarEscalera();
     actualizarTodo();
     mostrarToast("💾 Guardado y bloqueado - Escalera oculta");
@@ -2012,7 +2083,6 @@ function generarTabla(datos, tbodyId, tipo) {
         fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
         tbody.insertAdjacentHTML("beforeend", fila);
     });
-    // Fila de totales...
     let totales = Array(12).fill(0);
     CONFIG.equipos.forEach(eq => {
         if (datos[eq]) for (let i = 0; i < 12; i++) totales[i] += datos[eq][i] || 0;
@@ -2022,7 +2092,6 @@ function generarTabla(datos, tbodyId, tipo) {
     totales.forEach(t => row += `<td><strong>${t}</strong></td>`);
     row += `<td><strong>${totalGral}</strong></td></tr>`;
     tbody.insertAdjacentHTML("beforeend", row);
-
     document.querySelectorAll('.cell-input').forEach(inp => {
         inp.onchange = () => handleCellChange(inp);
     });
@@ -2147,7 +2216,6 @@ function calcularEconomico() {
     document.getElementById("cantPulmonFrenoNuevo").textContent = cant.pulmonFrenoNuevo;
     document.getElementById("cantPulmonFrenoReparado").textContent = cant.pulmonFrenoReparado;
     document.getElementById("cantLlantas").textContent = cant.llantas;
-
     const filterIndicator = document.getElementById("filterIndicator");
     if (categoriaFiltrada !== null && mesFiltrado !== null) {
         filterIndicator.textContent = `📌 Filtro: ${cardLabel(categoriaFiltrada)} - ${CONFIG.meses[mesFiltrado]}`;
@@ -2158,8 +2226,6 @@ function calcularEconomico() {
     } else {
         filterIndicator.textContent = `📌 Año completo - TOTALES ANUALES`;
     }
-    
-    // ... (cálculos de precios y totales económicos, mantenidos igual que original) ...
     const prec = {
         elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
         elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
@@ -2189,7 +2255,6 @@ function calcularEconomico() {
     setVal("totalPulmonFrenoNuevo", cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo);
     setVal("totalPulmonFrenoReparado", cant.pulmonFrenoReparado * prec.pulmonFrenoReparado);
     setVal("totalLlanta", cant.llantas * prec.llanta);
-
     const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
     const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
     const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
@@ -2203,7 +2268,6 @@ function calcularEconomico() {
         (cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo) + (cant.pulmonFrenoReparado * prec.pulmonFrenoReparado) +
         (cant.llantas * prec.llanta);
     const totalGral = totalRep + totalMO;
-
     document.getElementById("totalPropio").value = hPropio ? formatMoney(hPropio) : "";
     document.getElementById("totalCoriaMecanico").value = hCoriaM ? formatMoney(hCoriaM) : "";
     document.getElementById("totalCoriaSoldador").value = hCoriaS ? formatMoney(hCoriaS) : "";
@@ -2238,9 +2302,8 @@ function exportarCSV() {
         });
     });
     csv += "\n";
-
     const categoriasCSV = [
-        { key: 'elasticosO', title: ' PAQUETES ELÁSTICOS ORIGINALES' },
+        { key: 'elasticosO', title: '📦 PAQUETES ELÁSTICOS ORIGINALES' },
         { key: 'elasticosF', title: '📦 PAQUETES ELÁSTICOS FABRICADOS' },
         { key: 'mazasN', title: '⚙️ MAZAS NUEVAS' },
         { key: 'mazasR', title: '⚙️ MAZAS REPARADAS' },
@@ -2249,12 +2312,11 @@ function exportarCSV() {
         { key: 'neumaticoUsado', title: '🛞 NEUMÁTICO USADO (SOLO CONSUMO)' },
         { key: 'patinFrenoNuevo', title: '🛞 PATÍN DE FRENO NUEVO' },
         { key: 'patinFrenoReparado', title: '🛞 PATÍN DE FRENO REPARADO' },
-        { key: 'levaFreno', title: '️ LEVA DE FRENO' },
+        { key: 'levaFreno', title: '⚙️ LEVA DE FRENO' },
         { key: 'pulmonFrenoNuevo', title: '💨 PULMÓN DE FRENO NUEVO' },
         { key: 'pulmonFrenoReparado', title: '💨 PULMÓN DE FRENO REPARADO' },
         { key: 'llantas', title: '⭕ LLANTAS ROTAS' }
     ];
-
     categoriasCSV.forEach(cat => {
         csv += "═══════════════════════════════════════════════════════\n";
         csv += cat.title + "\n";
@@ -2262,7 +2324,6 @@ function exportarCSV() {
         if (mesFiltrado !== null) {
             csv += `Equipo;${CONFIG.meses[mesFiltrado]};TOTAL\n`;
             CONFIG.equipos.forEach(eq => {
-                // ✅ CORRECCIÓN 3: Aseguramos valor 0 si es undefined
                 let val = d[cat.key][eq][mesFiltrado] || 0;
                 csv += `${eq};${val};${val}\n`;
             });
@@ -2272,7 +2333,6 @@ function exportarCSV() {
                 let row = `${eq};`;
                 let total = 0;
                 for (let i = 0; i < 12; i++) {
-                    // ✅ CORRECCIÓN 3: Aseguramos valor 0 si es undefined
                     let val = d[cat.key][eq][i] || 0;
                     row += `${val};`;
                     total += val;
@@ -2282,7 +2342,6 @@ function exportarCSV() {
         }
         csv += "\n";
     });
-    // ... (resto del CSV económico, mantenido igual) ...
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "💰 RESUMEN ECONÓMICO\n";
     csv += "═══════════════════════════════════════════════════════\n";
@@ -2332,7 +2391,6 @@ function exportarCSV() {
     csv += `Pulmón Freno Nuevo;${cant.pulmonFrenoNuevo};${prec.pulmonFrenoNuevo};${formatMoneySimple(parseInt(cant.pulmonFrenoNuevo) * parseFloat(prec.pulmonFrenoNuevo))}\n`;
     csv += `Pulmón Freno Reparado;${cant.pulmonFrenoReparado};${prec.pulmonFrenoReparado};${formatMoneySimple(parseInt(cant.pulmonFrenoReparado) * parseFloat(prec.pulmonFrenoReparado))}\n`;
     csv += `Llantas Rotas;${cant.llantas};${prec.llanta};${formatMoneySimple(parseInt(cant.llantas) * parseFloat(prec.llanta))}\n`;
-
     csv += `\n`;
     csv += "═══════════════════════════════════════════════════════\n";
     csv += "👷 HORAS HOMBRE\n";
@@ -2345,7 +2403,6 @@ function exportarCSV() {
     csv += `PATIÑO - Soldador;${document.getElementById("horasPatino").value || 0};${document.getElementById("valorHoraPatino").value || 0};${document.getElementById("totalPatino").value || 0}\n`;
     csv += `TOTAL MANO DE OBRA;;;${document.getElementById("totalManoObra").value || 0}\n`;
     csv += `TOTAL GENERAL;;;${document.getElementById("totalGeneral").value || 0}\n`;
-
     const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -2421,7 +2478,7 @@ function importarCSV(event) {
                 guardarTodosLosDatos();
                 mostrarToast(`✅ Importados ${filasProcesadas} registros exitosamente`);
             } else {
-                mostrarToast("️ No se encontraron datos válidos en el archivo", true);
+                mostrarToast("⚠️ No se encontraron datos válidos en el archivo", true);
             }
         } catch (err) {
             console.error(err);
@@ -2496,9 +2553,9 @@ function filtrarGrafico(categoria) {
         card.style.transform = 'scale(1.07)';
         const label = card.querySelector('.stat-label').innerText;
         if (mesFiltrado !== null) {
-            mostrarToast(` Filtrando: ${label} - Mes de ${CONFIG.meses[mesFiltrado]}`);
+            mostrarToast(`🔍 Filtrando: ${label} - Mes de ${CONFIG.meses[mesFiltrado]}`);
         } else {
-            mostrarToast(` Filtrando: ${label} (Año completo)`);
+            mostrarToast(`🔍 Filtrando: ${label} (Año completo)`);
         }
     }
     setTimeout(() => {
@@ -2519,9 +2576,9 @@ function actualizarGraficos() {
         purple: isDark ? 'rgba(168, 85, 247, 0.9)' : 'rgba(153, 102, 255, 0.9)',
         grid: isDark ? 'rgba(0, 212, 255, 0.15)' : 'rgba(0,0,0,0.06)',
         text: isDark ? '#e0f2fe' : '#2c3e50',
-        muted: isDark ? 'rgba(125, 211, 252, 0.5)' : 'rgba(127, 140, 141, 0.7)'
+        muted: isDark ? 'rgba(125, 211, 252, 0.5)' : 'rgba(127, 140, 141, 0.7)',
+        teal: isDark ? 'rgba(20, 184, 166, 0.9)' : 'rgba(26, 188, 155, 0.9)'
     };
-
     let lineData, lineLabel;
     if (categoriaFiltrada) {
         const datosFiltrados = Array(12).fill(0);
@@ -2531,15 +2588,37 @@ function actualizarGraficos() {
             }
         });
         let datosComparacion = null;
-        // ... (lógica de comparación mantenida) ...
         if (categoriaFiltrada.includes('elasticos')) {
             const otra = categoriaFiltrada === 'elasticosO' ? 'elasticosF' : 'elasticosO';
             datosComparacion = Array(12).fill(0);
             CONFIG.equipos.forEach(eq => {
                 for (let i = 0; i < 12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
             });
+        } else if (categoriaFiltrada.includes('mazas')) {
+            const otra = categoriaFiltrada === 'mazasN' ? 'mazasR' : 'mazasN';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('neumatico')) {
+            const otra = categoriaFiltrada === 'neumaticoNuevo' ? 'neumaticoUsado' : 'neumaticoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('patinFreno')) {
+            const otra = categoriaFiltrada === 'patinFrenoNuevo' ? 'patinFrenoReparado' : 'patinFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
+        } else if (categoriaFiltrada.includes('pulmonFreno')) {
+            const otra = categoriaFiltrada === 'pulmonFrenoNuevo' ? 'pulmonFrenoReparado' : 'pulmonFrenoNuevo';
+            datosComparacion = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) datosComparacion[i] += d[otra][eq][i] || 0;
+            });
         }
-        
         lineData = [{
             label: cardLabel(categoriaFiltrada),
             data: datosFiltrados,
@@ -2583,7 +2662,6 @@ function actualizarGraficos() {
         }];
         lineLabel = '📈 Consumo Total - Evolución Mensual';
     }
-
     if (charts.line) charts.line.destroy();
     charts.line = new Chart(document.getElementById('chartLine'), {
         type: 'line',
@@ -2611,8 +2689,6 @@ function actualizarGraficos() {
             }
         }
     });
-
-    // ✅ CORRECCIÓN 2: Mostrar TODOS los equipos, no solo Top 5
     let barLabels = [], barData = [], barColors = [];
     if (categoriaFiltrada) {
         const porEquipo = {};
@@ -2621,7 +2697,6 @@ function actualizarGraficos() {
                 ? (d[categoriaFiltrada][eq]?.[mesFiltrado] || 0)
                 : (d[categoriaFiltrada][eq]?.reduce((a, b) => a + b, 0) || 0);
         });
-        // ✅ Mostrar todos los equipos ordenados por consumo (sin límite de 5)
         const todosEquipos = Object.entries(porEquipo).sort((a, b) => b[1] - a[1]);
         barLabels = todosEquipos.map(e => e[0]);
         barData = todosEquipos.map(e => e[1]);
@@ -2634,14 +2709,12 @@ function actualizarGraficos() {
                 ? Object.values(d).flatMap(cat => cat[eq] || [])[mesFiltrado] || 0
                 : Object.values(d).flatMap(cat => cat[eq] || []).reduce((a, b) => a + b, 0);
         });
-        // ✅ Mostrar todos los equipos ordenados por consumo (sin límite de 5)
         const todosEquipos = Object.entries(porEquipo).sort((a, b) => b[1] - a[1]);
         barLabels = todosEquipos.map(e => e[0]);
         barData = todosEquipos.map(e => e[1]);
         const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary, '#ffd700', colors.teal, '#ff6b6b', '#ffb347', '#4ecdc4', '#45b7d1', '#96ceb4', '#e74c3c', '#34495e'];
         barColors = barLabels.map((_, i) => palette[i % palette.length]);
     }
-
     if (charts.bar) charts.bar.destroy();
     charts.bar = new Chart(document.getElementById('chartBar'), {
         type: 'bar',
@@ -2651,7 +2724,7 @@ function actualizarGraficos() {
                 label: categoriaFiltrada ? cardLabel(categoriaFiltrada) : 'Consumo Total',
                 data: barData,
                 backgroundColor: barColors,
-                borderColor: barColors.map(c => c.replace(/[\d.]+\)$/, '1)')),
+                borderColor: barColors.map(c => typeof c === 'string' ? c.replace(/[\d.]+\)$/, '1)') : c),
                 borderWidth: 2,
                 borderRadius: 8
             }]
@@ -2679,7 +2752,6 @@ function actualizarGraficos() {
             }
         }
     });
-
     let doughnutLabels = [], doughnutData = [], doughnutColors = [];
     if (categoriaFiltrada) {
         if (categoriaFiltrada === 'elasticosO' || categoriaFiltrada === 'elasticosF') {
@@ -2736,7 +2808,6 @@ function actualizarGraficos() {
         ];
         doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple, '#ffd700', colors.teal, '#ff6b6b', '#ffb347', '#4ecdc4', '#45b7d1', '#96ceb4', '#e74c3c'];
     }
-
     if (charts.doughnut) charts.doughnut.destroy();
     charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
         type: 'doughnut',
@@ -2754,7 +2825,7 @@ function actualizarGraficos() {
             responsive: true, maintainAspectRatio: false, animation: { duration: 500 },
             plugins: {
                 legend: { position: 'right', labels: { boxWidth: 12, font: { size: 10, weight: '600' }, color: colors.text } },
-                title: { display: true, text: categoriaFiltrada ? '🎯 Comparación de Categoría' : ' Distribución General', color: colors.text, font: { size: 13, weight: '700' } },
+                title: { display: true, text: categoriaFiltrada ? '🎯 Comparación de Categoría' : '🎯 Distribución General', color: colors.text, font: { size: 13, weight: '700' } },
                 tooltip: {
                     callbacks: {
                         label: function (ctx) {
