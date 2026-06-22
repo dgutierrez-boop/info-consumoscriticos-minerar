@@ -10,12 +10,227 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ===== MODO OSCURO ===== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 16px;
     min-height: 100vh;
+    transition: all 0.4s ease;
 }
+
+body.dark-mode {
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
+}
+
+body.dark-mode .top-bar {
+    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .top-bar .logo {
+    background: linear-gradient(135deg, #38B6B2, #4ECDC4) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.dark-mode .btn-outline {
+    background: #2a2a4a !important;
+    color: #e0e0e0 !important;
+    border-color: #4a4a6a !important;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #3a3a5a !important;
+}
+
+body.dark-mode .report-container {
+    background: #1a1a2e !important;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.5) !important;
+}
+
+body.dark-mode .filters-sticky {
+    background: #1a1a2e !important;
+    border-bottom-color: #38B6B2 !important;
+}
+
+body.dark-mode .filtro-meses {
+    background: rgba(56, 182, 178, 0.15) !important;
+    border-color: #38B6B2 !important;
+}
+
+body.dark-mode .filtro-meses h3 {
+    color: #4ECDC4 !important;
+}
+
+body.dark-mode .mes-btn {
+    border-color: #4ECDC4 !important;
+    color: #4ECDC4 !important;
+}
+
+body.dark-mode .mes-btn:hover,
+body.dark-mode .mes-btn.active {
+    background: #38B6B2 !important;
+    color: white !important;
+}
+
+body.dark-mode .btn-ver-todo {
+    border-color: #4ECDC4 !important;
+    color: #4ECDC4 !important;
+}
+
+body.dark-mode .btn-ver-todo.active {
+    background: #38B6B2 !important;
+    color: white !important;
+}
+
+body.dark-mode .alert {
+    background: linear-gradient(135deg, #1a3a2a, #1a2a3a) !important;
+    border-left-color: #4ECDC4 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .cards-sticky {
+    background: #1a1a2e !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .selection-info {
+    background: rgba(56, 182, 178, 0.15) !important;
+    border-color: #38B6B2 !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .chart-card {
+    background: #1a1a2e !important;
+    border-color: rgba(56, 182, 178, 0.3) !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+}
+
+body.dark-mode .chart-card h4 {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-section {
+    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
+}
+
+body.dark-mode .values-section h3 {
+    color: #4ECDC4 !important;
+}
+
+body.dark-mode .values-section h4 {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-table {
+    background: #1a1a2e !important;
+}
+
+body.dark-mode .values-table th {
+    background: linear-gradient(135deg, #1a2a3e, #2a3a4e) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-table td {
+    border-bottom-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-table input[readonly] {
+    background: #2a2a4a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-table input {
+    background: #1a1a2e !important;
+    border-color: #4a4a6a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .grand-total {
+    background: linear-gradient(135deg, #c0392b, #e74c3c) !important;
+}
+
+body.dark-mode .accordion-header {
+    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode table {
+    background: #1a1a2e !important;
+    border-color: #2a2a4a !important;
+}
+
+body.dark-mode th {
+    background: linear-gradient(135deg, #2a3a4e, #1a2a3e) !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode td {
+    border-bottom-color: #2a2a4a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .equipo-col {
+    background: #2a2a4a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .editable-cell {
+    background: #1a1a2e !important;
+}
+
+body.dark-mode .editable-cell input {
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .total-row {
+    background: linear-gradient(135deg, #1a3a4e, #2a4a5e) !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .security-modal {
+    background: #1a1a2e !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .security-modal input {
+    background: #2a2a4a !important;
+    border-color: #4a4a6a !important;
+    color: #e0e0e0 !important;
+}
+
+body.dark-mode .values-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-track {
+    background: #1a1a2e;
+    border-radius: 4px;
+}
+
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb {
+    background: #4a4a6a;
+    border-radius: 4px;
+}
+
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #5a5a7a;
+}
+
+body.dark-mode .floating-controls #unlock-btn {
+    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
+    border: 2px solid #4ECDC4 !important;
+}
+
+body.dark-mode .floating-controls #save-lock-btn {
+    background: linear-gradient(135deg, #1a4a2a, #2a5a3a) !important;
+    border: 2px solid #4ECDC4 !important;
+}
+
+/* ===== FIN MODO OSCURO ===== */
 
 body.read-only-mode .editing-only {
     display: none !important;
@@ -36,6 +251,7 @@ body.editing-mode .editing-only {
     margin-bottom: 24px;
     flex-wrap: wrap;
     gap: 12px;
+    transition: all 0.4s ease;
 }
 
 .logo {
@@ -44,6 +260,7 @@ body.editing-mode .editing-only {
     background: linear-gradient(135deg, #2c3e50, #e67e22);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    transition: all 0.4s ease;
 }
 
 .controls { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -67,23 +284,47 @@ body.editing-mode .editing-only {
 .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
 .btn-outline { background: #ecf0f1; color: #2c3e50; border: 2px solid #bdc3c7; }
 
-/* 2. LAYOUT - Ajustar para la columna más ancha */
+/* Botón Modo Oscuro */
+.btn-dark-mode {
+    background: linear-gradient(135deg, #2c3e50, #1a252f);
+    color: white;
+    border: 2px solid #34495e;
+    font-size: 1.1rem;
+}
+
+.btn-dark-mode:hover {
+    background: linear-gradient(135deg, #1a252f, #0d1a2a);
+    transform: translateY(-3px) scale(1.05);
+}
+
+body.dark-mode .btn-dark-mode {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    border-color: #f39c12;
+}
+
+body.dark-mode .btn-dark-mode:hover {
+    background: linear-gradient(135deg, #e67e22, #d35400);
+}
+
+/* =============================================== */
+/* 2. LAYOUT - Columna izquierda más ancha (500px) */
+/* =============================================== */
 .main-layout {
     display: grid;
-    grid-template-columns: 450px 1fr; /* ENSANCHADO */
+    grid-template-columns: 500px 1fr; /* ENSANCHADO a 500px */
     gap: 24px;
-    max-width: 1900px; /* Un poco más ancho también */
+    max-width: 2000px; /* Un poco más ancho */
     margin: 0 auto;
 }
 
-/* 1. COLUMNA IZQUIERDA - Más ancha (de 380px a 450px) */
+/* 1. COLUMNA IZQUIERDA - 500px de ancho */
 .values-sidebar {
     position: sticky;
     top: 20px;
     height: fit-content;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
-    width: 450px; /* ENSANCHADO */
+    width: 500px; /* ENSANCHADO a 500px */
 }
 
 .values-section {
@@ -91,6 +332,7 @@ body.editing-mode .editing-only {
     padding: 20px;
     border-radius: 20px;
     box-shadow: 0 15px 50px rgba(0,0,0,0.2);
+    transition: all 0.4s ease;
 }
 
 .values-section h3 {
@@ -101,22 +343,38 @@ body.editing-mode .editing-only {
     text-align: center;
 }
 
-/* 6. TABLA DE VALORES - Ajustar para el ancho mayor Y NO CORTAR */
+.values-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.values-table-wrapper::-webkit-scrollbar {
+    height: 8px;
+}
+
+.values-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+}
+
+.values-table-wrapper::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+.values-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.5);
+}
+
 .values-table {
     width: 100%;
     background: white;
     border-radius: 12px;
     overflow: hidden;
     font-size: 0.8rem;
-    table-layout: fixed; /* Para que no se desborde */
-    min-width: 400px; /* Ancho mínimo para no cortar */
-}
-
-/* CONTENEDOR DE LA TABLA CON SCROLL HORIZONTAL */
-.values-table-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    -webkit-overflow-scrolling: touch;
+    table-layout: fixed;
+    min-width: 450px; /* Aumentado para que no se comprima */
 }
 
 .values-table th,
@@ -128,31 +386,30 @@ body.editing-mode .editing-only {
     font-size: 0.75rem;
 }
 
-/* Primera columna más ancha para los nombres */
+/* Ajuste de columnas para mejor visualización */
 .values-table th:first-child,
 .values-table td:first-child {
-    width: 32%;
+    width: 30%;
     padding-left: 8px;
-    min-width: 90px;
+    min-width: 100px;
 }
 
-/* Columnas de cantidad, valor y total con ancho fijo */
 .values-table th:nth-child(2),
 .values-table td:nth-child(2) {
-    width: 18%;
+    width: 15%;
     min-width: 45px;
 }
 
 .values-table th:nth-child(3),
 .values-table td:nth-child(3) {
-    width: 25%;
-    min-width: 70px;
+    width: 27%;
+    min-width: 80px;
 }
 
 .values-table th:nth-child(4),
 .values-table td:nth-child(4) {
-    width: 25%;
-    min-width: 70px;
+    width: 28%;
+    min-width: 80px;
 }
 
 .values-table th {
@@ -187,7 +444,7 @@ body.editing-mode .editing-only {
     font-weight: 800 !important;
 }
 
-/* COLUMNA DERECHA - CONTENIDO PRINCIPAL */
+/* COLUMNA DERECHA */
 .content-area {
     display: flex;
     flex-direction: column;
@@ -199,6 +456,7 @@ body.editing-mode .editing-only {
     border-radius: 16px;
     box-shadow: 0 15px 50px rgba(0,0,0,0.2);
     padding: 24px;
+    transition: all 0.4s ease;
 }
 
 /* FILTROS STICKY */
@@ -210,6 +468,7 @@ body.editing-mode .editing-only {
     padding: 16px 0;
     border-bottom: 3px solid #38B6B2;
     margin-bottom: 24px;
+    transition: all 0.4s ease;
 }
 
 .filtro-meses {
@@ -229,7 +488,6 @@ body.editing-mode .editing-only {
     font-weight: 600;
 }
 
-/* 4. BOTÓN "VER TODO EL AÑO" - Estilo cuando está activo */
 .btn-ver-todo.active {
     background: #38B6B2 !important;
     color: white !important;
@@ -238,12 +496,8 @@ body.editing-mode .editing-only {
 }
 
 @keyframes pulse-button {
-    0%, 100% { 
-        box-shadow: 0 0 20px rgba(56, 182, 178, 0.6);
-    }
-    50% { 
-        box-shadow: 0 0 30px rgba(56, 182, 178, 0.9);
-    }
+    0%, 100% { box-shadow: 0 0 20px rgba(56, 182, 178, 0.6); }
+    50% { box-shadow: 0 0 30px rgba(56, 182, 178, 0.9); }
 }
 
 .mes-btn {
@@ -262,7 +516,6 @@ body.editing-mode .editing-only {
     color: white;
 }
 
-/* 5. BOTONES DE MES - Mejor visualización activa */
 .mes-btn.active {
     background: #38B6B2 !important;
     color: white !important;
@@ -345,7 +598,6 @@ body.editing-mode .editing-only {
     box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-/* 3. TARJETAS SELECCIONADAS - Efecto "hundido" mucho más NOTORIO */
 .stat-card.selected {
     border: 4px solid #FFFFFF !important;
     box-shadow: 
@@ -359,7 +611,6 @@ body.editing-mode .editing-only {
     animation: pulse-selected 2s ease-in-out infinite;
 }
 
-/* Efecto de "presionado" adicional con pseudo-elemento */
 .stat-card.selected::after {
     content: '✓';
     position: absolute;
@@ -612,7 +863,7 @@ body.editing-mode #save-lock-btn { display: flex; }
     color: white;
 }
 
-/* 7. RESPONSIVE - Ajustar para móviles */
+/* RESPONSIVE */
 @media (max-width: 1200px) {
     .main-layout {
         grid-template-columns: 1fr;
@@ -635,6 +886,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="top-bar">
 <div class="logo">⛏️ MINERAR | Scania G500</div>
 <div class="controls">
+<button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
 <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
 <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
 <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
@@ -645,11 +897,10 @@ body.editing-mode #save-lock-btn { display: flex; }
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
 
 <div class="main-layout">
-    <!-- COLUMNA IZQUIERDA - VALORES ECONÓMICOS (STICKY) -->
+    <!-- COLUMNA IZQUIERDA - VALORES ECONÓMICOS (STICKY) 500px -->
     <div class="values-sidebar">
         <div class="values-section">
             <h3>💰 VALORES ECONÓMICOS <span id="filterIndicator" class="filter-badge"></span></h3>
-            <!-- WRAPPER CON SCROLL HORIZONTAL -->
             <div class="values-table-wrapper">
                 <table class="values-table">
                     <thead><tr><th>Concepto</th><th>Cant</th><th>Valor $</th><th>Total $</th></tr></thead>
@@ -847,7 +1098,18 @@ let modoEdicionActivo = false;
 let categoriasSeleccionadas = new Set();
 let mesFiltrado = null;
 
-// Datos del CSV cargados
+// ===== MODO OSCURO =====
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const btn = document.querySelector('.btn-dark-mode');
+    if (document.body.classList.contains('dark-mode')) {
+        btn.textContent = '☀️';
+    } else {
+        btn.textContent = '🌙';
+    }
+}
+
+// ===== DATOS INCRUSTADOS =====
 const datosIncrustados = {
     elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     elasticosF: {
@@ -1120,7 +1382,6 @@ function obtenerCantidadPorMes(categoria) {
 }
 
 function obtenerCantidadPorTarjetas(categoria) {
-    // Si hay tarjetas seleccionadas, solo calcula si esta categoría está seleccionada
     if (categoriasSeleccionadas.size > 0) {
         if (!categoriasSeleccionadas.has(categoria)) return 0;
     }
@@ -1183,7 +1444,6 @@ function actualizarTarjetas() {
     document.getElementById("totalLlantas").textContent = calc("llantas");
 }
 
-// SELECCIÓN MÚLTIPLE CORREGIDA
 function toggleCard(categoria, event) {
     event.preventDefault();
     event.stopPropagation();
@@ -1193,7 +1453,6 @@ function toggleCard(categoria, event) {
     const yaSeleccionada = categoriasSeleccionadas.has(categoria);
     
     if (isCtrl) {
-        // Ctrl+Click: Toggle selección múltiple
         if (yaSeleccionada) {
             categoriasSeleccionadas.delete(categoria);
             card.classList.remove('selected');
@@ -1202,17 +1461,13 @@ function toggleCard(categoria, event) {
             card.classList.add('selected');
         }
     } else {
-        // Click normal
         if (yaSeleccionada && categoriasSeleccionadas.size === 1) {
-            // Deseleccionar si es la única
             categoriasSeleccionadas.clear();
             card.classList.remove('selected');
         } else if (yaSeleccionada) {
-            // Quitar esta de la selección múltiple
             categoriasSeleccionadas.delete(categoria);
             card.classList.remove('selected');
         } else {
-            // Agregar a la selección
             categoriasSeleccionadas.add(categoria);
             card.classList.add('selected');
         }
@@ -1220,7 +1475,7 @@ function toggleCard(categoria, event) {
     
     actualizarInfoSeleccion();
     actualizarGraficos();
-    calcularEconomico(); // AHORA los valores responden a las tarjetas
+    calcularEconomico();
 }
 
 function actualizarInfoSeleccion() {
@@ -1235,7 +1490,6 @@ function actualizarInfoSeleccion() {
     }
 }
 
-// VALORES ECONÓMICOS: Responden a mes + tarjetas seleccionadas
 function calcularEconomico() {
     const d = obtenerDatosActual();
     
@@ -1512,7 +1766,7 @@ function actualizarGraficos() {
         text: '#2c3e50'
     };
     
-    // GRÁFICO DE LÍNEAS
+    // GRÁFICO DE LÍNEAS - Tooltip con Equipo, Cantidad, Porcentaje y Fecha
     let lineData = [];
     if (categoriasSeleccionadas.size > 0) {
         const cats = [...categoriasSeleccionadas];
@@ -1533,21 +1787,23 @@ function actualizarGraficos() {
                 tension: 0.4,
                 fill: false,
                 pointRadius: 5,
-                borderWidth: 3
+                borderWidth: 3,
+                categoria: cat
             });
         });
     } else {
         const totales = Array(12).fill(0);
-        CONFIG.equipos.forEach(eq => {
-            for (let i = 0; i < 12; i++) {
-                Object.values(d).forEach(cat => {
-                    if (cat && cat[eq]) totales[i] += cat[eq][i] || 0;
-                });
-            }
+        const cats = ['elasticosO', 'elasticosF', 'mazasN', 'mazasR', 'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado', 'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno', 'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas'];
+        cats.forEach(cat => {
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) {
+                    if (d[cat] && d[cat][eq]) totales[i] += d[cat][eq][i] || 0;
+                }
+            });
         });
         
         lineData = [{
-            label: 'Total',
+            label: 'Total General',
             data: totales,
             borderColor: colors.primary,
             backgroundColor: colors.primary.replace('0.9', '0.25'),
@@ -1570,11 +1826,16 @@ function actualizarGraficos() {
                 title: { display: true, text: '📈 Evolución Mensual', color: colors.text },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
-                            const val = ctx.parsed.y || 0;
-                            const total = ctx.dataset.data.reduce((a, b) => a + (b || 0), 0);
+                        title: function(items) {
+                            // Muestra el mes y año
+                            return `📅 ${items[0].label} 2026`;
+                        },
+                        label: function(context) {
+                            const val = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            return `${ctx.dataset.label}: ${val} unidades (${pct}%)`;
+                            const equipo = context.dataset.categoria || 'Todos';
+                            return `🏷️ ${context.dataset.label} | 🔢 ${val} uds | 📊 ${pct}%`;
                         }
                     }
                 },
@@ -1598,9 +1859,10 @@ function actualizarGraficos() {
         plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DE BARRAS
+    // GRÁFICO DE BARRAS - Tooltip con Equipo, Cantidad, Porcentaje y Fecha
     let barLabels = CONFIG.equipos;
     let barData = [];
+    let categoriaActiva = '';
     
     if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
         barData = CONFIG.equipos.map(eq => {
@@ -1610,6 +1872,7 @@ function actualizarGraficos() {
             });
             return total;
         });
+        categoriaActiva = [...categoriasSeleccionadas].map(c => cardLabel(c)).join('+');
     } else if (categoriasSeleccionadas.size > 0) {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1618,6 +1881,7 @@ function actualizarGraficos() {
             });
             return total;
         });
+        categoriaActiva = [...categoriasSeleccionadas].map(c => cardLabel(c)).join('+');
     } else if (mesFiltrado !== null) {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1626,6 +1890,7 @@ function actualizarGraficos() {
             });
             return total;
         });
+        categoriaActiva = 'Todos';
     } else {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1634,6 +1899,7 @@ function actualizarGraficos() {
             });
             return total;
         });
+        categoriaActiva = 'Todos';
     }
     
     const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
@@ -1657,14 +1923,18 @@ function actualizarGraficos() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: '📊 Por Equipo', color: colors.text },
+                title: { display: true, text: '📊 Consumo por Equipo', color: colors.text },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
-                            const val = ctx.parsed.y || 0;
-                            const total = ctx.dataset.data.reduce((a, b) => a + (b || 0), 0);
+                        title: function(items) {
+                            return `🔧 Equipo ${items[0].label}`;
+                        },
+                        label: function(context) {
+                            const val = context.parsed.y || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            return `${val} unidades (${pct}%)`;
+                            const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
+                            return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
                         }
                     }
                 },
@@ -1688,7 +1958,7 @@ function actualizarGraficos() {
         plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DOUGHNUT
+    // GRÁFICO DOUGHNUT - Tooltip con Categoría, Cantidad, Porcentaje y Fecha
     let doughnutLabels = [];
     let doughnutData = [];
     let doughnutColors = [];
@@ -1731,11 +2001,15 @@ function actualizarGraficos() {
                 title: { display: true, text: '🎯 Distribución', color: colors.text },
                 tooltip: {
                     callbacks: {
-                        label: function(ctx) {
-                            const val = ctx.parsed || 0;
-                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                        title: function(items) {
+                            return `📦 ${items[0].label}`;
+                        },
+                        label: function(context) {
+                            const val = context.parsed || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            return `${val} unidades (${pct}%)`;
+                            const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
+                            return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
                         }
                     }
                 },
