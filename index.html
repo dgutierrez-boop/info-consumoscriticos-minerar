@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
@@ -16,7 +17,6 @@ body {
     min-height: 100vh;
 }
 
-/* === OCULTAR ACORDEONES EN MODO LECTURA === */
 body.read-only-mode .accordion-header,
 body.read-only-mode .accordion-content {
     display: none !important;
@@ -44,9 +44,6 @@ body.editing-mode .accordion-content {
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
     font-weight: 800;
     font-size: 1.5rem;
     background: linear-gradient(135deg, #2c3e50, #e67e22);
@@ -84,18 +81,6 @@ body.editing-mode .accordion-content {
     padding: 32px;
 }
 
-.report-header {
-    border-bottom: 4px solid #e67e22;
-    padding-bottom: 24px;
-    margin-bottom: 32px;
-}
-
-.report-title h1 {
-    font-size: 1.8rem;
-    color: #2c3e50;
-    font-weight: 800;
-}
-
 .filtro-meses {
     margin-bottom: 24px;
     padding: 16px;
@@ -130,21 +115,32 @@ body.editing-mode .accordion-content {
     color: white;
 }
 
+/* TARJETAS STICKY - Siempre visibles */
+.summary-grid-container {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    padding: 16px 0;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 12px;
-    margin-bottom: 32px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
 }
 
 .stat-card {
-    border-radius: 16px;
-    padding: 16px 10px;
+    border-radius: 12px;
+    padding: 12px 8px;
     text-align: center;
     cursor: pointer;
     transition: all 0.25s;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     position: relative;
+    border: 3px solid transparent;
 }
 
 .stat-card:nth-child(1) { background: linear-gradient(135deg, #FF6B6B, #EE5A5A); }
@@ -163,33 +159,29 @@ body.editing-mode .accordion-content {
 .stat-card:nth-child(14) { background: linear-gradient(135deg, #2ECC71, #27AE60); }
 
 .stat-card:hover {
-    transform: translateY(-6px) scale(1.04);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
 }
 
-.stat-card.active {
-    animation: glow-pulse 2s ease-in-out infinite;
-    border: 3px solid #ffffff !important;
-    transform: scale(1.08) !important;
-}
-
-@keyframes glow-pulse {
-    0%, 100% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.7); }
-    50% { box-shadow: 0 0 45px rgba(0, 255, 136, 0.95); }
+.stat-card.selected {
+    border: 3px solid #fff !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    transform: scale(1.08);
 }
 
 .stat-value {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 800;
     color: white;
-    margin: 5px 0;
+    margin: 4px 0;
 }
 
 .stat-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     color: rgba(255,255,255,0.95);
     font-weight: 700;
+    line-height: 1.2;
 }
 
 .charts-section {
@@ -293,6 +285,9 @@ td {
     margin-bottom: 24px;
     border-radius: 12px;
     font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .floating-controls {
@@ -367,15 +362,8 @@ body.editing-mode #save-lock-btn { display: flex; }
     margin: 0 6px;
 }
 
-.security-btn-primary {
-    background: linear-gradient(135deg, #27ae60, #229954);
-    color: white;
-}
-
-.security-btn-secondary {
-    background: linear-gradient(135deg, #95a5a6, #7f8c8d);
-    color: white;
-}
+.security-btn-primary { background: linear-gradient(135deg, #27ae60, #229954); color: white; }
+.security-btn-secondary { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
 
 .values-section {
     margin-top: 40px;
@@ -452,11 +440,23 @@ body.editing-mode #save-lock-btn { display: flex; }
 
 .filter-badge {
     display: inline-block;
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.3);
     border-radius: 20px;
     padding: 4px 12px;
     font-size: 0.75rem;
     margin-left: 12px;
+    color: white;
+}
+
+.selection-info {
+    background: rgba(52, 152, 219, 0.1);
+    border: 2px solid #3498db;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
 }
 </style>
 </head>
@@ -468,19 +468,12 @@ body.editing-mode #save-lock-btn { display: flex; }
 <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
 <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
 <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
-<button class="btn btn-danger" onclick="resetearDatosCompletos()">🔒 Reset</button>
+<button class="btn btn-danger" onclick="resetearDatosCompletos()"> Reset</button>
 </div>
 </div>
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
 
 <div class="report-container">
-<div class="report-header">
-<div class="report-title">
-<h1>📊 Informe de Consumo - Repuestos Críticos</h1>
-<p>Elásticos • Mazas • Bulones/Tuercas • Neumáticos • Patines • Levas • Pulmones • Llantas</p>
-</div>
-</div>
-
 <div class="filtro-meses">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
 <h3 style="color: #38B6B2; margin: 0;">📅 FILTRAR POR MES</h3>
@@ -502,24 +495,31 @@ body.editing-mode #save-lock-btn { display: flex; }
 </div>
 </div>
 
-<div class="alert">✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar.
-<span id="lock-indicator" style="margin-left: auto; color: #e74c3c;">🔒 Solo lectura</span>
+<div class="alert">
+<span>✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar.</span>
+<span id="lock-indicator" style="color: #e74c3c;">🔒 Solo lectura</span>
 </div>
 
+<!-- TARJETAS STICKY -->
+<div class="summary-grid-container">
+<div class="selection-info" id="selectionInfo">
+ Click simple: Seleccionar | Ctrl+Click: Selección múltiple | Click en seleccionada: Deseleccionar
+</div>
 <div class="summary-grid">
-<div class="stat-card" onclick="filtrarGrafico('elasticosO')"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
-<div class="stat-card" onclick="filtrarGrafico('elasticosF')"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
-<div class="stat-card" onclick="filtrarGrafico('mazasN')"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
-<div class="stat-card" onclick="filtrarGrafico('mazasR')"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
-<div class="stat-card" onclick="filtrarGrafico('bulonTuerca')"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón y Tuerca</div></div>
-<div class="stat-card" onclick="filtrarGrafico('neumaticoNuevo')"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
-<div class="stat-card" onclick="filtrarGrafico('neumaticoUsado')"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
-<div class="stat-card" onclick="filtrarGrafico('patinFrenoNuevo')"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
-<div class="stat-card" onclick="filtrarGrafico('patinFrenoReparado')"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
-<div class="stat-card" onclick="filtrarGrafico('levaFreno')"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva de Freno</div></div>
-<div class="stat-card" onclick="filtrarGrafico('pulmonFrenoNuevo')"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
-<div class="stat-card" onclick="filtrarGrafico('pulmonFrenoReparado')"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
-<div class="stat-card" onclick="filtrarGrafico('llantas')"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas Rotas</div></div>
+<div class="stat-card" onclick="toggleCard('elasticosO', event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
+<div class="stat-card" onclick="toggleCard('elasticosF', event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label"> Elásticos FAB</div></div>
+<div class="stat-card" onclick="toggleCard('mazasN', event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
+<div class="stat-card" onclick="toggleCard('mazasR', event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('bulonTuerca', event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
+<div class="stat-card" onclick="toggleCard('neumaticoNuevo', event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('neumaticoUsado', event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
+<div class="stat-card" onclick="toggleCard('patinFrenoNuevo', event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('patinFrenoReparado', event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('levaFreno', event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva Freno</div></div>
+<div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo', event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label"> Pulmón NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('pulmonFrenoReparado', event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('llantas', event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label"> Llantas</div></div>
+</div>
 </div>
 
 <div class="charts-section">
@@ -532,16 +532,16 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="chart-container"><canvas id="chartBar"></canvas></div>
 </div>
 <div class="chart-card">
-<h4>🎯 Distribución por Categoría</h4>
+<h4>🎯 Distribución</h4>
 <div class="chart-container"><canvas id="chartDoughnut"></canvas></div>
 </div>
 </div>
 
-<!-- ACORDEONES - Se ocultan en modo lectura -->
+<!-- ACORDEONES -->
 <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
 <div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
 
-<div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span>📦 Elásticos FABRICADOS</span><span>▼</span></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span> Elásticos FABRICADOS</span><span>▼</span></div>
 <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
 
 <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
@@ -587,10 +587,10 @@ body.editing-mode #save-lock-btn { display: flex; }
 <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
 <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
 <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-<tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+<tr><td><strong> Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
 <tr><td><strong>🛞 Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
 <tr><td><strong>🛞 Patín NUEVO</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
-<tr><td><strong>🛞 Patín REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
+<tr><td><strong> Patín REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
 <tr><td><strong>⚙️ Leva de Freno</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
 <tr><td><strong>💨 Pulmón NUEVO</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
 <tr><td><strong>💨 Pulmón REPARADO</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
@@ -621,7 +621,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 
 <div class="security-overlay" id="securityModal">
 <div class="security-modal">
-<h2>🔐 Acceso Restringido</h2>
+<h2> Acceso Restringido</h2>
 <p>Ingrese contraseña</p>
 <input type="password" id="passwordInput" placeholder="••••••">
 <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
@@ -647,14 +647,14 @@ const CONFIG = {
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
     meses: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
     passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v19"
+    storageKey: "minerar_repuestos_v20"
 };
 
 let añoActual = 2026;
 let datosPorAnio = {};
 let charts = {};
 let modoEdicionActivo = false;
-let categoriaFiltrada = null;
+let categoriasSeleccionadas = new Set();
 let mesFiltrado = null;
 
 const datosIncrustados = {
@@ -788,7 +788,7 @@ function verificarPassword() {
         modoEdicionActivo = true;
         document.body.classList.remove('read-only-mode');
         document.body.classList.add('editing-mode');
-        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
+        document.getElementById('lock-indicator').innerHTML = ' Modo edición';
         document.getElementById('lock-indicator').style.color = '#27ae60';
         actualizarTodo();
     }
@@ -799,7 +799,7 @@ function guardarYBloquear() {
     modoEdicionActivo = false;
     document.body.classList.remove('editing-mode');
     document.body.classList.add('read-only-mode');
-    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
+    document.getElementById('lock-indicator').innerHTML = ' Solo lectura';
     document.getElementById('lock-indicator').style.color = '#e74c3c';
 }
 
@@ -934,21 +934,78 @@ function actualizarTarjetas() {
     document.getElementById("totalLlantas").textContent = calc("llantas");
 }
 
+function toggleCard(categoria, event) {
+    const card = event.currentTarget;
+    
+    if (event.ctrlKey || event.metaKey) {
+        // Ctrl+Click: Toggle selección múltiple
+        if (categoriasSeleccionadas.has(categoria)) {
+            categoriasSeleccionadas.delete(categoria);
+            card.classList.remove('selected');
+        } else {
+            categoriasSeleccionadas.add(categoria);
+            card.classList.add('selected');
+        }
+    } else {
+        // Click normal: Selección única
+        if (categoriasSeleccionadas.has(categoria) && categoriasSeleccionadas.size === 1) {
+            // Deseleccionar si ya está seleccionada y es la única
+            categoriasSeleccionadas.clear();
+            card.classList.remove('selected');
+        } else {
+            // Seleccionar esta y deseleccionar las demás
+            categoriasSeleccionadas.clear();
+            categoriasSeleccionadas.add(categoria);
+            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+        }
+    }
+    
+    actualizarInfoSeleccion();
+    actualizarGraficos();
+    calcularEconomico();
+}
+
+function actualizarInfoSeleccion() {
+    const info = document.getElementById('selectionInfo');
+    if (categoriasSeleccionadas.size === 0) {
+        info.textContent = '💡 Click simple: Seleccionar | Ctrl+Click: Selección múltiple | Click en seleccionada: Deseleccionar';
+    } else if (categoriasSeleccionadas.size === 1) {
+        info.textContent = `📌 Seleccionado: ${cardLabel([...categoriasSeleccionadas][0])} - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
+    } else {
+        info.textContent = `📌 ${categoriasSeleccionadas.size} categorías seleccionadas - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
+    }
+}
+
 function calcularEconomico() {
+    const d = obtenerDatosActual();
+    
+    const calc = (cat) => {
+        const data = d[cat];
+        if (!data) return 0;
+        let total = 0;
+        CONFIG.equipos.forEach(eq => {
+            if (data[eq]) {
+                total += mesFiltrado !== null ? (data[eq][mesFiltrado] || 0) : data[eq].reduce((a, b) => a + b, 0);
+            }
+        });
+        return total;
+    };
+    
     const cant = {
-        elastO: obtenerCantidadFiltrada("elasticosO"),
-        elastF: obtenerCantidadFiltrada("elasticosF"),
-        mazaN: obtenerCantidadFiltrada("mazasN"),
-        mazaR: obtenerCantidadFiltrada("mazasR"),
-        bulon: obtenerCantidadFiltrada("bulonTuerca"),
-        tuerca: obtenerCantidadFiltrada("bulonTuerca"),
-        neumaticoNuevo: obtenerCantidadFiltrada("neumaticoNuevo"),
-        patinFrenoNuevo: obtenerCantidadFiltrada("patinFrenoNuevo"),
-        patinFrenoReparado: obtenerCantidadFiltrada("patinFrenoReparado"),
-        levaFreno: obtenerCantidadFiltrada("levaFreno"),
-        pulmonFrenoNuevo: obtenerCantidadFiltrada("pulmonFrenoNuevo"),
-        pulmonFrenoReparado: obtenerCantidadFiltrada("pulmonFrenoReparado"),
-        llantas: obtenerCantidadFiltrada("llantas")
+        elastO: calc("elasticosO"),
+        elastF: calc("elasticosF"),
+        mazaN: calc("mazasN"),
+        mazaR: calc("mazasR"),
+        bulon: calc("bulonTuerca"),
+        tuerca: calc("bulonTuerca"),
+        neumaticoNuevo: calc("neumaticoNuevo"),
+        patinFrenoNuevo: calc("patinFrenoNuevo"),
+        patinFrenoReparado: calc("patinFrenoReparado"),
+        levaFreno: calc("levaFreno"),
+        pulmonFrenoNuevo: calc("pulmonFrenoNuevo"),
+        pulmonFrenoReparado: calc("pulmonFrenoReparado"),
+        llantas: calc("llantas")
     };
     
     document.getElementById("cantElasticosO").textContent = cant.elastO;
@@ -966,10 +1023,10 @@ function calcularEconomico() {
     document.getElementById("cantLlantas").textContent = cant.llantas;
     
     const filterIndicator = document.getElementById("filterIndicator");
-    if (categoriaFiltrada !== null && mesFiltrado !== null) {
-        filterIndicator.textContent = `📌 ${cardLabel(categoriaFiltrada)} - ${CONFIG.meses[mesFiltrado]}`;
-    } else if (categoriaFiltrada !== null) {
-        filterIndicator.textContent = `📌 ${cardLabel(categoriaFiltrada)} (Año)`;
+    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
+        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${CONFIG.meses[mesFiltrado]}`;
+    } else if (categoriasSeleccionadas.size > 0) {
+        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas (Año)`;
     } else if (mesFiltrado !== null) {
         filterIndicator.textContent = `📌 Mes: ${CONFIG.meses[mesFiltrado]}`;
     } else {
@@ -1188,37 +1245,9 @@ function mostrarToast(msg, error = false) {
     setTimeout(() => t.className = 'toast', 3000);
 }
 
-function filtrarGrafico(categoria) {
-    const card = event.currentTarget;
-    
-    if (categoriaFiltrada === categoria) {
-        categoriaFiltrada = null;
-        document.querySelectorAll('.stat-card').forEach(c => {
-            c.classList.remove('active');
-            c.style.opacity = '1';
-            c.style.transform = 'scale(1)';
-        });
-    } else {
-        categoriaFiltrada = categoria;
-        document.querySelectorAll('.stat-card').forEach(c => {
-            c.classList.remove('active');
-            c.style.opacity = '0.65';
-            c.style.transform = 'scale(0.97)';
-        });
-        card.classList.add('active');
-        card.style.opacity = '1';
-        card.style.transform = 'scale(1.08)';
-    }
-    
-    actualizarGraficos();
-    calcularEconomico();
-    actualizarTarjetas();
-}
-
 function actualizarGraficos() {
     const d = obtenerDatosActual();
     
-    // Colores
     const colors = {
         primary: 'rgba(54, 162, 235, 0.9)',
         secondary: 'rgba(255, 159, 64, 0.8)',
@@ -1229,26 +1258,30 @@ function actualizarGraficos() {
         text: '#2c3e50'
     };
     
-    // GRÁFICO DE LÍNEAS - Respeta filtro de mes
+    // GRÁFICO DE LÍNEAS
     let lineData = [];
-    if (categoriaFiltrada) {
-        const datos = Array(12).fill(0);
-        CONFIG.equipos.forEach(eq => {
-            for (let i = 0; i < 12; i++) {
-                datos[i] += d[categoriaFiltrada][eq][i] || 0;
-            }
+    if (categoriasSeleccionadas.size > 0) {
+        const cats = [...categoriasSeleccionadas];
+        cats.forEach((cat, idx) => {
+            const datos = Array(12).fill(0);
+            CONFIG.equipos.forEach(eq => {
+                for (let i = 0; i < 12; i++) {
+                    datos[i] += d[cat][eq][i] || 0;
+                }
+            });
+            
+            const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+            lineData.push({
+                label: cardLabel(cat),
+                data: datos,
+                borderColor: palette[idx % palette.length],
+                backgroundColor: palette[idx % palette.length].replace('0.9', '0.25'),
+                tension: 0.4,
+                fill: false,
+                pointRadius: 5,
+                borderWidth: 3
+            });
         });
-        
-        lineData = [{
-            label: cardLabel(categoriaFiltrada),
-            data: datos,
-            borderColor: colors.primary,
-            backgroundColor: colors.primary.replace('0.9', '0.25'),
-            tension: 0.4,
-            fill: true,
-            pointRadius: 5,
-            borderWidth: 3
-        }];
     } else {
         const totales = Array(12).fill(0);
         CONFIG.equipos.forEach(eq => {
@@ -1280,37 +1313,58 @@ function actualizarGraficos() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { position: 'top', labels: { color: colors.text } },
-                title: { display: true, text: '📈 Evolución Mensual', color: colors.text },
+                title: { display: true, text: ' Evolución Mensual', color: colors.text },
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
                             const val = ctx.parsed.y || 0;
                             const total = ctx.dataset.data.reduce((a, b) => a + (b || 0), 0);
                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            return `${val} unidades (${pct}%)`;
+                            return `${ctx.dataset.label}: ${val} unidades (${pct}%)`;
                         }
                     }
+                },
+                datalabels: {
+                    display: true,
+                    color: colors.text,
+                    font: { size: 9, weight: 'bold' },
+                    formatter: function(value) {
+                        return value > 0 ? value : '';
+                    },
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 4
                 }
             },
             scales: {
                 y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
                 x: { grid: { display: false }, ticks: { color: colors.text } }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DE BARRAS - Respeta filtros
+    // GRÁFICO DE BARRAS
     let barLabels = CONFIG.equipos;
     let barData = [];
     
-    if (categoriaFiltrada && mesFiltrado !== null) {
-        // Categoría específica + mes específico
-        barData = CONFIG.equipos.map(eq => d[categoriaFiltrada][eq][mesFiltrado] || 0);
-    } else if (categoriaFiltrada) {
-        // Categoría específica + año completo
-        barData = CONFIG.equipos.map(eq => d[categoriaFiltrada][eq].reduce((a, b) => a + b, 0));
+    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
+        barData = CONFIG.equipos.map(eq => {
+            let total = 0;
+            categoriasSeleccionadas.forEach(cat => {
+                total += d[cat][eq][mesFiltrado] || 0;
+            });
+            return total;
+        });
+    } else if (categoriasSeleccionadas.size > 0) {
+        barData = CONFIG.equipos.map(eq => {
+            let total = 0;
+            categoriasSeleccionadas.forEach(cat => {
+                total += d[cat][eq].reduce((a, b) => a + b, 0);
+            });
+            return total;
+        });
     } else if (mesFiltrado !== null) {
-        // Todos + mes específico
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
             Object.values(d).forEach(cat => {
@@ -1319,7 +1373,6 @@ function actualizarGraficos() {
             return total;
         });
     } else {
-        // Todos + año completo
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
             Object.values(d).forEach(cat => {
@@ -1338,7 +1391,7 @@ function actualizarGraficos() {
         data: {
             labels: barLabels,
             datasets: [{
-                label: categoriaFiltrada ? cardLabel(categoriaFiltrada) : 'Total',
+                label: categoriasSeleccionadas.size > 0 ? 'Seleccionados' : 'Total',
                 data: barData,
                 backgroundColor: barColors,
                 borderWidth: 2,
@@ -1350,7 +1403,7 @@ function actualizarGraficos() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: '📊 Por Equipo', color: colors.text },
+                title: { display: true, text: ' Por Equipo', color: colors.text },
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
@@ -1360,42 +1413,39 @@ function actualizarGraficos() {
                             return `${val} unidades (${pct}%)`;
                         }
                     }
+                },
+                datalabels: {
+                    display: true,
+                    color: colors.text,
+                    font: { size: 9, weight: 'bold' },
+                    formatter: function(value) {
+                        return value > 0 ? value : '';
+                    },
+                    anchor: 'end',
+                    align: 'top',
+                    offset: 4
                 }
             },
             scales: {
                 y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
                 x: { grid: { display: false }, ticks: { color: colors.text } }
             }
-        }
+        },
+        plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DOUGHNUT - Respeta filtros
+    // GRÁFICO DOUGHNUT
     let doughnutLabels = [];
     let doughnutData = [];
     let doughnutColors = [];
     
-    if (categoriaFiltrada) {
-        if (categoriaFiltrada === 'elasticosO' || categoriaFiltrada === 'elasticosF') {
-            doughnutLabels = ['Elást. ORIG', 'Elást. FAB'];
-            doughnutData = [
-                Object.values(d.elasticosO).flat().reduce((a, b) => a + b, 0),
-                Object.values(d.elasticosF).flat().reduce((a, b) => a + b, 0)
-            ];
-            doughnutColors = [colors.primary, colors.secondary];
-        } else if (categoriaFiltrada === 'mazasN' || categoriaFiltrada === 'mazasR') {
-            doughnutLabels = ['Mazas N', 'Mazas R'];
-            doughnutData = [
-                Object.values(d.mazasN).flat().reduce((a, b) => a + b, 0),
-                Object.values(d.mazasR).flat().reduce((a, b) => a + b, 0)
-            ];
-            doughnutColors = [colors.success, colors.danger];
-        } else {
-            const valFilt = Object.values(d[categoriaFiltrada]).flat().reduce((a, b) => a + b, 0);
-            const resto = Object.entries(d).filter(([k]) => k !== categoriaFiltrada).flatMap(([_, c]) => Object.values(c).flat()).reduce((a, b) => a + b, 0);
-            doughnutLabels = [cardLabel(categoriaFiltrada), 'Otros'];
-            doughnutData = [valFilt, resto];
-            doughnutColors = [colors.primary, colors.purple];
-        }
+    if (categoriasSeleccionadas.size > 0) {
+        const cats = [...categoriasSeleccionadas];
+        cats.forEach(cat => {
+            doughnutLabels.push(cardLabel(cat));
+            doughnutData.push(Object.values(d[cat]).flat().reduce((a, b) => a + b, 0));
+        });
+        doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
     } else {
         const calc = (data) => data ? Object.values(data).flat().reduce((a, b) => a + b, 0) : 0;
         doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tue', 'Neum. N', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Llantas'];
@@ -1434,10 +1484,23 @@ function actualizarGraficos() {
                             return `${val} unidades (${pct}%)`;
                         }
                     }
+                },
+                datalabels: {
+                    display: true,
+                    color: '#fff',
+                    font: { size: 10, weight: 'bold' },
+                    textStrokeColor: 'rgba(0,0,0,0.5)',
+                    textStrokeWidth: 2,
+                    formatter: function(value, context) {
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const pct = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+                        return value > 0 ? `${pct}%` : '';
+                    }
                 }
             },
             cutout: '65%'
-        }
+        },
+        plugins: [ChartDataLabels]
     });
 }
 
@@ -1454,6 +1517,7 @@ function cambiarMes(idx) {
     actualizarTarjetas();
     actualizarGraficos();
     calcularEconomico();
+    actualizarInfoSeleccion();
     mostrarToast(`📅 ${CONFIG.meses[idx]}`);
 }
 
@@ -1463,6 +1527,7 @@ function limpiarFiltroMes() {
     actualizarTarjetas();
     actualizarGraficos();
     calcularEconomico();
+    actualizarInfoSeleccion();
     mostrarToast('📅 Año completo');
 }
 
