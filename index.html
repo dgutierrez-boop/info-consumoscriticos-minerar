@@ -72,8 +72,9 @@ body.editing-mode .accordion-content {
 .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
 .btn-outline { background: #ecf0f1; color: #2c3e50; border: 2px solid #bdc3c7; }
 
+/* ENSANCHADO: max-width aumentado a 1600px */
 .report-container {
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     background: white;
     border-radius: 16px;
@@ -115,7 +116,6 @@ body.editing-mode .accordion-content {
     color: white;
 }
 
-/* TARJETAS STICKY - Siempre visibles */
 .summary-grid-container {
     position: sticky;
     top: 0;
@@ -128,7 +128,7 @@ body.editing-mode .accordion-content {
 
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 10px;
 }
 
@@ -141,6 +141,7 @@ body.editing-mode .accordion-content {
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     position: relative;
     border: 3px solid transparent;
+    user-select: none;
 }
 
 .stat-card:nth-child(1) { background: linear-gradient(135deg, #FF6B6B, #EE5A5A); }
@@ -186,7 +187,7 @@ body.editing-mode .accordion-content {
 
 .charts-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 24px;
     margin: 32px 0;
 }
@@ -452,11 +453,12 @@ body.editing-mode #save-lock-btn { display: flex; }
     background: rgba(52, 152, 219, 0.1);
     border: 2px solid #3498db;
     border-radius: 12px;
-    padding: 12px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 12px;
     text-align: center;
     font-weight: 600;
     color: #2c3e50;
+    font-size: 0.85rem;
 }
 </style>
 </head>
@@ -466,9 +468,9 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="controls">
 <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
 <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
-<button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
+<button class="btn btn-warning" onclick="exportarCSV()"> Exportar Excel</button>
 <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
-<button class="btn btn-danger" onclick="resetearDatosCompletos()"> Reset</button>
+<button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
 </div>
 </div>
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
@@ -500,14 +502,13 @@ body.editing-mode #save-lock-btn { display: flex; }
 <span id="lock-indicator" style="color: #e74c3c;">🔒 Solo lectura</span>
 </div>
 
-<!-- TARJETAS STICKY -->
 <div class="summary-grid-container">
 <div class="selection-info" id="selectionInfo">
- Click simple: Seleccionar | Ctrl+Click: Selección múltiple | Click en seleccionada: Deseleccionar
+💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar
 </div>
 <div class="summary-grid">
 <div class="stat-card" onclick="toggleCard('elasticosO', event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
-<div class="stat-card" onclick="toggleCard('elasticosF', event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label"> Elásticos FAB</div></div>
+<div class="stat-card" onclick="toggleCard('elasticosF', event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
 <div class="stat-card" onclick="toggleCard('mazasN', event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
 <div class="stat-card" onclick="toggleCard('mazasR', event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
 <div class="stat-card" onclick="toggleCard('bulonTuerca', event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
@@ -515,10 +516,10 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="stat-card" onclick="toggleCard('neumaticoUsado', event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
 <div class="stat-card" onclick="toggleCard('patinFrenoNuevo', event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
 <div class="stat-card" onclick="toggleCard('patinFrenoReparado', event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
-<div class="stat-card" onclick="toggleCard('levaFreno', event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva Freno</div></div>
-<div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo', event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label"> Pulmón NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('levaFreno', event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">️ Leva Freno</div></div>
+<div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo', event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
 <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado', event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
-<div class="stat-card" onclick="toggleCard('llantas', event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label"> Llantas</div></div>
+<div class="stat-card" onclick="toggleCard('llantas', event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
 </div>
 </div>
 
@@ -537,14 +538,13 @@ body.editing-mode #save-lock-btn { display: flex; }
 </div>
 </div>
 
-<!-- ACORDEONES -->
 <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
 <div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
 
-<div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span> Elásticos FABRICADOS</span><span>▼</span></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span>🔧 Elásticos FABRICADOS</span><span>▼</span></div>
 <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
 
-<div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>️ Mazas NUEVAS</span><span>▼</span></div>
 <div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
 
 <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
@@ -568,7 +568,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
 <div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
 
-<div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span>💨 Pulmón NUEVO</span><span>▼</span></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span> Pulmón NUEVO</span><span>▼</span></div>
 <div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
 
 <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')"><span>💨 Pulmón REPARADO</span><span>▼</span></div>
@@ -587,7 +587,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 <tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
 <tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
 <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-<tr><td><strong> Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+<tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
 <tr><td><strong>🛞 Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
 <tr><td><strong>🛞 Patín NUEVO</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
 <tr><td><strong> Patín REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
@@ -647,7 +647,7 @@ const CONFIG = {
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
     meses: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
     passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v20"
+    storageKey: "minerar_repuestos_v21"
 };
 
 let añoActual = 2026;
@@ -657,50 +657,171 @@ let modoEdicionActivo = false;
 let categoriasSeleccionadas = new Set();
 let mesFiltrado = null;
 
+// DATOS REALES según el CSV cargado
 const datosIncrustados = {
-    elasticosO: {
-        "M442": [2, 1, 0, 3, 2, 1, 0, 2, 1, 0, 1, 2],
-        "M443": Array(12).fill(0),
-        "M444": [0, 1, 2, 0, 1, 0, 2, 1, 0, 1, 0, 1],
-        "M445": [1, 0, 2, 1, 2, 0, 1, 0, 2, 1, 0, 0],
-        "M446": [2, 1, 3, 0, 1, 2, 0, 1, 0, 2, 1, 0],
-        "M447": [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0],
-        "M448": [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
-        "M450": Array(12).fill(0),
-        "M451": [2, 2, 1, 2, 2, 0, 1, 2, 1, 0, 1, 2],
-        "M452": [0, 2, 2, 2, 2, 1, 0, 2, 1, 0, 0, 1],
-        "M453": [0, 1, 2, 1, 1, 0, 1, 0, 2, 1, 0, 0],
-        "M454": Array(12).fill(0),
-        "M455": [1, 2, 1, 1, 2, 0, 1, 0, 1, 2, 0, 1],
-        "M456": [2, 0, 1, 2, 1, 0, 0, 1, 0, 2, 1, 0]
+    elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    elasticosF: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,1,1,2,0,1,0,0,0,0,0,0],
+        "M445": [1,0,0,0,2,1,0,0,0,0,0,0],
+        "M446": [2,2,1,0,1,1,0,0,0,0,0,0],
+        "M447": [0,0,0,2,1,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [2,0,1,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,2,1,2,0,0,0,0,0,0],
+        "M453": [0,0,1,2,0,1,0,0,0,0,0,0],
+        "M454": [0,2,2,2,0,1,0,0,0,0,0,0],
+        "M455": [1,2,0,0,1,1,0,0,0,0,0,0],
+        "M456": [2,0,0,0,2,0,0,0,0,0,0,0]
     },
-    elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    mazasN: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    mazasN: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M455": [0,0,1,0,0,1,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,1,0,0,0,0,0,0]
+    },
+    mazasR: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [1,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+    },
     bulonTuerca: {
-        "M442": [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        "M443": Array(12).fill(0),
-        "M444": [10, 20, 10, 30, 20, 0, 0, 0, 0, 0, 0, 0],
-        "M445": [0, 0, 3, 10, 20, 0, 0, 0, 0, 0, 0, 0],
-        "M446": [2, 2, 10, 12, 12, 0, 0, 0, 0, 0, 0, 0],
-        "M447": [0, 10, 0, 30, 30, 0, 0, 0, 0, 0, 0, 0],
-        "M448": [20, 0, 2, 10, 10, 0, 0, 0, 0, 0, 0, 0],
-        "M450": Array(12).fill(0),
-        "M451": [2, 0, 0, 20, 10, 0, 0, 0, 0, 0, 0, 0],
-        "M452": [10, 10, 19, 32, 25, 0, 0, 0, 0, 0, 0, 0],
-        "M453": [4, 0, 10, 15, 10, 0, 0, 0, 0, 0, 0, 0],
-        "M454": Array(12).fill(0),
-        "M455": [0, 10, 0, 10, 20, 0, 0, 0, 0, 0, 0, 0],
-        "M456": [20, 10, 10, 10, 10, 0, 0, 0, 0, 0, 0, 0]
+        "M442": [0,0,0,0,10,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,0,2,30,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,20,10,0,0,0,0,0,0,0],
+        "M446": [2,2,0,14,10,12,0,0,0,0,0,0],
+        "M447": [0,0,2,10,10,0,0,0,0,0,0,0],
+        "M448": [14,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,2,0,0,0,0,0,0,0,0,0],
+        "M452": [12,0,0,10,2,0,0,0,0,0,0,0],
+        "M453": [4,0,2,10,10,10,0,0,0,0,0,0],
+        "M454": [0,1,10,10,0,0,0,0,0,0,0,0],
+        "M455": [0,2,10,10,10,20,0,0,0,0,0,0],
+        "M456": [30,0,10,0,0,20,0,0,0,0,0,0]
     },
-    neumaticoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    neumaticoNuevo: {
+        "M442": [1,4,0,1,1,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,2,2,2,1,0,0,0,0,0,0,0],
+        "M445": [1,3,2,0,3,0,0,0,0,0,0,0],
+        "M446": [1,1,0,3,1,0,0,0,0,0,0,0],
+        "M447": [4,0,0,1,3,0,0,0,0,0,0,0],
+        "M448": [2,2,2,2,0,0,0,0,0,0,0,0],
+        "M450": [1,1,1,1,0,0,0,0,0,0,0,0],
+        "M451": [0,1,0,3,1,0,0,0,0,0,0,0],
+        "M452": [2,1,4,0,0,0,0,0,0,0,0,0],
+        "M453": [1,0,3,0,3,0,0,0,0,0,0,0],
+        "M454": [1,0,1,0,0,0,0,0,0,0,0,0],
+        "M455": [1,3,2,0,0,2,0,0,0,0,0,0],
+        "M456": [2,1,2,0,0,0,0,0,0,0,0,0]
+    },
     neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    patinFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    patinFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    levaFreno: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    pulmonFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
+    patinFrenoNuevo: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,2,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+    },
+    patinFrenoReparado: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [2,0,0,4,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,6,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M452": [2,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [2,0,0,0,0,0,0,0,0,0,0,0]
+    },
+    levaFreno: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,2,0,0,0,0,0,0],
+        "M444": [0,0,0,4,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,2,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+    },
+    pulmonFrenoNuevo: {
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,3,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+    },
     pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
+    llantas: {
+        "M442": [0,1,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,0,1,2,2,0,0,0,0,0,0,0],
+        "M445": [1,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M447": [1,0,0,0,0,2,0,0,0,0,0,0],
+        "M448": [0,0,1,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M452": [1,0,1,0,0,0,0,0,0,0,0,0],
+        "M453": [1,0,0,0,0,1,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,4,0,0,2,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+    }
 };
 
 function cardLabel(c) {
@@ -799,7 +920,7 @@ function guardarYBloquear() {
     modoEdicionActivo = false;
     document.body.classList.remove('editing-mode');
     document.body.classList.add('read-only-mode');
-    document.getElementById('lock-indicator').innerHTML = ' Solo lectura';
+    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
     document.getElementById('lock-indicator').style.color = '#e74c3c';
 }
 
@@ -860,7 +981,8 @@ function generarTabla(datos, tbodyId, tipo) {
     });
 }
 
-function obtenerCantidadFiltrada(categoria) {
+// Obtener cantidad SOLO por mes (NO por tarjetas seleccionadas)
+function obtenerCantidadPorMes(categoria) {
     const d = obtenerDatosActual();
     const data = d[categoria];
     if (!data) return 0;
@@ -934,12 +1056,18 @@ function actualizarTarjetas() {
     document.getElementById("totalLlantas").textContent = calc("llantas");
 }
 
+// SELECCIÓN MÚLTIPLE CORREGIDA
 function toggleCard(categoria, event) {
-    const card = event.currentTarget;
+    event.preventDefault();
+    event.stopPropagation();
     
-    if (event.ctrlKey || event.metaKey) {
+    const card = event.currentTarget;
+    const isCtrl = event.ctrlKey || event.metaKey;
+    const yaSeleccionada = categoriasSeleccionadas.has(categoria);
+    
+    if (isCtrl) {
         // Ctrl+Click: Toggle selección múltiple
-        if (categoriasSeleccionadas.has(categoria)) {
+        if (yaSeleccionada) {
             categoriasSeleccionadas.delete(categoria);
             card.classList.remove('selected');
         } else {
@@ -947,65 +1075,63 @@ function toggleCard(categoria, event) {
             card.classList.add('selected');
         }
     } else {
-        // Click normal: Selección única
-        if (categoriasSeleccionadas.has(categoria) && categoriasSeleccionadas.size === 1) {
-            // Deseleccionar si ya está seleccionada y es la única
+        // Click normal
+        if (yaSeleccionada && categoriasSeleccionadas.size === 1) {
+            // Deseleccionar si es la única
             categoriasSeleccionadas.clear();
             card.classList.remove('selected');
+        } else if (yaSeleccionada) {
+            // Quitar esta de la selección múltiple
+            categoriasSeleccionadas.delete(categoria);
+            card.classList.remove('selected');
         } else {
-            // Seleccionar esta y deseleccionar las demás
-            categoriasSeleccionadas.clear();
-            categoriasSeleccionadas.add(categoria);
-            document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
+            // Agregar a la selección (manteniendo las demás si hay Ctrl, sino reemplaza)
+            if (categoriasSeleccionadas.size === 0) {
+                categoriasSeleccionadas.add(categoria);
+                card.classList.add('selected');
+            } else {
+                // Si ya hay seleccionadas, agregar esta también (comportamiento múltiple por defecto)
+                categoriasSeleccionadas.add(categoria);
+                card.classList.add('selected');
+            }
         }
     }
     
     actualizarInfoSeleccion();
     actualizarGraficos();
-    calcularEconomico();
+    // NO actualizar valores económicos por tarjetas, solo por mes
 }
 
 function actualizarInfoSeleccion() {
     const info = document.getElementById('selectionInfo');
     if (categoriasSeleccionadas.size === 0) {
-        info.textContent = '💡 Click simple: Seleccionar | Ctrl+Click: Selección múltiple | Click en seleccionada: Deseleccionar';
+        info.textContent = '💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar';
     } else if (categoriasSeleccionadas.size === 1) {
         info.textContent = `📌 Seleccionado: ${cardLabel([...categoriasSeleccionadas][0])} - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
     } else {
-        info.textContent = `📌 ${categoriasSeleccionadas.size} categorías seleccionadas - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
+        const nombres = [...categoriasSeleccionadas].map(c => cardLabel(c)).join(', ');
+        info.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas: ${nombres} - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
     }
 }
 
+// VALORES ECONÓMICOS: SOLO por mes, NO por tarjetas seleccionadas
 function calcularEconomico() {
     const d = obtenerDatosActual();
     
-    const calc = (cat) => {
-        const data = d[cat];
-        if (!data) return 0;
-        let total = 0;
-        CONFIG.equipos.forEach(eq => {
-            if (data[eq]) {
-                total += mesFiltrado !== null ? (data[eq][mesFiltrado] || 0) : data[eq].reduce((a, b) => a + b, 0);
-            }
-        });
-        return total;
-    };
-    
     const cant = {
-        elastO: calc("elasticosO"),
-        elastF: calc("elasticosF"),
-        mazaN: calc("mazasN"),
-        mazaR: calc("mazasR"),
-        bulon: calc("bulonTuerca"),
-        tuerca: calc("bulonTuerca"),
-        neumaticoNuevo: calc("neumaticoNuevo"),
-        patinFrenoNuevo: calc("patinFrenoNuevo"),
-        patinFrenoReparado: calc("patinFrenoReparado"),
-        levaFreno: calc("levaFreno"),
-        pulmonFrenoNuevo: calc("pulmonFrenoNuevo"),
-        pulmonFrenoReparado: calc("pulmonFrenoReparado"),
-        llantas: calc("llantas")
+        elastO: obtenerCantidadPorMes("elasticosO"),
+        elastF: obtenerCantidadPorMes("elasticosF"),
+        mazaN: obtenerCantidadPorMes("mazasN"),
+        mazaR: obtenerCantidadPorMes("mazasR"),
+        bulon: obtenerCantidadPorMes("bulonTuerca"),
+        tuerca: obtenerCantidadPorMes("bulonTuerca"),
+        neumaticoNuevo: obtenerCantidadPorMes("neumaticoNuevo"),
+        patinFrenoNuevo: obtenerCantidadPorMes("patinFrenoNuevo"),
+        patinFrenoReparado: obtenerCantidadPorMes("patinFrenoReparado"),
+        levaFreno: obtenerCantidadPorMes("levaFreno"),
+        pulmonFrenoNuevo: obtenerCantidadPorMes("pulmonFrenoNuevo"),
+        pulmonFrenoReparado: obtenerCantidadPorMes("pulmonFrenoReparado"),
+        llantas: obtenerCantidadPorMes("llantas")
     };
     
     document.getElementById("cantElasticosO").textContent = cant.elastO;
@@ -1023,14 +1149,10 @@ function calcularEconomico() {
     document.getElementById("cantLlantas").textContent = cant.llantas;
     
     const filterIndicator = document.getElementById("filterIndicator");
-    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${CONFIG.meses[mesFiltrado]}`;
-    } else if (categoriasSeleccionadas.size > 0) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas (Año)`;
-    } else if (mesFiltrado !== null) {
+    if (mesFiltrado !== null) {
         filterIndicator.textContent = `📌 Mes: ${CONFIG.meses[mesFiltrado]}`;
     } else {
-        filterIndicator.textContent = `📌 Año completo`;
+        filterIndicator.textContent = ` Año completo`;
     }
     
     const prec = {
@@ -1139,9 +1261,11 @@ async function guardarTodosLosDatos(event) {
     if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local");
 }
 
+// EXPORTACIÓN: Usa SOLO los datos reales en memoria
 function exportarCSV() {
-    const d = obtenerDatosActual();
-    let csv = "MINERAR - REPUESTOS CRÍTICOS " + añoActual + "\n\n";
+    const d = obtenerDatosActual(); // Datos REALES en memoria
+    let csv = "MINERAR - REPUESTOS CRÍTICOS " + añoActual + "\n";
+    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
     
     const cats = [
         { key: 'elasticosO', title: 'ELASTICOS ORIG' },
@@ -1150,20 +1274,23 @@ function exportarCSV() {
         { key: 'mazasR', title: 'MAZAS REPAR' },
         { key: 'bulonTuerca', title: 'BULON/TUERCA' },
         { key: 'neumaticoNuevo', title: 'NEUMATICO NUEVO' },
+        { key: 'neumaticoUsado', title: 'NEUMATICO USADO' },
         { key: 'patinFrenoNuevo', title: 'PATIN NUEVO' },
         { key: 'patinFrenoReparado', title: 'PATIN REPAR' },
         { key: 'levaFreno', title: 'LEVA FRENO' },
         { key: 'pulmonFrenoNuevo', title: 'PULMON NUEVO' },
+        { key: 'pulmonFrenoReparado', title: 'PULMON REPAR' },
         { key: 'llantas', title: 'LLANTAS' }
     ];
     
     cats.forEach(cat => {
-        csv += `\n${cat.title}\nEquipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n`;
+        csv += `\n${cat.title}\n`;
+        csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
         CONFIG.equipos.forEach(eq => {
             let row = `${eq};`;
             let total = 0;
             for (let i = 0; i < 12; i++) {
-                let val = d[cat.key][eq][i] || 0;
+                let val = (d[cat.key] && d[cat.key][eq] && d[cat.key][eq][i]) ? d[cat.key][eq][i] : 0;
                 row += `${val};`;
                 total += val;
             }
@@ -1180,7 +1307,8 @@ function exportarCSV() {
     a.href = url;
     a.download = `Minerar_${añoActual}.csv`;
     a.click();
-    mostrarToast("📊 Exportado");
+    URL.revokeObjectURL(url);
+    mostrarToast("📊 Exportado con datos reales");
 }
 
 function importarCSV(event) {
@@ -1197,8 +1325,10 @@ function importarCSV(event) {
             'ELASTICOS ORIG': 'elasticosO', 'ELASTICOS FAB': 'elasticosF',
             'MAZAS NUEVAS': 'mazasN', 'MAZAS REPAR': 'mazasR',
             'BULON/TUERCA': 'bulonTuerca', 'NEUMATICO NUEVO': 'neumaticoNuevo',
+            'NEUMATICO USADO': 'neumaticoUsado',
             'PATIN NUEVO': 'patinFrenoNuevo', 'PATIN REPAR': 'patinFrenoReparado',
             'LEVA FRENO': 'levaFreno', 'PULMON NUEVO': 'pulmonFrenoNuevo',
+            'PULMON REPAR': 'pulmonFrenoReparado',
             'LLANTAS': 'llantas'
         };
         
@@ -1313,7 +1443,7 @@ function actualizarGraficos() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { position: 'top', labels: { color: colors.text } },
-                title: { display: true, text: ' Evolución Mensual', color: colors.text },
+                title: { display: true, text: '📈 Evolución Mensual', color: colors.text },
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
@@ -1403,7 +1533,7 @@ function actualizarGraficos() {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                title: { display: true, text: ' Por Equipo', color: colors.text },
+                title: { display: true, text: '📊 Por Equipo', color: colors.text },
                 tooltip: {
                     callbacks: {
                         label: function(ctx) {
