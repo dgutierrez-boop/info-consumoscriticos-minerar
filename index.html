@@ -17,11 +17,16 @@ body {
     min-height: 100vh;
 }
 
-body.read-only-mode .editing-only {
+body.read-only-mode .accordion-header,
+body.read-only-mode .accordion-content {
     display: none !important;
 }
 
-body.editing-mode .editing-only {
+body.editing-mode .accordion-header {
+    display: flex !important;
+}
+
+body.editing-mode .accordion-content {
     display: block !important;
 }
 
@@ -67,104 +72,18 @@ body.editing-mode .editing-only {
 .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
 .btn-outline { background: #ecf0f1; color: #2c3e50; border: 2px solid #bdc3c7; }
 
-/* LAYOUT DE 2 COLUMNAS */
-.main-layout {
-    display: grid;
-    grid-template-columns: 380px 1fr;
-    gap: 24px;
-    max-width: 1800px;
-    margin: 0 auto;
-}
-
-/* COLUMNA IZQUIERDA - VALORES ECONÓMICOS (STICKY) */
-.values-sidebar {
-    position: sticky;
-    top: 20px;
-    height: fit-content;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-}
-
-.values-section {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 20px;
-    border-radius: 20px;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.2);
-}
-
-.values-section h3 {
-    color: white;
-    margin-bottom: 16px;
-    font-size: 1.1rem;
-    font-weight: 800;
-    text-align: center;
-}
-
-.values-table {
-    width: 100%;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    font-size: 0.85rem;
-}
-
-.values-table th {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 8px 6px;
-    font-weight: 700;
-}
-
-.values-table td {
-    padding: 6px;
-    border-bottom: 1px solid #ecf0f1;
-}
-
-.values-table input {
-    width: 100%;
-    padding: 4px 6px;
-    border: 2px solid #bdc3c7;
-    border-radius: 6px;
-    font-size: 0.8rem;
-}
-
-.values-table input[readonly] {
-    background: #ecf0f1;
-    font-weight: 800;
-    border: none;
-}
-
-.grand-total {
-    background: linear-gradient(135deg, #f39c12, #e67e22) !important;
-    font-weight: 800 !important;
-}
-
-/* COLUMNA DERECHA - CONTENIDO PRINCIPAL */
-.content-area {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-}
-
+/* ENSANCHADO: max-width aumentado a 1600px */
 .report-container {
+    max-width: 1600px;
+    margin: 0 auto;
     background: white;
     border-radius: 16px;
     box-shadow: 0 15px 50px rgba(0,0,0,0.2);
-    padding: 24px;
-}
-
-/* FILTROS STICKY */
-.filters-sticky {
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 50;
-    padding: 16px 0;
-    border-bottom: 3px solid #38B6B2;
-    margin-bottom: 24px;
+    padding: 32px;
 }
 
 .filtro-meses {
+    margin-bottom: 24px;
     padding: 16px;
     background: rgba(56, 182, 178, 0.1);
     border-radius: 12px;
@@ -197,44 +116,19 @@ body.editing-mode .editing-only {
     color: white;
 }
 
-.alert {
-    background: linear-gradient(135deg, #d4edda, #c3e6cb);
-    border-left: 5px solid #27ae60;
-    padding: 12px 16px;
-    margin-bottom: 24px;
-    border-radius: 12px;
-    font-weight: 600;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-/* TARJETAS STICKY */
-.cards-sticky {
+.summary-grid-container {
     position: sticky;
-    top: 140px;
+    top: 0;
+    z-index: 100;
     background: white;
     padding: 16px 0;
     margin-bottom: 24px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    z-index: 40;
-}
-
-.selection-info {
-    background: rgba(52, 152, 219, 0.1);
-    border: 2px solid #3498db;
-    border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 12px;
-    text-align: center;
-    font-weight: 600;
-    color: #2c3e50;
-    font-size: 0.85rem;
 }
 
 .summary-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
     gap: 10px;
 }
 
@@ -293,9 +187,9 @@ body.editing-mode .editing-only {
 
 .charts-section {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
     gap: 24px;
-    margin: 24px 0;
+    margin: 32px 0;
 }
 
 .chart-card {
@@ -315,7 +209,6 @@ body.editing-mode .editing-only {
 
 .chart-container { position: relative; height: 320px; }
 
-/* TABLAS DE EDICIÓN */
 .accordion-header {
     display: flex;
     justify-content: space-between;
@@ -346,7 +239,6 @@ table {
     border-radius: 12px;
     overflow: hidden;
     border: 2px solid #bdc3c7;
-    margin-bottom: 20px;
 }
 
 th {
@@ -385,6 +277,18 @@ td {
     background: linear-gradient(135deg, #34495e, #2c3e50) !important;
     color: #ffffff !important;
     font-weight: 800 !important;
+}
+
+.alert {
+    background: linear-gradient(135deg, #d4edda, #c3e6cb);
+    border-left: 5px solid #27ae60;
+    padding: 12px 16px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .floating-controls {
@@ -462,6 +366,59 @@ body.editing-mode #save-lock-btn { display: flex; }
 .security-btn-primary { background: linear-gradient(135deg, #27ae60, #229954); color: white; }
 .security-btn-secondary { background: linear-gradient(135deg, #95a5a6, #7f8c8d); color: white; }
 
+.values-section {
+    margin-top: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 24px;
+    border-radius: 20px;
+}
+
+.values-section h3 {
+    color: white;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: 800;
+    text-align: center;
+}
+
+.values-table {
+    width: 100%;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.values-table th {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 10px;
+    font-weight: 700;
+}
+
+.values-table td {
+    padding: 10px;
+    border-bottom: 2px solid #ecf0f1;
+}
+
+.values-table input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 2px solid #bdc3c7;
+    border-radius: 10px;
+    font-size: 0.8rem;
+}
+
+.values-table input[readonly] {
+    background: #ecf0f1;
+    font-weight: 800;
+    border: none;
+}
+
+.grand-total {
+    background: linear-gradient(135deg, #f39c12, #e67e22) !important;
+    font-weight: 800 !important;
+}
+
 .toast {
     position: fixed;
     bottom: 24px;
@@ -492,21 +449,16 @@ body.editing-mode #save-lock-btn { display: flex; }
     color: white;
 }
 
-/* RESPONSIVE */
-@media (max-width: 1200px) {
-    .main-layout {
-        grid-template-columns: 1fr;
-    }
-    .values-sidebar {
-        position: static;
-        max-height: none;
-    }
-    .cards-sticky {
-        top: 0;
-    }
-    .filters-sticky {
-        top: 0;
-    }
+.selection-info {
+    background: rgba(52, 152, 219, 0.1);
+    border: 2px solid #3498db;
+    border-radius: 12px;
+    padding: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.85rem;
 }
 </style>
 </head>
@@ -516,166 +468,150 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div class="controls">
 <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
 <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
-<button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
+<button class="btn btn-warning" onclick="exportarCSV()"> Exportar Excel</button>
 <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
 <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
 </div>
 </div>
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
 
-<div class="main-layout">
-    <!-- COLUMNA IZQUIERDA - VALORES ECONÓMICOS (STICKY) -->
-    <div class="values-sidebar">
-        <div class="values-section">
-            <h3>💰 VALORES ECONÓMICOS <span id="filterIndicator" class="filter-badge"></span></h3>
-            <table class="values-table">
-                <thead><tr><th>Concepto</th><th>Cant</th><th>Valor $</th><th>Total $</th></tr></thead>
-                <tbody>
-                    <tr><td><strong>🔧 Elást. ORIG</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
-                    <tr><td><strong>🔧 Elást. FAB</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
-                    <tr><td><strong>⚙️ Mazas N</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
-                    <tr><td><strong>⚙️ Mazas R</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
-                    <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-                    <tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
-                    <tr><td><strong>🛞 Neum. N</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
-                    <tr><td><strong>🛞 Patín N</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
-                    <tr><td><strong>🛞 Patín R</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
-                    <tr><td><strong>⚙️ Leva</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
-                    <tr><td><strong>💨 Pulmón N</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
-                    <tr><td><strong>💨 Pulmón R</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
-                    <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
-                </tbody>
-            </table>
+<div class="report-container">
+<div class="filtro-meses">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+<h3 style="color: #38B6B2; margin: 0;">📅 FILTRAR POR MES</h3>
+<button class="btn-ver-todo" onclick="limpiarFiltroMes()">Ver Todo el Año</button>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px;">
+<button class="mes-btn" onclick="cambiarMes(0)">Ene</button>
+<button class="mes-btn" onclick="cambiarMes(1)">Feb</button>
+<button class="mes-btn" onclick="cambiarMes(2)">Mar</button>
+<button class="mes-btn" onclick="cambiarMes(3)">Abr</button>
+<button class="mes-btn" onclick="cambiarMes(4)">May</button>
+<button class="mes-btn" onclick="cambiarMes(5)">Jun</button>
+<button class="mes-btn" onclick="cambiarMes(6)">Jul</button>
+<button class="mes-btn" onclick="cambiarMes(7)">Ago</button>
+<button class="mes-btn" onclick="cambiarMes(8)">Sep</button>
+<button class="mes-btn" onclick="cambiarMes(9)">Oct</button>
+<button class="mes-btn" onclick="cambiarMes(10)">Nov</button>
+<button class="mes-btn" onclick="cambiarMes(11)">Dic</button>
+</div>
+</div>
 
-            <h4 style="color:white; margin:20px 0 12px 0; font-size:1rem;">👷 HORAS HOMBRE</h4>
-            <table class="values-table">
-                <thead><tr><th>Concepto</th><th>Hs</th><th>$/Hs</th><th>Total $</th></tr></thead>
-                <tbody>
-                    <tr><td><strong>Personal</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
-                    <tr><td><strong>CORIA Mec</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
-                    <tr><td><strong>CORIA Sold</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
-                    <tr><td><strong>CARRIZO</strong></td><td><input type="text" id="horasCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCarrizo" readonly></td></tr>
-                    <tr><td><strong>PATIÑO</strong></td><td><input type="text" id="horasPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatino" readonly></td></tr>
-                    <tr class="grand-total"><td><strong>TOTAL MO</strong></td><td colspan="2" style="text-align:right;">SUMA:</td><td><input type="text" id="totalManoObra" readonly></td></tr>
-                    <tr class="grand-total"><td><strong>TOTAL GRAL</strong></td><td colspan="2" style="text-align:right;">TOTAL:</td><td><input type="text" id="totalGeneral" readonly></td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+<div class="alert">
+<span>✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar.</span>
+<span id="lock-indicator" style="color: #e74c3c;">🔒 Solo lectura</span>
+</div>
 
-    <!-- COLUMNA DERECHA - CONTENIDO PRINCIPAL -->
-    <div class="content-area">
-        <div class="report-container">
-            <!-- FILTROS STICKY -->
-            <div class="filters-sticky">
-                <div class="filtro-meses">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <h3 style="color: #38B6B2; margin: 0;">📅 FILTRAR POR MES</h3>
-                        <button class="btn-ver-todo" onclick="limpiarFiltroMes()">Ver Todo el Año</button>
-                    </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
-                        <button class="mes-btn" onclick="cambiarMes(0)">Ene</button>
-                        <button class="mes-btn" onclick="cambiarMes(1)">Feb</button>
-                        <button class="mes-btn" onclick="cambiarMes(2)">Mar</button>
-                        <button class="mes-btn" onclick="cambiarMes(3)">Abr</button>
-                        <button class="mes-btn" onclick="cambiarMes(4)">May</button>
-                        <button class="mes-btn" onclick="cambiarMes(5)">Jun</button>
-                        <button class="mes-btn" onclick="cambiarMes(6)">Jul</button>
-                        <button class="mes-btn" onclick="cambiarMes(7)">Ago</button>
-                        <button class="mes-btn" onclick="cambiarMes(8)">Sep</button>
-                        <button class="mes-btn" onclick="cambiarMes(9)">Oct</button>
-                        <button class="mes-btn" onclick="cambiarMes(10)">Nov</button>
-                        <button class="mes-btn" onclick="cambiarMes(11)">Dic</button>
-                    </div>
-                </div>
-            </div>
+<div class="summary-grid-container">
+<div class="selection-info" id="selectionInfo">
+💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar
+</div>
+<div class="summary-grid">
+<div class="stat-card" onclick="toggleCard('elasticosO', event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elásticos ORIG</div></div>
+<div class="stat-card" onclick="toggleCard('elasticosF', event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elásticos FAB</div></div>
+<div class="stat-card" onclick="toggleCard('mazasN', event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas NUEVAS</div></div>
+<div class="stat-card" onclick="toggleCard('mazasR', event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('bulonTuerca', event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
+<div class="stat-card" onclick="toggleCard('neumaticoNuevo', event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neumático NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('neumaticoUsado', event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neumático USADO</div></div>
+<div class="stat-card" onclick="toggleCard('patinFrenoNuevo', event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('patinFrenoReparado', event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('levaFreno', event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">️ Leva Freno</div></div>
+<div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo', event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón NUEVO</div></div>
+<div class="stat-card" onclick="toggleCard('pulmonFrenoReparado', event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón REPAR</div></div>
+<div class="stat-card" onclick="toggleCard('llantas', event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
+</div>
+</div>
 
-            <div class="alert">
-                <span>✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar.</span>
-                <span id="lock-indicator" style="color: #e74c3c;">🔒 Solo lectura</span>
-            </div>
+<div class="charts-section">
+<div class="chart-card">
+<h4>📈 Evolución Mensual</h4>
+<div class="chart-container"><canvas id="chartLine"></canvas></div>
+</div>
+<div class="chart-card">
+<h4>📊 Consumo por Equipo</h4>
+<div class="chart-container"><canvas id="chartBar"></canvas></div>
+</div>
+<div class="chart-card">
+<h4>🎯 Distribución</h4>
+<div class="chart-container"><canvas id="chartDoughnut"></canvas></div>
+</div>
+</div>
 
-            <!-- TARJETAS STICKY -->
-            <div class="cards-sticky">
-                <div class="selection-info" id="selectionInfo">
-                    💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar
-                </div>
-                <div class="summary-grid">
-                    <div class="stat-card" onclick="toggleCard('elasticosO', event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elást. ORIG</div></div>
-                    <div class="stat-card" onclick="toggleCard('elasticosF', event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elást. FAB</div></div>
-                    <div class="stat-card" onclick="toggleCard('mazasN', event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas N</div></div>
-                    <div class="stat-card" onclick="toggleCard('mazasR', event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas R</div></div>
-                    <div class="stat-card" onclick="toggleCard('bulonTuerca', event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
-                    <div class="stat-card" onclick="toggleCard('neumaticoNuevo', event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neum. N</div></div>
-                    <div class="stat-card" onclick="toggleCard('neumaticoUsado', event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neum. U</div></div>
-                    <div class="stat-card" onclick="toggleCard('patinFrenoNuevo', event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín N</div></div>
-                    <div class="stat-card" onclick="toggleCard('patinFrenoReparado', event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín R</div></div>
-                    <div class="stat-card" onclick="toggleCard('levaFreno', event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva</div></div>
-                    <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo', event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón N</div></div>
-                    <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado', event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón R</div></div>
-                    <div class="stat-card" onclick="toggleCard('llantas', event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
-                </div>
-            </div>
+<div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
+<div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
 
-            <!-- GRÁFICOS -->
-            <div class="charts-section">
-                <div class="chart-card">
-                    <h4>📈 Evolución Mensual</h4>
-                    <div class="chart-container"><canvas id="chartLine"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>📊 Consumo por Equipo</h4>
-                    <div class="chart-container"><canvas id="chartBar"></canvas></div>
-                </div>
-                <div class="chart-card">
-                    <h4>🎯 Distribución</h4>
-                    <div class="chart-container"><canvas id="chartDoughnut"></canvas></div>
-                </div>
-            </div>
+<div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span>🔧 Elásticos FABRICADOS</span><span>▼</span></div>
+<div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
 
-            <!-- TABLAS DE EDICIÓN (SOLO MODO EDICIÓN) -->
-            <div class="editing-only">
-                <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
-                <div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>️ Mazas NUEVAS</span><span>▼</span></div>
+<div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span>🔧 Elásticos FABRICADOS</span><span>▼</span></div>
-                <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
+<div id="accordionMazasR" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
-                <div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')"><span>🔩 Bulón y Tuerca</span><span>▼</span></div>
+<div id="accordionBulonTuerca" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
-                <div id="accordionMazasR" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')"><span>🛞 Neumático NUEVO</span><span>▼</span></div>
+<div id="accordionNeumaticoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoNuevo"><thead id="theadNeumaticoNuevo"></thead><tbody id="tbodyNeumaticoNuevo"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')"><span>🔩 Bulón y Tuerca</span><span>▼</span></div>
-                <div id="accordionBulonTuerca" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoUsado')"><span>🛞 Neumático USADO</span><span>▼</span></div>
+<div id="accordionNeumaticoUsado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoUsado"><thead id="theadNeumaticoUsado"></thead><tbody id="tbodyNeumaticoUsado"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')"><span>🛞 Neumático NUEVO</span><span>▼</span></div>
-                <div id="accordionNeumaticoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoNuevo"><thead id="theadNeumaticoNuevo"></thead><tbody id="tbodyNeumaticoNuevo"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')"><span>🛞 Patín NUEVO</span><span>▼</span></div>
+<div id="accordionPatinFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoUsado')"><span>🛞 Neumático USADO</span><span>▼</span></div>
-                <div id="accordionNeumaticoUsado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoUsado"><thead id="theadNeumaticoUsado"></thead><tbody id="tbodyNeumaticoUsado"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span>🛞 Patín REPARADO</span><span>▼</span></div>
+<div id="accordionPatinFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')"><span>🛞 Patín NUEVO</span><span>▼</span></div>
-                <div id="accordionPatinFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
+<div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span>🛞 Patín REPARADO</span><span>▼</span></div>
-                <div id="accordionPatinFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span> Pulmón NUEVO</span><span>▼</span></div>
+<div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
-                <div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')"><span>💨 Pulmón REPARADO</span><span>▼</span></div>
+<div id="accordionPulmonFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span>💨 Pulmón NUEVO</span><span>▼</span></div>
-                <div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
+<div class="accordion-header" onclick="toggleAccordion('accordionLlantas')"><span>⭕ Llantas Rotas</span><span>▼</span></div>
+<div id="accordionLlantas" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div></div>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')"><span>💨 Pulmón REPARADO</span><span>▼</span></div>
-                <div id="accordionPulmonFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div></div>
+<div class="values-section">
+<h3>💰 VALORES ECONÓMICOS <span id="filterIndicator" class="filter-badge"></span></h3>
+<table class="values-table">
+<thead><tr><th>Concepto</th><th>Cantidad</th><th>Valor Unitario ($)</th><th>Total ($)</th></tr></thead>
+<tbody>
+<tr><td><strong>🔧 Elásticos ORIGINALES</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
+<tr><td><strong>🔧 Elásticos FABRICADOS</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+<tr><td><strong>⚙️ Mazas NUEVAS</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
+<tr><td><strong>⚙️ Mazas REPARADAS</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
+<tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
+<tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+<tr><td><strong>🛞 Neumático NUEVO</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
+<tr><td><strong>🛞 Patín NUEVO</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
+<tr><td><strong> Patín REPARADO</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
+<tr><td><strong>⚙️ Leva de Freno</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
+<tr><td><strong>💨 Pulmón NUEVO</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
+<tr><td><strong>💨 Pulmón REPARADO</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
+<tr><td><strong>⭕ Llantas Rotas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+</tbody>
+</table>
 
-                <div class="accordion-header" onclick="toggleAccordion('accordionLlantas')"><span>⭕ Llantas Rotas</span><span>▼</span></div>
-                <div id="accordionLlantas" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div></div>
-            </div>
-        </div>
-    </div>
+<h4 style="color:white; margin:24px 0 16px 0;">👷 HORAS HOMBRE</h4>
+<table class="values-table">
+<thead><tr><th>Concepto</th><th>Horas</th><th>Valor/Hora ($)</th><th>Total ($)</th></tr></thead>
+<tbody>
+<tr><td><strong>Personal Propio</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+<tr><td><strong>CORIA - Mecánico</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
+<tr><td><strong>CORIA - Soldador</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
+<tr><td><strong>CARRIZO</strong></td><td><input type="text" id="horasCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCarrizo" readonly></td></tr>
+<tr><td><strong>PATIÑO</strong></td><td><input type="text" id="horasPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatino" readonly></td></tr>
+<tr class="grand-total"><td><strong>TOTAL MANO DE OBRA</strong></td><td colspan="2" style="text-align:right;">SUMA:</td><td><input type="text" id="totalManoObra" readonly></td></tr>
+<tr class="grand-total"><td><strong>TOTAL GENERAL</strong></td><td colspan="2" style="text-align:right;">TOTAL:</td><td><input type="text" id="totalGeneral" readonly></td></tr>
+</tbody>
+</table>
+</div>
 </div>
 
 <div class="floating-controls">
@@ -685,7 +621,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 
 <div class="security-overlay" id="securityModal">
 <div class="security-modal">
-<h2>🔐 Acceso Restringido</h2>
+<h2> Acceso Restringido</h2>
 <p>Ingrese contraseña</p>
 <input type="password" id="passwordInput" placeholder="••••••">
 <button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
@@ -711,7 +647,7 @@ const CONFIG = {
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
     meses: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
     passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v22"
+    storageKey: "minerar_repuestos_v21"
 };
 
 let añoActual = 2026;
@@ -721,112 +657,182 @@ let modoEdicionActivo = false;
 let categoriasSeleccionadas = new Set();
 let mesFiltrado = null;
 
-// Datos del CSV cargados
+// DATOS REALES según el CSV cargado
 const datosIncrustados = {
     elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     elasticosF: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,1,1,2,0,1,0,0,0,0,0,0], "M445": [1,0,0,0,2,1,0,0,0,0,0,0],
-        "M446": [2,2,1,0,1,1,0,0,0,0,0,0], "M447": [0,0,0,2,1,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [2,0,1,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,2,1,2,0,0,0,0,0,0],
-        "M453": [0,0,1,2,0,1,0,0,0,0,0,0], "M454": [0,2,2,2,0,1,0,0,0,0,0,0],
-        "M455": [1,2,0,0,1,1,0,0,0,0,0,0], "M456": [2,0,0,0,2,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,1,1,2,0,1,0,0,0,0,0,0],
+        "M445": [1,0,0,0,2,1,0,0,0,0,0,0],
+        "M446": [2,2,1,0,1,1,0,0,0,0,0,0],
+        "M447": [0,0,0,2,1,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [2,0,1,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,2,1,2,0,0,0,0,0,0],
+        "M453": [0,0,1,2,0,1,0,0,0,0,0,0],
+        "M454": [0,2,2,2,0,1,0,0,0,0,0,0],
+        "M455": [1,2,0,0,1,1,0,0,0,0,0,0],
+        "M456": [2,0,0,0,2,0,0,0,0,0,0,0]
     },
     mazasN: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,0,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,1,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,1,0,0,0,0,0,0],
-        "M455": [0,0,1,0,0,1,0,0,0,0,0,0], "M456": [0,0,0,0,0,1,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M455": [0,0,1,0,0,1,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,1,0,0,0,0,0,0]
     },
     mazasR: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,1,0,0,0,0,0,0,0,0], "M445": [0,0,0,1,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [1,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,1,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,2,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [1,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
     },
     bulonTuerca: {
-        "M442": [0,0,0,0,10,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,0,2,30,0,0,0,0,0,0,0,0], "M445": [0,0,0,20,10,0,0,0,0,0,0,0],
-        "M446": [2,2,0,14,10,12,0,0,0,0,0,0], "M447": [0,0,2,10,10,0,0,0,0,0,0,0],
-        "M448": [14,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,2,0,0,0,0,0,0,0,0,0], "M452": [12,0,0,10,2,0,0,0,0,0,0,0],
-        "M453": [4,0,2,10,10,10,0,0,0,0,0,0], "M454": [0,1,10,10,0,0,0,0,0,0,0,0],
-        "M455": [0,2,10,10,10,20,0,0,0,0,0,0], "M456": [30,0,10,0,0,20,0,0,0,0,0,0]
+        "M442": [0,0,0,0,10,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,0,2,30,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,20,10,0,0,0,0,0,0,0],
+        "M446": [2,2,0,14,10,12,0,0,0,0,0,0],
+        "M447": [0,0,2,10,10,0,0,0,0,0,0,0],
+        "M448": [14,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,2,0,0,0,0,0,0,0,0,0],
+        "M452": [12,0,0,10,2,0,0,0,0,0,0,0],
+        "M453": [4,0,2,10,10,10,0,0,0,0,0,0],
+        "M454": [0,1,10,10,0,0,0,0,0,0,0,0],
+        "M455": [0,2,10,10,10,20,0,0,0,0,0,0],
+        "M456": [30,0,10,0,0,20,0,0,0,0,0,0]
     },
     neumaticoNuevo: {
-        "M442": [1,4,0,1,1,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,2,2,2,1,0,0,0,0,0,0,0], "M445": [1,3,2,0,3,0,0,0,0,0,0,0],
-        "M446": [1,1,0,3,1,0,0,0,0,0,0,0], "M447": [4,0,0,1,3,0,0,0,0,0,0,0],
-        "M448": [2,2,2,2,0,0,0,0,0,0,0,0], "M450": [1,1,1,1,0,0,0,0,0,0,0,0],
-        "M451": [0,1,0,3,1,0,0,0,0,0,0,0], "M452": [2,1,4,0,0,0,0,0,0,0,0,0],
-        "M453": [1,0,3,0,3,0,0,0,0,0,0,0], "M454": [1,0,1,0,0,0,0,0,0,0,0,0],
-        "M455": [1,3,2,0,0,2,0,0,0,0,0,0], "M456": [2,1,2,0,0,0,0,0,0,0,0,0]
+        "M442": [1,4,0,1,1,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,2,2,2,1,0,0,0,0,0,0,0],
+        "M445": [1,3,2,0,3,0,0,0,0,0,0,0],
+        "M446": [1,1,0,3,1,0,0,0,0,0,0,0],
+        "M447": [4,0,0,1,3,0,0,0,0,0,0,0],
+        "M448": [2,2,2,2,0,0,0,0,0,0,0,0],
+        "M450": [1,1,1,1,0,0,0,0,0,0,0,0],
+        "M451": [0,1,0,3,1,0,0,0,0,0,0,0],
+        "M452": [2,1,4,0,0,0,0,0,0,0,0,0],
+        "M453": [1,0,3,0,3,0,0,0,0,0,0,0],
+        "M454": [1,0,1,0,0,0,0,0,0,0,0,0],
+        "M455": [1,3,2,0,0,2,0,0,0,0,0,0],
+        "M456": [2,1,2,0,0,0,0,0,0,0,0,0]
     },
     neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     patinFrenoNuevo: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,0,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,2,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,2,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
     },
     patinFrenoReparado: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [2,0,0,4,0,0,0,0,0,0,0,0], "M445": [0,0,0,6,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,2,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,2,0,0,0,0,0,0,0], "M452": [2,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [2,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [2,0,0,4,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,6,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M452": [2,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [2,0,0,0,0,0,0,0,0,0,0,0]
     },
     levaFreno: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,2,0,0,0,0,0,0],
-        "M444": [0,0,0,4,0,0,0,0,0,0,0,0], "M445": [0,0,0,2,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,2,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,1,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,2,0,0,0,0,0,0],
+        "M444": [0,0,0,4,0,0,0,0,0,0,0,0],
+        "M445": [0,0,0,2,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,2,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
     },
     pulmonFrenoNuevo: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,1,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,3,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M448": [0,0,0,0,3,0,0,0,0,0,0,0],
+        "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M453": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
     },
     pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
     llantas: {
-        "M442": [0,1,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,0,1,2,2,0,0,0,0,0,0,0], "M445": [1,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,1,0,0,0,0,0,0], "M447": [1,0,0,0,0,2,0,0,0,0,0,0],
-        "M448": [0,0,1,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,1,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,1,0,0,0,0,0,0,0], "M452": [1,0,1,0,0,0,0,0,0,0,0,0],
-        "M453": [1,0,0,0,0,1,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,4,0,0,2,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
+        "M442": [0,1,0,0,0,0,0,0,0,0,0,0],
+        "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M444": [1,0,1,2,2,0,0,0,0,0,0,0],
+        "M445": [1,0,0,0,0,0,0,0,0,0,0,0],
+        "M446": [0,0,0,0,0,1,0,0,0,0,0,0],
+        "M447": [1,0,0,0,0,2,0,0,0,0,0,0],
+        "M448": [0,0,1,0,0,0,0,0,0,0,0,0],
+        "M450": [0,0,0,1,0,0,0,0,0,0,0,0],
+        "M451": [0,0,0,0,1,0,0,0,0,0,0,0],
+        "M452": [1,0,1,0,0,0,0,0,0,0,0,0],
+        "M453": [1,0,0,0,0,1,0,0,0,0,0,0],
+        "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
+        "M455": [0,0,4,0,0,2,0,0,0,0,0,0],
+        "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
     }
 };
 
 function cardLabel(c) {
     const m = {
         'elasticosO': 'Elásticos ORIG', 'elasticosF': 'Elásticos FAB',
-        'mazasN': 'Mazas N', 'mazasR': 'Mazas R',
+        'mazasN': 'Mazas NUEVAS', 'mazasR': 'Mazas REPAR',
         'bulonTuerca': 'Bulón/Tuerca',
-        'neumaticoNuevo': 'Neumático N', 'neumaticoUsado': 'Neumático U',
-        'patinFrenoNuevo': 'Patín N', 'patinFrenoReparado': 'Patín R',
-        'levaFreno': 'Leva',
-        'pulmonFrenoNuevo': 'Pulmón N', 'pulmonFrenoReparado': 'Pulmón R',
+        'neumaticoNuevo': 'Neumático NUEVO', 'neumaticoUsado': 'Neumático USADO',
+        'patinFrenoNuevo': 'Patín NUEVO', 'patinFrenoReparado': 'Patín REPAR',
+        'levaFreno': 'Leva Freno',
+        'pulmonFrenoNuevo': 'Pulmón NUEVO', 'pulmonFrenoReparado': 'Pulmón REPAR',
         'llantas': 'Llantas'
     };
     return m[c] || c;
@@ -903,7 +909,7 @@ function verificarPassword() {
         modoEdicionActivo = true;
         document.body.classList.remove('read-only-mode');
         document.body.classList.add('editing-mode');
-        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
+        document.getElementById('lock-indicator').innerHTML = ' Modo edición';
         document.getElementById('lock-indicator').style.color = '#27ae60';
         actualizarTodo();
     }
@@ -975,6 +981,7 @@ function generarTabla(datos, tbodyId, tipo) {
     });
 }
 
+// Obtener cantidad SOLO por mes (NO por tarjetas seleccionadas)
 function obtenerCantidadPorMes(categoria) {
     const d = obtenerDatosActual();
     const data = d[categoria];
@@ -991,14 +998,6 @@ function obtenerCantidadPorMes(categoria) {
         }
     });
     return total;
-}
-
-function obtenerCantidadPorTarjetas(categoria) {
-    // Si hay tarjetas seleccionadas, solo calcula si esta categoría está seleccionada
-    if (categoriasSeleccionadas.size > 0) {
-        if (!categoriasSeleccionadas.has(categoria)) return 0;
-    }
-    return obtenerCantidadPorMes(categoria);
 }
 
 function actualizarTodo() {
@@ -1086,15 +1085,21 @@ function toggleCard(categoria, event) {
             categoriasSeleccionadas.delete(categoria);
             card.classList.remove('selected');
         } else {
-            // Agregar a la selección
-            categoriasSeleccionadas.add(categoria);
-            card.classList.add('selected');
+            // Agregar a la selección (manteniendo las demás si hay Ctrl, sino reemplaza)
+            if (categoriasSeleccionadas.size === 0) {
+                categoriasSeleccionadas.add(categoria);
+                card.classList.add('selected');
+            } else {
+                // Si ya hay seleccionadas, agregar esta también (comportamiento múltiple por defecto)
+                categoriasSeleccionadas.add(categoria);
+                card.classList.add('selected');
+            }
         }
     }
     
     actualizarInfoSeleccion();
     actualizarGraficos();
-    calcularEconomico(); // AHORA los valores responden a las tarjetas
+    // NO actualizar valores económicos por tarjetas, solo por mes
 }
 
 function actualizarInfoSeleccion() {
@@ -1105,28 +1110,28 @@ function actualizarInfoSeleccion() {
         info.textContent = `📌 Seleccionado: ${cardLabel([...categoriasSeleccionadas][0])} - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
     } else {
         const nombres = [...categoriasSeleccionadas].map(c => cardLabel(c)).join(', ');
-        info.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
+        info.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas: ${nombres} - ${mesFiltrado !== null ? CONFIG.meses[mesFiltrado] : 'Año completo'}`;
     }
 }
 
-// VALORES ECONÓMICOS: Responden a mes + tarjetas seleccionadas
+// VALORES ECONÓMICOS: SOLO por mes, NO por tarjetas seleccionadas
 function calcularEconomico() {
     const d = obtenerDatosActual();
     
     const cant = {
-        elastO: obtenerCantidadPorTarjetas("elasticosO"),
-        elastF: obtenerCantidadPorTarjetas("elasticosF"),
-        mazaN: obtenerCantidadPorTarjetas("mazasN"),
-        mazaR: obtenerCantidadPorTarjetas("mazasR"),
-        bulon: obtenerCantidadPorTarjetas("bulonTuerca"),
-        tuerca: obtenerCantidadPorTarjetas("bulonTuerca"),
-        neumaticoNuevo: obtenerCantidadPorTarjetas("neumaticoNuevo"),
-        patinFrenoNuevo: obtenerCantidadPorTarjetas("patinFrenoNuevo"),
-        patinFrenoReparado: obtenerCantidadPorTarjetas("patinFrenoReparado"),
-        levaFreno: obtenerCantidadPorTarjetas("levaFreno"),
-        pulmonFrenoNuevo: obtenerCantidadPorTarjetas("pulmonFrenoNuevo"),
-        pulmonFrenoReparado: obtenerCantidadPorTarjetas("pulmonFrenoReparado"),
-        llantas: obtenerCantidadPorTarjetas("llantas")
+        elastO: obtenerCantidadPorMes("elasticosO"),
+        elastF: obtenerCantidadPorMes("elasticosF"),
+        mazaN: obtenerCantidadPorMes("mazasN"),
+        mazaR: obtenerCantidadPorMes("mazasR"),
+        bulon: obtenerCantidadPorMes("bulonTuerca"),
+        tuerca: obtenerCantidadPorMes("bulonTuerca"),
+        neumaticoNuevo: obtenerCantidadPorMes("neumaticoNuevo"),
+        patinFrenoNuevo: obtenerCantidadPorMes("patinFrenoNuevo"),
+        patinFrenoReparado: obtenerCantidadPorMes("patinFrenoReparado"),
+        levaFreno: obtenerCantidadPorMes("levaFreno"),
+        pulmonFrenoNuevo: obtenerCantidadPorMes("pulmonFrenoNuevo"),
+        pulmonFrenoReparado: obtenerCantidadPorMes("pulmonFrenoReparado"),
+        llantas: obtenerCantidadPorMes("llantas")
     };
     
     document.getElementById("cantElasticosO").textContent = cant.elastO;
@@ -1144,14 +1149,10 @@ function calcularEconomico() {
     document.getElementById("cantLlantas").textContent = cant.llantas;
     
     const filterIndicator = document.getElementById("filterIndicator");
-    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${CONFIG.meses[mesFiltrado]}`;
-    } else if (categoriasSeleccionadas.size > 0) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas (Año)`;
-    } else if (mesFiltrado !== null) {
+    if (mesFiltrado !== null) {
         filterIndicator.textContent = `📌 Mes: ${CONFIG.meses[mesFiltrado]}`;
     } else {
-        filterIndicator.textContent = `📌 Año completo`;
+        filterIndicator.textContent = ` Año completo`;
     }
     
     const prec = {
@@ -1260,8 +1261,9 @@ async function guardarTodosLosDatos(event) {
     if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local");
 }
 
+// EXPORTACIÓN: Usa SOLO los datos reales en memoria
 function exportarCSV() {
-    const d = obtenerDatosActual();
+    const d = obtenerDatosActual(); // Datos REALES en memoria
     let csv = "MINERAR - REPUESTOS CRÍTICOS " + añoActual + "\n";
     csv += "Generado: " + new Date().toLocaleString() + "\n\n";
     
