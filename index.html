@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📊 Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
+
+<!-- ===== FAVICON ===== -->
+<link rel="icon" type="image/gif" href="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif">
+<link rel="shortcut icon" type="image/gif" href="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif">
+
+<title>⛏️ MINERAR | Informe Gerencial - Repuestos Críticos Scania G500 | 2026</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -30,7 +35,7 @@ body.dark-mode .top-bar {
     box-shadow: 0 8px 32px rgba(0,0,0,0.8) !important;
 }
 
-body.dark-mode .top-bar .logo {
+body.dark-mode .top-bar .logo-text {
     background: linear-gradient(135deg, #4ECDC4, #38B6B2) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
@@ -107,7 +112,7 @@ body.dark-mode .selection-info {
     color: #b0d4e8 !important;
 }
 
-/* ===== GRÁFICOS EN MODO OSCURO - MEJOR VISIBILIDAD ===== */
+/* ===== GRÁFICOS EN MODO OSCURO ===== */
 body.dark-mode .chart-card {
     background: #0f1a2e !important;
     border: 1px solid #2a4a6a !important;
@@ -119,8 +124,6 @@ body.dark-mode .chart-card h4 {
     font-weight: 700 !important;
     text-shadow: 0 0 10px rgba(56, 182, 178, 0.3) !important;
 }
-
-/* Los textos de los gráficos se controlan desde JS ahora */
 
 body.dark-mode .values-section {
     background: #0f1a2e !important;
@@ -288,11 +291,12 @@ body.editing-mode .editing-only {
     display: block !important;
 }
 
+/* ===== TOP BAR CON LOGO ===== */
 .top-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 24px;
+    padding: 12px 24px;
     background: white;
     border-radius: 16px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.15);
@@ -302,13 +306,51 @@ body.editing-mode .editing-only {
     transition: all 0.4s ease;
 }
 
-.logo {
+.top-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.top-bar-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    background: white;
+    border-radius: 12px;
+    padding: 5px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.top-bar-logo:hover {
+    transform: scale(1.05) rotate(-3deg);
+    box-shadow: 0 4px 20px rgba(56, 182, 178, 0.3);
+}
+
+.logo-text {
     font-weight: 800;
     font-size: 1.5rem;
     background: linear-gradient(135deg, #2c3e50, #e67e22);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     transition: all 0.4s ease;
+    line-height: 1.2;
+}
+
+.logo-sub {
+    font-size: 0.7rem;
+    color: #7f8c8d;
+    font-weight: 600;
+    display: block;
+    -webkit-text-fill-color: #7f8c8d;
+    letter-spacing: 1px;
+}
+
+body.dark-mode .logo-sub {
+    color: #7fdbff !important;
+    -webkit-text-fill-color: #7fdbff !important;
 }
 
 .controls { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -907,7 +949,7 @@ body.editing-mode #save-lock-btn { display: flex; }
     color: white;
 }
 
-/* RESPONSIVE */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1200px) {
     .main-layout {
         grid-template-columns: 1fr;
@@ -957,10 +999,28 @@ body.editing-mode #save-lock-btn { display: flex; }
     }
     
     .top-bar {
-        padding: 12px 16px;
+        padding: 10px 12px;
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
+    }
+    
+    .top-bar-left {
+        justify-content: center;
+    }
+    
+    .top-bar-logo {
+        width: 40px;
+        height: 40px;
+        padding: 4px;
+    }
+    
+    .logo-text {
+        font-size: 1.1rem;
+    }
+    
+    .logo-sub {
+        font-size: 0.6rem;
     }
     
     .controls {
@@ -970,7 +1030,7 @@ body.editing-mode #save-lock-btn { display: flex; }
     
     .btn {
         padding: 6px 12px;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
     }
     
     .report-container {
@@ -1057,15 +1117,24 @@ body.editing-mode #save-lock-btn { display: flex; }
 </head>
 <body class="read-only-mode">
 <div class="top-bar">
-<div class="logo">⛏️ MINERAR | Scania G500</div>
-<div class="controls">
-<button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
-<button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
-<button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
-<button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
-<button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
-<button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
-</div>
+    <div class="top-bar-left">
+        <!-- ===== LOGO MINERAR ===== -->
+        <img src="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif" 
+             alt="Minerar" 
+             class="top-bar-logo">
+        <div>
+            <span class="logo-text">MINERAR</span>
+            <span class="logo-sub">Scania G500 | Repuestos Críticos</span>
+        </div>
+    </div>
+    <div class="controls">
+        <button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
+        <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+        <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
+    </div>
 </div>
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
 
@@ -1246,6 +1315,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div id="toast" class="toast">✅ Listo</div>
 
 <script>
+// ===== FIRESTORE CONFIG =====
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -1280,7 +1350,6 @@ function toggleDarkMode() {
     } else {
         btn.textContent = '🌙';
     }
-    // Actualizar gráficos para que usen los colores del modo actual
     actualizarGraficos();
 }
 
@@ -1931,10 +2000,8 @@ function mostrarToast(msg, error = false) {
 function actualizarGraficos() {
     const d = obtenerDatosActual();
     
-    // ===== DETECTAR MODO OSCURO =====
     const isDark = document.body.classList.contains('dark-mode');
     
-    // ===== COLORES MEJORADOS PARA MODO OSCURO =====
     const colors = {
         primary: isDark ? 'rgba(78, 205, 196, 0.95)' : 'rgba(54, 162, 235, 0.9)',
         secondary: isDark ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 159, 64, 0.8)',
@@ -1947,7 +2014,7 @@ function actualizarGraficos() {
         border: isDark ? 'rgba(56, 182, 178, 0.4)' : 'rgba(0,0,0,0.1)'
     };
     
-    // ===== GRÁFICO DE LÍNEAS =====
+    // GRÁFICO DE LÍNEAS
     let lineData = [];
     if (categoriasSeleccionadas.size > 0) {
         const cats = [...categoriasSeleccionadas];
@@ -2062,7 +2129,7 @@ function actualizarGraficos() {
         plugins: [ChartDataLabels]
     });
     
-    // ===== GRÁFICO DE BARRAS =====
+    // GRÁFICO DE BARRAS
     let barLabels = CONFIG.equipos;
     let barData = [];
     
@@ -2180,7 +2247,7 @@ function actualizarGraficos() {
         plugins: [ChartDataLabels]
     });
     
-    // ===== GRÁFICO DOUGHNUT =====
+    // GRÁFICO DOUGHNUT
     let doughnutLabels = [];
     let doughnutData = [];
     let doughnutColors = [];
