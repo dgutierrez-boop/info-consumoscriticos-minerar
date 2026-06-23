@@ -11,7 +11,6 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ===== MODO OSCURO ===== */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -20,43 +19,47 @@ body {
     transition: all 0.4s ease;
 }
 
+/* ===== MODO OSCURO MEJORADO ===== */
 body.dark-mode {
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
+    background: #0a0e1a !important;
 }
 
 body.dark-mode .top-bar {
-    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+    background: #0f1a2e !important;
+    border: 1px solid #1a3a5a !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8) !important;
 }
 
 body.dark-mode .top-bar .logo {
-    background: linear-gradient(135deg, #38B6B2, #4ECDC4) !important;
+    background: linear-gradient(135deg, #4ECDC4, #38B6B2) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
 }
 
 body.dark-mode .btn-outline {
-    background: #2a2a4a !important;
-    color: #e0e0e0 !important;
-    border-color: #4a4a6a !important;
+    background: #0f1a2e !important;
+    color: #7fdbff !important;
+    border-color: #1a3a5a !important;
 }
 
 body.dark-mode .btn-outline:hover {
-    background: #3a3a5a !important;
+    background: #1a2a4a !important;
+    border-color: #4ECDC4 !important;
 }
 
 body.dark-mode .report-container {
-    background: #1a1a2e !important;
-    box-shadow: 0 15px 50px rgba(0,0,0,0.5) !important;
+    background: #0f1a2e !important;
+    border: 1px solid #1a3a5a !important;
+    box-shadow: 0 15px 50px rgba(0,0,0,0.8) !important;
 }
 
 body.dark-mode .filters-sticky {
-    background: #1a1a2e !important;
+    background: #0f1a2e !important;
     border-bottom-color: #38B6B2 !important;
 }
 
 body.dark-mode .filtro-meses {
-    background: rgba(56, 182, 178, 0.15) !important;
+    background: rgba(56, 182, 178, 0.08) !important;
     border-color: #38B6B2 !important;
 }
 
@@ -66,54 +69,62 @@ body.dark-mode .filtro-meses h3 {
 
 body.dark-mode .mes-btn {
     border-color: #4ECDC4 !important;
-    color: #4ECDC4 !important;
+    color: #7fdbff !important;
+    background: transparent !important;
 }
 
 body.dark-mode .mes-btn:hover,
 body.dark-mode .mes-btn.active {
     background: #38B6B2 !important;
-    color: white !important;
+    color: #0a0e1a !important;
+    border-color: #38B6B2 !important;
 }
 
 body.dark-mode .btn-ver-todo {
     border-color: #4ECDC4 !important;
-    color: #4ECDC4 !important;
+    color: #7fdbff !important;
 }
 
 body.dark-mode .btn-ver-todo.active {
     background: #38B6B2 !important;
-    color: white !important;
+    color: #0a0e1a !important;
 }
 
 body.dark-mode .alert {
-    background: linear-gradient(135deg, #1a3a2a, #1a2a3a) !important;
+    background: rgba(56, 182, 178, 0.12) !important;
     border-left-color: #4ECDC4 !important;
-    color: #e0e0e0 !important;
+    color: #b0d4e8 !important;
 }
 
 body.dark-mode .cards-sticky {
-    background: #1a1a2e !important;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+    background: #0f1a2e !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
 }
 
 body.dark-mode .selection-info {
-    background: rgba(56, 182, 178, 0.15) !important;
+    background: rgba(56, 182, 178, 0.1) !important;
     border-color: #38B6B2 !important;
-    color: #e0e0e0 !important;
+    color: #b0d4e8 !important;
 }
 
+/* ===== GRÁFICOS EN MODO OSCURO - MEJOR VISIBILIDAD ===== */
 body.dark-mode .chart-card {
-    background: #1a1a2e !important;
-    border-color: rgba(56, 182, 178, 0.3) !important;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
+    background: #0f1a2e !important;
+    border: 1px solid #2a4a6a !important;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6) !important;
 }
 
 body.dark-mode .chart-card h4 {
-    color: #e0e0e0 !important;
+    color: #7fdbff !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(56, 182, 178, 0.3) !important;
 }
 
+/* Los textos de los gráficos se controlan desde JS ahora */
+
 body.dark-mode .values-section {
-    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
+    background: #0f1a2e !important;
+    border: 1px solid #1a3a5a !important;
 }
 
 body.dark-mode .values-section h3 {
@@ -121,85 +132,114 @@ body.dark-mode .values-section h3 {
 }
 
 body.dark-mode .values-section h4 {
-    color: #e0e0e0 !important;
+    color: #7fdbff !important;
 }
 
 body.dark-mode .values-table {
-    background: #1a1a2e !important;
+    background: #0a0e1a !important;
 }
 
 body.dark-mode .values-table th {
-    background: linear-gradient(135deg, #1a2a3e, #2a3a4e) !important;
-    color: #e0e0e0 !important;
+    background: #0f1a2e !important;
+    color: #7fdbff !important;
+    border-bottom: 2px solid #1a3a5a !important;
 }
 
 body.dark-mode .values-table td {
-    border-bottom-color: #2a2a4a !important;
-    color: #e0e0e0 !important;
+    border-bottom-color: #1a2a4a !important;
+    color: #b0d4e8 !important;
 }
 
 body.dark-mode .values-table input[readonly] {
-    background: #2a2a4a !important;
-    color: #e0e0e0 !important;
+    background: #0a0e1a !important;
+    color: #7fdbff !important;
+    border: none !important;
 }
 
 body.dark-mode .values-table input {
-    background: #1a1a2e !important;
-    border-color: #4a4a6a !important;
-    color: #e0e0e0 !important;
+    background: #0f1a2e !important;
+    border-color: #1a3a5a !important;
+    color: #b0d4e8 !important;
+}
+
+body.dark-mode .values-table input:focus {
+    border-color: #4ECDC4 !important;
+    outline: none !important;
 }
 
 body.dark-mode .grand-total {
-    background: linear-gradient(135deg, #c0392b, #e74c3c) !important;
+    background: linear-gradient(135deg, #1a3a5a, #0f1a2e) !important;
+    color: #7fdbff !important;
+}
+
+body.dark-mode .grand-total td {
+    color: #7fdbff !important;
 }
 
 body.dark-mode .accordion-header {
-    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
-    color: #e0e0e0 !important;
+    background: linear-gradient(135deg, #0f1a2e, #1a2a4a) !important;
+    border: 1px solid #1a3a5a !important;
+    color: #7fdbff !important;
 }
 
 body.dark-mode table {
-    background: #1a1a2e !important;
-    border-color: #2a2a4a !important;
+    background: #0a0e1a !important;
+    border-color: #1a3a5a !important;
 }
 
 body.dark-mode th {
-    background: linear-gradient(135deg, #2a3a4e, #1a2a3e) !important;
-    color: #e0e0e0 !important;
+    background: linear-gradient(135deg, #0f1a2e, #1a2a4a) !important;
+    color: #7fdbff !important;
+    border-bottom: 2px solid #1a3a5a !important;
 }
 
 body.dark-mode td {
-    border-bottom-color: #2a2a4a !important;
-    color: #e0e0e0 !important;
+    border-bottom-color: #1a2a4a !important;
+    color: #b0d4e8 !important;
 }
 
 body.dark-mode .equipo-col {
-    background: #2a2a4a !important;
-    color: #e0e0e0 !important;
+    background: #0f1a2e !important;
+    color: #7fdbff !important;
 }
 
 body.dark-mode .editable-cell {
-    background: #1a1a2e !important;
+    background: #0a0e1a !important;
 }
 
 body.dark-mode .editable-cell input {
-    color: #e0e0e0 !important;
+    color: #b0d4e8 !important;
+    background: transparent !important;
 }
 
 body.dark-mode .total-row {
-    background: linear-gradient(135deg, #1a3a4e, #2a4a5e) !important;
-    color: #ffffff !important;
+    background: linear-gradient(135deg, #1a2a4a, #0f1a2e) !important;
+    color: #7fdbff !important;
+}
+
+body.dark-mode .total-row td {
+    color: #7fdbff !important;
 }
 
 body.dark-mode .security-modal {
-    background: #1a1a2e !important;
-    color: #e0e0e0 !important;
+    background: #0f1a2e !important;
+    border: 1px solid #1a3a5a !important;
+    color: #b0d4e8 !important;
+}
+
+body.dark-mode .security-modal h2 {
+    color: #7fdbff !important;
 }
 
 body.dark-mode .security-modal input {
-    background: #2a2a4a !important;
-    border-color: #4a4a6a !important;
-    color: #e0e0e0 !important;
+    background: #0a0e1a !important;
+    border-color: #1a3a5a !important;
+    color: #b0d4e8 !important;
+}
+
+body.dark-mode .security-modal input:focus {
+    border-color: #4ECDC4 !important;
+    outline: none !important;
 }
 
 body.dark-mode .values-table-wrapper::-webkit-scrollbar {
@@ -207,27 +247,35 @@ body.dark-mode .values-table-wrapper::-webkit-scrollbar {
 }
 
 body.dark-mode .values-table-wrapper::-webkit-scrollbar-track {
-    background: #1a1a2e;
+    background: #0a0e1a;
     border-radius: 4px;
 }
 
 body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb {
-    background: #4a4a6a;
+    background: #1a3a5a;
     border-radius: 4px;
 }
 
 body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: #5a5a7a;
+    background: #2a5a7a;
 }
 
 body.dark-mode .floating-controls #unlock-btn {
-    background: linear-gradient(135deg, #1a1a3e, #2a1a4e) !important;
+    background: #0f1a2e !important;
     border: 2px solid #4ECDC4 !important;
+    color: #7fdbff !important;
 }
 
 body.dark-mode .floating-controls #save-lock-btn {
-    background: linear-gradient(135deg, #1a4a2a, #2a5a3a) !important;
+    background: #0f1a2e !important;
     border: 2px solid #4ECDC4 !important;
+    color: #7fdbff !important;
+}
+
+body.dark-mode .toast {
+    background: linear-gradient(135deg, #0f1a2e, #1a2a4a) !important;
+    border: 1px solid #4ECDC4 !important;
+    color: #7fdbff !important;
 }
 
 /* ===== FIN MODO OSCURO ===== */
@@ -284,7 +332,6 @@ body.editing-mode .editing-only {
 .btn-danger { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
 .btn-outline { background: #ecf0f1; color: #2c3e50; border: 2px solid #bdc3c7; }
 
-/* Botón Modo Oscuro */
 .btn-dark-mode {
     background: linear-gradient(135deg, #2c3e50, #1a252f);
     color: white;
@@ -306,25 +353,23 @@ body.dark-mode .btn-dark-mode:hover {
     background: linear-gradient(135deg, #e67e22, #d35400);
 }
 
-/* =============================================== */
-/* 2. LAYOUT - Columna izquierda más ancha (500px) */
-/* =============================================== */
+/* LAYOUT */
 .main-layout {
     display: grid;
-    grid-template-columns: 500px 1fr; /* ENSANCHADO a 500px */
+    grid-template-columns: 500px 1fr;
     gap: 24px;
-    max-width: 2000px; /* Un poco más ancho */
+    max-width: 2000px;
     margin: 0 auto;
 }
 
-/* 1. COLUMNA IZQUIERDA - 500px de ancho */
+/* COLUMNA IZQUIERDA */
 .values-sidebar {
     position: sticky;
     top: 20px;
     height: fit-content;
     max-height: calc(100vh - 40px);
     overflow-y: auto;
-    width: 500px; /* ENSANCHADO a 500px */
+    width: 500px;
 }
 
 .values-section {
@@ -374,7 +419,7 @@ body.dark-mode .btn-dark-mode:hover {
     overflow: hidden;
     font-size: 0.8rem;
     table-layout: fixed;
-    min-width: 450px; /* Aumentado para que no se comprima */
+    min-width: 450px;
 }
 
 .values-table th,
@@ -386,7 +431,6 @@ body.dark-mode .btn-dark-mode:hover {
     font-size: 0.75rem;
 }
 
-/* Ajuste de columnas para mejor visualización */
 .values-table th:first-child,
 .values-table td:first-child {
     width: 30%;
@@ -867,17 +911,146 @@ body.editing-mode #save-lock-btn { display: flex; }
 @media (max-width: 1200px) {
     .main-layout {
         grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column-reverse;
     }
+    
     .values-sidebar {
         position: static;
         max-height: none;
         width: 100%;
+        order: 2;
     }
+    
+    .content-area {
+        order: 1;
+    }
+    
     .cards-sticky {
         top: 0;
     }
+    
     .filters-sticky {
         top: 0;
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .stat-card {
+        padding: 8px 4px;
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 8px;
+    }
+    
+    .top-bar {
+        padding: 12px 16px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+    
+    .controls {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 6px 12px;
+        font-size: 0.75rem;
+    }
+    
+    .report-container {
+        padding: 12px;
+    }
+    
+    .filtro-meses {
+        padding: 10px;
+    }
+    
+    .mes-btn {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+    
+    .charts-section {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .chart-card {
+        padding: 12px;
+    }
+    
+    .chart-container {
+        height: 220px;
+    }
+    
+    .values-sidebar {
+        width: 100%;
+        padding: 0;
+    }
+    
+    .values-section {
+        padding: 12px;
+    }
+    
+    .values-table {
+        font-size: 0.65rem;
+        min-width: 320px;
+    }
+    
+    .values-table th,
+    .values-table td {
+        padding: 4px 2px;
+        font-size: 0.65rem;
+    }
+    
+    .values-table input {
+        font-size: 0.65rem;
+        padding: 2px 4px;
+        min-width: 35px;
+    }
+    
+    .summary-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 6px;
+    }
+    
+    .stat-card {
+        padding: 6px 4px;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    .stat-label {
+        font-size: 0.45rem;
+    }
+    
+    .floating-controls {
+        bottom: 12px;
+        left: 12px;
+        gap: 6px;
+    }
+    
+    #unlock-btn, #save-lock-btn {
+        padding: 6px 12px;
+        font-size: 0.7rem;
     }
 }
 </style>
@@ -897,7 +1070,7 @@ body.editing-mode #save-lock-btn { display: flex; }
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
 
 <div class="main-layout">
-    <!-- COLUMNA IZQUIERDA - VALORES ECONÓMICOS (STICKY) 500px -->
+    <!-- COLUMNA IZQUIERDA -->
     <div class="values-sidebar">
         <div class="values-section">
             <h3>💰 VALORES ECONÓMICOS <span id="filterIndicator" class="filter-badge"></span></h3>
@@ -940,10 +1113,10 @@ body.editing-mode #save-lock-btn { display: flex; }
         </div>
     </div>
 
-    <!-- COLUMNA DERECHA - CONTENIDO PRINCIPAL -->
+    <!-- COLUMNA DERECHA -->
     <div class="content-area">
         <div class="report-container">
-            <!-- FILTROS STICKY -->
+            <!-- FILTROS -->
             <div class="filters-sticky">
                 <div class="filtro-meses">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -972,7 +1145,7 @@ body.editing-mode #save-lock-btn { display: flex; }
                 <span id="lock-indicator" style="color: #e74c3c;">🔒 Solo lectura</span>
             </div>
 
-            <!-- TARJETAS STICKY -->
+            <!-- TARJETAS -->
             <div class="cards-sticky">
                 <div class="selection-info" id="selectionInfo">
                     💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar
@@ -1010,7 +1183,7 @@ body.editing-mode #save-lock-btn { display: flex; }
                 </div>
             </div>
 
-            <!-- TABLAS DE EDICIÓN (SOLO MODO EDICIÓN) -->
+            <!-- TABLAS DE EDICIÓN -->
             <div class="editing-only">
                 <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
                 <div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
@@ -1107,6 +1280,8 @@ function toggleDarkMode() {
     } else {
         btn.textContent = '🌙';
     }
+    // Actualizar gráficos para que usen los colores del modo actual
+    actualizarGraficos();
 }
 
 // ===== DATOS INCRUSTADOS =====
@@ -1756,17 +1931,23 @@ function mostrarToast(msg, error = false) {
 function actualizarGraficos() {
     const d = obtenerDatosActual();
     
+    // ===== DETECTAR MODO OSCURO =====
+    const isDark = document.body.classList.contains('dark-mode');
+    
+    // ===== COLORES MEJORADOS PARA MODO OSCURO =====
     const colors = {
-        primary: 'rgba(54, 162, 235, 0.9)',
-        secondary: 'rgba(255, 159, 64, 0.8)',
-        success: 'rgba(75, 192, 192, 0.9)',
-        danger: 'rgba(255, 99, 132, 0.9)',
-        purple: 'rgba(153, 102, 255, 0.9)',
-        grid: 'rgba(0,0,0,0.06)',
-        text: '#2c3e50'
+        primary: isDark ? 'rgba(78, 205, 196, 0.95)' : 'rgba(54, 162, 235, 0.9)',
+        secondary: isDark ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 159, 64, 0.8)',
+        success: isDark ? 'rgba(75, 220, 192, 0.95)' : 'rgba(75, 192, 192, 0.9)',
+        danger: isDark ? 'rgba(255, 130, 150, 0.95)' : 'rgba(255, 99, 132, 0.9)',
+        purple: isDark ? 'rgba(180, 140, 255, 0.95)' : 'rgba(153, 102, 255, 0.9)',
+        grid: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
+        text: isDark ? '#b0d4e8' : '#2c3e50',
+        textLight: isDark ? '#e8f4f8' : '#1a252f',
+        border: isDark ? 'rgba(56, 182, 178, 0.4)' : 'rgba(0,0,0,0.1)'
     };
     
-    // GRÁFICO DE LÍNEAS - Tooltip con Equipo, Cantidad, Porcentaje y Fecha
+    // ===== GRÁFICO DE LÍNEAS =====
     let lineData = [];
     if (categoriasSeleccionadas.size > 0) {
         const cats = [...categoriasSeleccionadas];
@@ -1822,19 +2003,28 @@ function actualizarGraficos() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'top', labels: { color: colors.text } },
-                title: { display: true, text: '📈 Evolución Mensual', color: colors.text },
+                legend: { 
+                    position: 'top', 
+                    labels: { 
+                        color: colors.text,
+                        font: { size: 12, weight: 'bold' }
+                    } 
+                },
+                title: { 
+                    display: true, 
+                    text: '📈 Evolución Mensual', 
+                    color: colors.text,
+                    font: { size: 14, weight: 'bold' }
+                },
                 tooltip: {
                     callbacks: {
                         title: function(items) {
-                            // Muestra el mes y año
                             return `📅 ${items[0].label} 2026`;
                         },
                         label: function(context) {
                             const val = context.parsed.y || 0;
                             const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            const equipo = context.dataset.categoria || 'Todos';
                             return `🏷️ ${context.dataset.label} | 🔢 ${val} uds | 📊 ${pct}%`;
                         }
                     }
@@ -1852,17 +2042,29 @@ function actualizarGraficos() {
                 }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
-                x: { grid: { display: false }, ticks: { color: colors.text } }
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: colors.grid }, 
+                    ticks: { 
+                        color: colors.text,
+                        font: { size: 11, weight: 'bold' }
+                    } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { 
+                        color: colors.text,
+                        font: { size: 11, weight: 'bold' }
+                    } 
+                }
             }
         },
         plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DE BARRAS - Tooltip con Equipo, Cantidad, Porcentaje y Fecha
+    // ===== GRÁFICO DE BARRAS =====
     let barLabels = CONFIG.equipos;
     let barData = [];
-    let categoriaActiva = '';
     
     if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
         barData = CONFIG.equipos.map(eq => {
@@ -1872,7 +2074,6 @@ function actualizarGraficos() {
             });
             return total;
         });
-        categoriaActiva = [...categoriasSeleccionadas].map(c => cardLabel(c)).join('+');
     } else if (categoriasSeleccionadas.size > 0) {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1881,7 +2082,6 @@ function actualizarGraficos() {
             });
             return total;
         });
-        categoriaActiva = [...categoriasSeleccionadas].map(c => cardLabel(c)).join('+');
     } else if (mesFiltrado !== null) {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1890,7 +2090,6 @@ function actualizarGraficos() {
             });
             return total;
         });
-        categoriaActiva = 'Todos';
     } else {
         barData = CONFIG.equipos.map(eq => {
             let total = 0;
@@ -1899,7 +2098,6 @@ function actualizarGraficos() {
             });
             return total;
         });
-        categoriaActiva = 'Todos';
     }
     
     const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
@@ -1915,15 +2113,26 @@ function actualizarGraficos() {
                 data: barData,
                 backgroundColor: barColors,
                 borderWidth: 2,
-                borderRadius: 8
+                borderRadius: 8,
+                borderColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
-                title: { display: true, text: '📊 Consumo por Equipo', color: colors.text },
+                legend: { 
+                    labels: { 
+                        color: colors.text,
+                        font: { size: 12, weight: 'bold' }
+                    } 
+                },
+                title: { 
+                    display: true, 
+                    text: '📊 Consumo por Equipo', 
+                    color: colors.text,
+                    font: { size: 14, weight: 'bold' }
+                },
                 tooltip: {
                     callbacks: {
                         title: function(items) {
@@ -1951,14 +2160,27 @@ function actualizarGraficos() {
                 }
             },
             scales: {
-                y: { beginAtZero: true, grid: { color: colors.grid }, ticks: { color: colors.text } },
-                x: { grid: { display: false }, ticks: { color: colors.text } }
+                y: { 
+                    beginAtZero: true, 
+                    grid: { color: colors.grid }, 
+                    ticks: { 
+                        color: colors.text,
+                        font: { size: 11, weight: 'bold' }
+                    } 
+                },
+                x: { 
+                    grid: { display: false }, 
+                    ticks: { 
+                        color: colors.text,
+                        font: { size: 10, weight: 'bold' }
+                    } 
+                }
             }
         },
         plugins: [ChartDataLabels]
     });
     
-    // GRÁFICO DOUGHNUT - Tooltip con Categoría, Cantidad, Porcentaje y Fecha
+    // ===== GRÁFICO DOUGHNUT =====
     let doughnutLabels = [];
     let doughnutData = [];
     let doughnutColors = [];
@@ -1990,15 +2212,27 @@ function actualizarGraficos() {
                 data: doughnutData,
                 backgroundColor: doughnutColors,
                 borderWidth: 3,
-                borderColor: '#fff'
+                borderColor: isDark ? '#0f1a2e' : '#fff'
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { position: 'right', labels: { boxWidth: 12, color: colors.text } },
-                title: { display: true, text: '🎯 Distribución', color: colors.text },
+                legend: { 
+                    position: 'right', 
+                    labels: { 
+                        boxWidth: 12, 
+                        color: colors.text,
+                        font: { size: 11, weight: 'bold' }
+                    } 
+                },
+                title: { 
+                    display: true, 
+                    text: '🎯 Distribución', 
+                    color: colors.text,
+                    font: { size: 14, weight: 'bold' }
+                },
                 tooltip: {
                     callbacks: {
                         title: function(items) {
