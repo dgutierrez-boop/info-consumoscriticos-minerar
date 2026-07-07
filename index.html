@@ -8,13 +8,11 @@
 <title>MINERAR | Informe Gerencial - Scania G500</title>
 
 <!-- ===== FIREBASE - VERSIÓN ESTABLE ===== -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 
-<!-- ===== CHART.JS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:16px;min-height:100vh;transition:.4s}
@@ -340,15 +338,11 @@ body.editing-mode #save-lock-btn{display:flex}
 </div>
 </div>
 <div id="toast" class="toast">✅ Listo</div>
-
 <script>
 if (typeof ChartDataLabels === 'undefined') {
     var ChartDataLabels = window['chartjs-plugin-datalabels'] || {};
 }
 
-// ============================================================
-// ===== FIREBASE CONFIG =====
-// ============================================================
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -358,16 +352,18 @@ const firebaseConfig = {
     appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
 
-// ============================================================
-// ===== VERIFICAR QUE FIREBASE ESTÉ CARGADO =====
-// ============================================================
-if (typeof firebase !== 'undefined') {
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.firestore();
-    console.log('✅ Firebase conectado');
-} else {
-    console.warn('⚠️ Firebase no cargado - usando datos locales');
-    var db = null;
+// Verificar si Firebase está cargado
+let db = null;
+try {
+    if (typeof firebase !== 'undefined' && firebase.initializeApp) {
+        firebase.initializeApp(firebaseConfig);
+        db = firebase.firestore();
+        console.log('✅ Firebase conectado correctamente');
+    } else {
+        console.warn('⚠️ Firebase no disponible - usando localStorage');
+    }
+} catch(e) {
+    console.warn('⚠️ Error al iniciar Firebase:', e);
 }
 
 const CONFIG = {
@@ -429,7 +425,7 @@ function crearDatosEjemplo() {
         CONFIG.equipos.forEach(eq => {
             datos[cat][eq] = [];
             for (let i = 0; i < 12; i++) {
-                datos[cat][eq].push(Math.floor(Math.random() * 6) + 1);
+                datos[cat][eq].push(Math.floor(Math.random() * 8) + 1);
             }
         });
     });
@@ -443,7 +439,7 @@ function asegurarTodasLasCategorias(datos) {
             CONFIG.equipos.forEach(eq => {
                 datos[cat][eq] = Array(12).fill(0);
                 for (let i = 0; i < 12; i++) {
-                    datos[cat][eq][i] = Math.floor(Math.random() * 5) + 1;
+                    datos[cat][eq][i] = Math.floor(Math.random() * 6) + 1;
                 }
             });
         } else {
@@ -451,11 +447,11 @@ function asegurarTodasLasCategorias(datos) {
                 if (!datos[cat][eq]) {
                     datos[cat][eq] = Array(12).fill(0);
                     for (let i = 0; i < 12; i++) {
-                        datos[cat][eq][i] = Math.floor(Math.random() * 5) + 1;
+                        datos[cat][eq][i] = Math.floor(Math.random() * 6) + 1;
                     }
                 } else if (datos[cat][eq].length < 12) {
                     while (datos[cat][eq].length < 12) {
-                        datos[cat][eq].push(Math.floor(Math.random() * 5) + 1);
+                        datos[cat][eq].push(Math.floor(Math.random() * 6) + 1);
                     }
                 }
             });
@@ -465,8 +461,19 @@ function asegurarTodasLasCategorias(datos) {
 }
 
 async function init() {
-    // Intentar cargar datos de Firebase si está disponible
-    if (db) {
+    // Intentar cargar de localStorage primero
+    try {
+        const saved = localStorage.getItem(CONFIG.storageKey);
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed.datosPorAnio && parsed.datosPorAnio[añoActual]) {
+                datosPorAnio[añoActual] = parsed.datosPorAnio[añoActual];
+            }
+        }
+    } catch(e) {}
+
+    // Si no hay datos locales, intentar Firebase
+    if (!datosPorAnio[añoActual] && db) {
         try {
             const doc = await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).get();
             if (doc.exists) {
@@ -491,8 +498,8 @@ async function init() {
                     });
                 }
             }
-        } catch (e) {
-            console.log("⚠️ Error cargando Firebase, usando datos locales:", e);
+        } catch(e) {
+            console.log("⚠️ Error cargando Firebase:", e);
         }
     }
 
@@ -602,7 +609,8 @@ function actualizarTodo() {
 
 function actualizarTarjetas() {
     CATEGORIAS.forEach(cat => {
-        const el = document.getElementById(cat.id === 'elasticosO' ? 'totalElasticosO' :
+        const el = document.getElementById(
+            cat.id === 'elasticosO' ? 'totalElasticosO' :
             cat.id === 'elasticosF' ? 'totalElasticosF' :
             cat.id === 'mazasN' ? 'totalMazasN' :
             cat.id === 'mazasR' ? 'totalMazasR' :
@@ -616,7 +624,8 @@ function actualizarTarjetas() {
             cat.id === 'pulmonFrenoReparado' ? 'totalPulmonFrenoReparado' :
             cat.id === 'llantas' ? 'totalLlantas' :
             cat.id === 'amortiguador' ? 'totalAmortiguador' :
-            cat.id === 'bogie' ? 'totalBogie' : null);
+            cat.id === 'bogie' ? 'totalBogie' : null
+        );
         if (el) {
             el.textContent = obtenerCantidadPorMes(cat.id);
         }
@@ -632,7 +641,6 @@ function calcularEconomico() {
         cant[c] = obtenerCantidadPorTarjetas(c);
     });
 
-    // Actualizar cantidades en la tabla
     const cantMap = {
         'elasticosO': 'cantElasticosO',
         'elasticosF': 'cantElasticosF',
@@ -655,7 +663,6 @@ function calcularEconomico() {
         if (el) el.textContent = cant[key] || 0;
     });
 
-    // Precios
     const prec = {
         elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
         elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
@@ -695,7 +702,6 @@ function calcularEconomico() {
     setVal("totalAmortiguador", cant.amortiguador * prec.amortiguador);
     setVal("totalBogie", cant.bogie * prec.bogie);
 
-    // Horas hombre
     const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
     const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
     const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
@@ -722,7 +728,6 @@ function calcularEconomico() {
     setVal("totalManoObra", totalMO);
     setVal("totalGeneral", totalRep + totalMO);
 
-    // Filter indicator
     const filterIndicator = document.getElementById("filterIndicator");
     if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
         filterIndicator.textContent = "📌 " + categoriasSeleccionadas.size + " seleccionadas - " + CONFIG.meses[mesFiltrado];
@@ -1080,7 +1085,10 @@ function guardarYBloquear() {
 // ===== GUARDADO =====
 // ============================================================
 function guardarEnLocalStorage() {
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify({ añoActual: añoActual, datosPorAnio: datosPorAnio }));
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify({ 
+        añoActual: añoActual, 
+        datosPorAnio: datosPorAnio 
+    }));
 }
 
 async function guardarEnFirebase() {
@@ -1097,18 +1105,13 @@ async function guardarEnFirebase() {
 }
 
 async function guardarTodosLosDatos(event) {
+    guardarEnLocalStorage();
     const ok = await guardarEnFirebase();
-    if (!ok) guardarEnLocalStorage();
     if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local");
 }
 
-function exportarCSV() {
-    mostrarToast("📊 Exportando...");
-}
-
-function importarCSV(event) {
-    mostrarToast("📥 Importando...");
-}
+function exportarCSV() { mostrarToast("📊 Exportando..."); }
+function importarCSV(event) { mostrarToast("📥 Importando..."); }
 
 async function resetearDatosCompletos() {
     if (!confirm("⚠️ ¿Resetear TODO?")) return;
