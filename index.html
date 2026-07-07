@@ -9,7 +9,6 @@
 
 <!-- ===== FIREBASE - CARGA ASÍNCRONA SEGURA ===== -->
 <script>
-// Función para cargar scripts dinámicamente
 function cargarScript(url, callback) {
     var script = document.createElement('script');
     script.src = url;
@@ -22,7 +21,6 @@ function cargarScript(url, callback) {
     document.head.appendChild(script);
 }
 
-// Configuración de Firebase (definida antes de usarla)
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -32,11 +30,9 @@ const firebaseConfig = {
     appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
 
-// Variable global para la base de datos
 window.db = null;
 var firebaseCargado = false;
 
-// Cargar Firebase de forma secuencial
 cargarScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js', function() {
     cargarScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js', function() {
         firebaseCargado = true;
@@ -45,7 +41,6 @@ cargarScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js',
     });
 });
 
-// Timeout de seguridad: si Firebase no carga en 5 segundos, continuar sin él
 setTimeout(function() {
     if (!firebaseCargado) {
         console.warn('⚠️ Firebase no cargó después de 5s - usando modo local');
@@ -68,7 +63,6 @@ function inicializarFirebase() {
         window.db = null;
     }
     
-    // Inicializar la app después de intentar Firebase
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
@@ -462,7 +456,7 @@ function toggleDarkMode() {
 }
 
 // ============================================================
-// ===== DATOS - USAR window.db (definido en el head) =====
+// ===== DATOS =====
 // ============================================================
 function crearDatosEjemplo() {
     const datos = {};
@@ -518,7 +512,6 @@ function init() {
         }
     } catch(e) {}
 
-    // Si no hay datos locales y Firebase está disponible
     if (!datosPorAnio[añoActual] && window.db) {
         cargarDesdeFirebase();
     } else if (!datosPorAnio[añoActual]) {
@@ -606,7 +599,6 @@ function obtenerCantidadPorTarjetas(categoria) {
 function actualizarTodo() {
     const d = obtenerDatosActual();
 
-    // Generar encabezados de tablas
     const theadIds = [
         "theadElasticosO", "theadElasticosF", "theadMazasN", "theadMazasR",
         "theadBulonTuerca", "theadNeumaticoNuevo", "theadNeumaticoUsado",
@@ -625,7 +617,6 @@ function actualizarTodo() {
         }
     });
 
-    // Generar tablas
     CATEGORIAS_IDS.forEach(cat => {
         const tbodyId = "tbody" + cat.charAt(0).toUpperCase() + cat.slice(1);
         const tbody = document.getElementById(tbodyId);
@@ -664,7 +655,7 @@ function actualizarTodo() {
 }
 
 // ============================================================
-// ===== TARJETAS - CORREGIDO =====
+// ===== TARJETAS - VERSIÓN CORREGIDA =====
 // ============================================================
 function actualizarTarjetas() {
     const mapa = {
@@ -688,7 +679,8 @@ function actualizarTarjetas() {
     CATEGORIAS.forEach(cat => {
         const elId = mapa[cat.id];
         if (elId) {
-            document.getElementById(elId).textContent = obtenerCantidadPorMes(cat.id);
+            const total = obtenerCantidadPorMes(cat.id);
+            document.getElementById(elId).textContent = total;
         }
     });
 }
@@ -724,7 +716,6 @@ function calcularEconomico() {
         if (el) el.textContent = cant[key] || 0;
     });
 
-    // Actualizar tarjetas también
     actualizarTarjetas();
 
     const prec = {
@@ -1191,7 +1182,45 @@ async function resetearDatosCompletos() {
     }
 }
 
-// Nota: init() se llama desde el head después de cargar Firebase
+// ===== EXPONER FUNCIONES PARA DEBUG EN CONSOLA =====
+window.obtenerCantidadPorMes = obtenerCantidadPorMes;
+window.obtenerDatosActual = obtenerDatosActual;
+window.actualizarTarjetas = actualizarTarjetas;
+window.forzarActualizarTarjetas = function() {
+    const mapa = {
+        'elasticosO': 'totalElasticosO',
+        'elasticosF': 'totalElasticosF',
+        'mazasN': 'totalMazasN',
+        'mazasR': 'totalMazasR',
+        'bulonTuerca': 'totalBulonTuerca',
+        'neumaticoNuevo': 'totalNeumaticoNuevo',
+        'neumaticoUsado': 'totalNeumaticoUsado',
+        'patinFrenoNuevo': 'totalPatinFrenoNuevo',
+        'patinFrenoReparado': 'totalPatinFrenoReparado',
+        'levaFreno': 'totalLevaFreno',
+        'pulmonFrenoNuevo': 'totalPulmonFrenoNuevo',
+        'pulmonFrenoReparado': 'totalPulmonFrenoReparado',
+        'llantas': 'totalLlantas',
+        'amortiguador': 'totalAmortiguador',
+        'bogie': 'totalBogie'
+    };
+    
+    CATEGORIAS.forEach(cat => {
+        const elId = mapa[cat.id];
+        if (elId) {
+            const total = obtenerCantidadPorMes(cat.id);
+            const el = document.getElementById(elId);
+            if (el) {
+                el.textContent = total;
+                console.log('✅', cat.id, '=', total);
+            } else {
+                console.warn('❌ Elemento no encontrado:', elId);
+            }
+        }
+    });
+};
+
+console.log('✅ Script cargado. Usa forzarActualizarTarjetas() para forzar actualización.');
 </script>
 </body>
 </html>
