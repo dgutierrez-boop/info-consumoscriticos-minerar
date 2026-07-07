@@ -1,7 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/gif" href="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif">
+<link rel="shortcut icon" type="image/gif" href="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif">
+<title>MINERAR | Informe Gerencial - Scania G500</title>
+
+<!-- ===== FIREBASE - VERSIÓN ESTABLE ===== -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<!-- ===== CHART.JS ===== -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:16px;min-height:100vh;transition:.4s}
+body.dark-mode{background:#0a0e1a}
+body.dark-mode .top-bar{background:#0f1a2e;border:1px solid #1a3a5a;box-shadow:0 8px 32px rgba(0,0,0,.8)}
+body.dark-mode .top-bar .logo-text{background:linear-gradient(135deg,#4ECDC4,#38B6B2);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.dark-mode .btn-outline{background:#0f1a2e;color:#7fdbff;border-color:#1a3a5a}
+body.dark-mode .btn-outline:hover{background:#1a2a4a;border-color:#4ECDC4}
+body.dark-mode .report-container{background:#0f1a2e;border:1px solid #1a3a5a;box-shadow:0 15px 50px rgba(0,0,0,.8)}
+body.dark-mode .filters-sticky{background:#0f1a2e;border-bottom-color:#38B6B2}
+body.dark-mode .filtro-meses{background:rgba(56,182,178,.08);border-color:#38B6B2}
+body.dark-mode .filtro-meses h3{color:#4ECDC4}
+body.dark-mode .mes-btn{border-color:#4ECDC4;color:#7fdbff;background:transparent}
+body.dark-mode .mes-btn:hover,body.dark-mode .mes-btn.active{background:#38B6B2;color:#0a0e1a;border-color:#38B6B2}
+body.dark-mode .btn-ver-todo{border-color:#4ECDC4;color:#7fdbff}
+body.dark-mode .btn-ver-todo.active{background:#38B6B2;color:#0a0e1a}
+body.dark-mode .alert{background:rgba(56,182,178,.12);border-left-color:#4ECDC4;color:#b0d4e8}
+body.dark-mode .cards-sticky{background:#0f1a2e;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+body.dark-mode .selection-info{background:rgba(56,182,178,.1);border-color:#38B6B2;color:#b0d4e8}
+body.dark-mode .chart-card{background:#0f1a2e;border:1px solid #2a4a6a;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+body.dark-mode .chart-card h4{color:#7fdbff;font-weight:700;text-shadow:0 0 10px rgba(56,182,178,.3)}
+body.dark-mode .values-section{background:#0f1a2e;border:1px solid #1a3a5a}
+body.dark-mode .values-section h3{color:#4ECDC4}
+body.dark-mode .values-section h4{color:#7fdbff}
+body.dark-mode .values-table{background:#0a0e1a}
+body.dark-mode .values-table th{background:#0f1a2e;color:#7fdbff;border-bottom:2px solid #1a3a5a}
+body.dark-mode .values-table td{border-bottom-color:#1a2a4a;color:#b0d4e8}
+body.dark-mode .values-table input[readonly]{background:#0a0e1a;color:#7fdbff;border:none}
+body.dark-mode .values-table input{background:#0f1a2e;border-color:#1a3a5a;color:#b0d4e8}
+body.dark-mode .values-table input:focus{border-color:#4ECDC4;outline:none}
+body.dark-mode .grand-total{background:linear-gradient(135deg,#1a3a5a,#0f1a2e);color:#7fdbff}
+body.dark-mode .grand-total td{color:#7fdbff}
+body.dark-mode .accordion-header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);border:1px solid #1a3a5a;color:#7fdbff}
+body.dark-mode table{background:#0a0e1a;border-color:#1a3a5a}
+body.dark-mode th{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:#7fdbff;border-bottom:2px solid #1a3a5a}
+body.dark-mode td{border-bottom-color:#1a2a4a;color:#b0d4e8}
+body.dark-mode .equipo-col{background:#0f1a2e;color:#7fdbff}
+body.dark-mode .editable-cell{background:#0a0e1a}
+body.dark-mode .editable-cell input{color:#b0d4e8;background:transparent}
+body.dark-mode .total-row{background:linear-gradient(135deg,#1a2a4a,#0f1a2e);color:#7fdbff}
+body.dark-mode .total-row td{color:#7fdbff}
+body.dark-mode .security-modal{background:#0f1a2e;border:1px solid #1a3a5a;color:#b0d4e8}
+body.dark-mode .security-modal h2{color:#7fdbff}
+body.dark-mode .security-modal input{background:#0a0e1a;border-color:#1a3a5a;color:#b0d4e8}
+body.dark-mode .security-modal input:focus{border-color:#4ECDC4;outline:none}
+body.dark-mode .values-table-wrapper::-webkit-scrollbar{height:8px}
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-track{background:#0a0e1a;border-radius:4px}
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb{background:#1a3a5a;border-radius:4px}
+body.dark-mode .values-table-wrapper::-webkit-scrollbar-thumb:hover{background:#2a5a7a}
+body.dark-mode .floating-controls #unlock-btn{background:#0f1a2e;border:2px solid #4ECDC4;color:#7fdbff}
+body.dark-mode .floating-controls #save-lock-btn{background:#0f1a2e;border:2px solid #4ECDC4;color:#7fdbff}
+body.dark-mode .toast{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);border:1px solid #4ECDC4;color:#7fdbff}
+body.read-only-mode .editing-only{display:none}
+body.editing-mode .editing-only{display:block}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.15);margin-bottom:24px;flex-wrap:wrap;gap:12px;transition:.4s}
+.top-bar-left{display:flex;align-items:center;gap:14px}
+.top-bar-logo{width:50px;height:50px;object-fit:contain;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 10px rgba(0,0,0,.1);transition:.3s;flex-shrink:0}
+.top-bar-logo:hover{transform:scale(1.05) rotate(-3deg);box-shadow:0 4px 20px rgba(56,182,178,.3)}
+.logo-text{font-weight:800;font-size:1.5rem;background:linear-gradient(135deg,#2c3e50,#e67e22);-webkit-background-clip:text;-webkit-text-fill-color:transparent;transition:.4s;line-height:1.2}
+.logo-sub{font-size:.7rem;color:#7f8c8d;font-weight:600;display:block;-webkit-text-fill-color:#7f8c8d;letter-spacing:1px}
+body.dark-mode .logo-sub{color:#7fdbff;-webkit-text-fill-color:#7fdbff}
+.controls{display:flex;gap:10px;flex-wrap:wrap}
+.btn{padding:10px 18px;border:none;border-radius:25px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:.3s;font-size:.9rem}
+.btn:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.btn-success{background:linear-gradient(135deg,#27ae60,#229954);color:#fff}
+.btn-warning{background:linear-gradient(135deg,#f39c12,#e67e22);color:#fff}
+.btn-danger{background:linear-gradient(135deg,#e74c3c,#c0392b);color:#fff}
+.btn-outline{background:#ecf0f1;color:#2c3e50;border:2px solid #bdc3c7}
+.btn-dark-mode{background:linear-gradient(135deg,#2c3e50,#1a252f);color:#fff;border:2px solid #34495e;font-size:1.1rem}
+.btn-dark-mode:hover{background:linear-gradient(135deg,#1a252f,#0d1a2a);transform:translateY(-3px) scale(1.05)}
+body.dark-mode .btn-dark-mode{background:linear-gradient(135deg,#f39c12,#e67e22);border-color:#f39c12}
+body.dark-mode .btn-dark-mode:hover{background:linear-gradient(135deg,#e67e22,#d35400)}
+.main-layout{display:grid;grid-template-columns:500px 1fr;gap:24px;max-width:2000px;margin:0 auto}
+.values-sidebar{position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 40px);overflow-y:auto;width:500px}
+.values-section{background:linear-gradient(135deg,#667eea,#764ba2);padding:20px;border-radius:20px;box-shadow:0 15px 50px rgba(0,0,0,.2);transition:.4s}
+.values-section h3{color:#fff;margin-bottom:16px;font-size:1.1rem;font-weight:800;text-align:center}
+.values-table-wrapper{overflow-x:auto;border-radius:12px;-webkit-overflow-scrolling:touch}
+.values-table-wrapper::-webkit-scrollbar{height:8px}
+.values-table-wrapper::-webkit-scrollbar-track{background:rgba(255,255,255,.1);border-radius:4px}
+.values-table-wrapper::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:4px}
+.values-table-wrapper::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.5)}
+.values-table{width:100%;background:#fff;border-radius:12px;overflow:hidden;font-size:.8rem;table-layout:fixed;min-width:450px}
+.values-table th,.values-table td{padding:6px 4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.75rem}
+.values-table th:first-child,.values-table td:first-child{width:25%;padding-left:8px;min-width:80px}
+.values-table th:nth-child(2),.values-table td:nth-child(2){width:13%;min-width:38px}
+.values-table th:nth-child(3),.values-table td:nth-child(3){width:27%;min-width:65px}
+.values-table th:nth-child(4),.values-table td:nth-child(4){width:35%;min-width:80px}
+.values-table th{background:linear-gradient(135deg,#2c3e50,#34495e);color:#fff;padding:8px 6px;font-weight:700}
+.values-table td{padding:6px;border-bottom:1px solid #ecf0f1}
+.values-table input{width:100%;padding:4px 6px;border:2px solid #bdc3c7;border-radius:6px;font-size:.75rem;min-width:50px}
+.values-table input[readonly]{background:#ecf0f1;font-weight:800;border:none}
+.grand-total{background:linear-gradient(135deg,#f39c12,#e67e22)!important;font-weight:800!important}
+.content-area{display:flex;flex-direction:column;gap:24px}
+.report-container{background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.2);padding:24px;transition:.4s}
+.filters-sticky{position:sticky;top:0;background:#fff;z-index:50;padding:16px 0;border-bottom:3px solid #38B6B2;margin-bottom:24px;transition:.4s}
+.filtro-meses{padding:16px;background:rgba(56,182,178,.1);border-radius:12px;border:2px solid #38B6B2}
+.btn-ver-todo{background:transparent;border:2px solid #38B6B2;color:#38B6B2;padding:6px 16px;border-radius:20px;cursor:pointer;font-weight:600}
+.btn-ver-todo.active{background:#38B6B2!important;color:#fff!important;box-shadow:0 0 20px rgba(56,182,178,.6);animation:pulse-button 2s ease-in-out infinite}
+@keyframes pulse-button{0%,100%{box-shadow:0 0 20px rgba(56,182,178,.6)}50%{box-shadow:0 0 30px rgba(56,182,178,.9)}}
+.mes-btn{padding:10px;border:2px solid #38B6B2;background:transparent;color:#38B6B2;border-radius:8px;cursor:pointer;font-weight:600;margin:2px}
+.mes-btn:hover,.mes-btn.active{background:#38B6B2;color:#fff}
+.mes-btn.active{background:#38B6B2!important;color:#fff!important;box-shadow:0 0 20px rgba(56,182,178,.6);transform:scale(1.1);font-weight:800}
+.alert{background:linear-gradient(135deg,#d4edda,#c3e6cb);border-left:5px solid #27ae60;padding:12px 16px;margin-bottom:24px;border-radius:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
+.cards-sticky{position:sticky;top:140px;background:#fff;padding:16px 0;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:40}
+.selection-info{background:rgba(52,152,219,.1);border:2px solid #3498db;border-radius:12px;padding:10px;margin-bottom:12px;text-align:center;font-weight:600;color:#2c3e50;font-size:.85rem}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px}
+.stat-card{border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 4px 15px rgba(0,0,0,.1);position:relative;border:3px solid transparent;user-select:none;transform:scale(1)}
+.stat-card:nth-child(1){background:linear-gradient(135deg,#FF6B6B,#EE5A5A)}
+.stat-card:nth-child(2){background:linear-gradient(135deg,#FF8C42,#F39C12)}
+.stat-card:nth-child(3){background:linear-gradient(135deg,#4ECDC4,#44B3A3)}
+.stat-card:nth-child(4){background:linear-gradient(135deg,#45B7D1,#3498DB)}
+.stat-card:nth-child(5){background:linear-gradient(135deg,#96CEB4,#7FB89A)}
+.stat-card:nth-child(6){background:linear-gradient(135deg,#F4D03F,#E67E22)}
+.stat-card:nth-child(7){background:linear-gradient(135deg,#BDC3C7,#95A5A6)}
+.stat-card:nth-child(8){background:linear-gradient(135deg,#9B59B6,#8E44AD)}
+.stat-card:nth-child(9){background:linear-gradient(135deg,#A569BD,#8E44AD)}
+.stat-card:nth-child(10){background:linear-gradient(135deg,#1ABC9C,#16A085)}
+.stat-card:nth-child(11){background:linear-gradient(135deg,#3498DB,#2980B9)}
+.stat-card:nth-child(12){background:linear-gradient(135deg,#5DADE2,#2E86C1)}
+.stat-card:nth-child(13){background:linear-gradient(135deg,#E74C3C,#C0392B)}
+.stat-card:nth-child(14){background:linear-gradient(135deg,#2ECC71,#27AE60)}
+.stat-card:nth-child(15){background:linear-gradient(135deg,#8E44AD,#9B59B6)}
+.stat-card:nth-child(16){background:linear-gradient(135deg,#D35400,#E67E22)}
+.stat-card:hover{transform:translateY(-4px) scale(1.03);box-shadow:0 10px 25px rgba(0,0,0,.25)}
+.stat-card.selected{border:4px solid #fff!important;box-shadow:inset 0 4px 15px rgba(0,0,0,.5),inset 0 -4px 15px rgba(255,255,255,.3),0 0 30px rgba(255,255,255,.8),0 0 60px rgba(255,255,255,.4)!important;transform:scale(.92)!important;filter:brightness(1.15) saturate(1.3);z-index:10;animation:pulse-selected 2s ease-in-out infinite}
+.stat-card.selected::after{content:'✓';position:absolute;top:-8px;right:-8px;background:#27ae60;color:#fff;width:24px;height:24px;border-radius:50%;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(39,174,96,.6);border:2px solid #fff}
+@keyframes pulse-selected{0%,100%{box-shadow:inset 0 4px 15px rgba(0,0,0,.5),inset 0 -4px 15px rgba(255,255,255,.3),0 0 30px rgba(255,255,255,.8),0 0 60px rgba(255,255,255,.4)}50%{box-shadow:inset 0 4px 15px rgba(0,0,0,.6),inset 0 -4px 15px rgba(255,255,255,.4),0 0 40px rgba(255,255,255,1),0 0 80px rgba(255,255,255,.6)}}
+.stat-value{font-size:1.2rem;font-weight:800;color:#fff;margin:2px 0}
+.stat-label{font-size:.5rem;text-transform:uppercase;color:rgba(255,255,255,.95);font-weight:700;line-height:1.2}
+.charts-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px;margin:24px 0}
+.chart-card{background:#fff;border-radius:16px;padding:24px;border:3px solid rgba(255,255,255,.5);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.chart-card h4{font-size:1.1rem;color:#2c3e50;margin-bottom:20px;font-weight:700}
+.chart-container{position:relative;height:320px}
+.accordion-header{display:flex;justify-content:space-between;align-items:center;margin:20px 0 0;padding:14px 20px;background:linear-gradient(135deg,#2c3e50,#1a252f);border-radius:12px;color:#fff;cursor:pointer}
+.accordion-content{max-height:0;overflow:hidden;transition:max-height .4s ease-out}
+.accordion-content.open{max-height:2000px;transition:max-height .6s ease-in}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:2px solid #bdc3c7;margin-bottom:20px}
+th{background:linear-gradient(135deg,#e67e22,#d35400);color:#fff;padding:10px 6px;font-weight:700;text-transform:uppercase;font-size:.7rem}
+td{border-bottom:2px solid #ecf0f1;padding:8px 4px;text-align:center;font-weight:600;font-size:.8rem}
+.equipo-col{font-weight:800;background:#f8f9fa}
+.editable-cell{background:#fffef7}
+.editable-cell input{width:100%;border:2px solid transparent;text-align:center;background:transparent;font-weight:600}
+.total-row{background:linear-gradient(135deg,#34495e,#2c3e50)!important;color:#fff!important;font-weight:800!important}
+.floating-controls{position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;gap:12px}
+#unlock-btn{background:linear-gradient(135deg,#2c3e50,#1a252f);color:#fff;padding:10px 18px;border-radius:30px;cursor:pointer;font-weight:700;border:none}
+#save-lock-btn{background:linear-gradient(135deg,#27ae60,#229954);color:#fff;padding:10px 18px;border-radius:30px;cursor:pointer;font-weight:700;border:none;display:none}
+body.editing-mode #unlock-btn{display:none}
+body.editing-mode #save-lock-btn{display:flex}
+.security-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:10000}
+.security-overlay.show{display:flex}
+.security-modal{background:#fff;padding:30px;border-radius:24px;max-width:400px;width:90%;text-align:center}
+.security-modal input{width:100%;padding:12px 16px;margin:15px 0;border:3px solid #bdc3c7;border-radius:12px;font-size:1rem}
+.security-btn{padding:10px 24px;border:none;border-radius:25px;font-weight:700;cursor:pointer;margin:0 6px}
+.security-btn-primary{background:linear-gradient(135deg,#27ae60,#229954);color:#fff}
+.security-btn-secondary{background:linear-gradient(135deg,#95a5a6,#7f8c8d);color:#fff}
+.toast{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#27ae60,#229954);color:#fff;padding:10px 20px;border-radius:30px;opacity:0;transform:translateY(20px);transition:.3s;z-index:1000;font-weight:700}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.error{background:linear-gradient(135deg,#e74c3c,#c0392b)}
+.file-input{display:none}
+.filter-badge{display:inline-block;background:rgba(255,255,255,.3);border-radius:20px;padding:4px 12px;font-size:.75rem;margin-left:12px;color:#fff}
+@media(max-width:1200px){.main-layout{grid-template-columns:1fr;display:flex;flex-direction:column-reverse}.values-sidebar{position:static;max-height:none;width:100%;order:2}.content-area{order:1}.cards-sticky{top:0}.filters-sticky{top:0}.charts-section{grid-template-columns:1fr}.stat-card{padding:8px 4px}.stat-value{font-size:1.1rem}.stat-label{font-size:.45rem}}
+@media(max-width:600px){body{padding:8px}.top-bar{padding:10px 12px;flex-direction:column;align-items:stretch;gap:8px}.top-bar-left{justify-content:center}.top-bar-logo{width:40px;height:40px;padding:4px}.logo-text{font-size:1.1rem}.logo-sub{font-size:.6rem}.controls{justify-content:center;flex-wrap:wrap}.btn{padding:6px 12px;font-size:.7rem}.report-container{padding:12px}.filtro-meses{padding:10px}.mes-btn{padding:6px 10px;font-size:.7rem}.charts-section{grid-template-columns:1fr;gap:12px}.chart-card{padding:12px}.chart-container{height:220px}.values-sidebar{width:100%;padding:0}.values-section{padding:12px}.values-table{font-size:.65rem;min-width:320px}.values-table th,.values-table td{padding:4px 2px;font-size:.65rem}.values-table input{font-size:.65rem;padding:2px 4px;min-width:35px}.summary-grid{grid-template-columns:repeat(auto-fit,minmax(70px,1fr));gap:4px}.stat-card{padding:4px 2px}.stat-value{font-size:.85rem}.stat-label{font-size:.38rem}.floating-controls{bottom:12px;left:12px;gap:6px}#unlock-btn,#save-lock-btn{padding:6px 12px;font-size:.7rem}}
+</style>
+</head>
+<body class="read-only-mode">
+<div class="top-bar">
+    <div class="top-bar-left">
+        <img src="https://i.ibb.co/cKVCzpy7/Logo-Minerar-1.gif" alt="Minerar" class="top-bar-logo">
+        <div><span class="logo-text">MINERAR</span><span class="logo-sub">Scania G500 | Repuestos Críticos</span></div>
+    </div>
+    <div class="controls">
+        <button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn btn-success" onclick="guardarTodosLosDatos(event)">💾 Guardar</button>
+        <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+        <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
+    </div>
+</div>
+<input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
+<div class="main-layout">
+    <div class="values-sidebar">
+        <div class="values-section">
+            <h3>💰 VALORES ECONÓMICOS <span id="filterIndicator" class="filter-badge"></span></h3>
+            <div class="values-table-wrapper">
+                <table class="values-table">
+                    <thead><tr><th>Concepto</th><th>Cant</th><th>Valor $</th><th>Total $</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>🔧 Elást. ORIG</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
+                        <tr><td><strong>🔧 Elást. FAB</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+                        <tr><td><strong>⚙️ Mazas N</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
+                        <tr><td><strong>⚙️ Mazas R</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
+                        <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
+                        <tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+                        <tr><td><strong>🛞 Neum. N</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
+                        <tr><td><strong>🛞 Patín N</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
+                        <tr><td><strong>🛞 Patín R</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
+                        <tr><td><strong>⚙️ Leva</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
+                        <tr><td><strong>💨 Pulmón N</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
+                        <tr><td><strong>💨 Pulmón R</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
+                        <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+                        <tr><td><strong>🔧 Amortiguador</strong></td><td id="cantAmortiguador">0</td><td><input type="text" id="precioAmortiguador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalAmortiguador" readonly></td></tr>
+                        <tr><td><strong>🚛 Bogie</strong></td><td id="cantBogie">0</td><td><input type="text" id="precioBogie" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBogie" readonly></td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <h4 style="color:#fff;margin:20px 0 12px;font-size:1rem;">👷 HORAS HOMBRE</h4>
+            <div class="values-table-wrapper">
+                <table class="values-table">
+                    <thead><tr><th>Concepto</th><th>Hs</th><th>$/Hs</th><th>Total $</th></tr></thead>
+                    <tbody>
+                        <tr><td><strong>Personal</strong></td><td><input type="text" id="horasPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPropio" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPropio" readonly></td></tr>
+                        <tr><td><strong>CORIA Mec</strong></td><td><input type="text" id="horasCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaMecanico" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaMecanico" readonly></td></tr>
+                        <tr><td><strong>CORIA Sold</strong></td><td><input type="text" id="horasCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCoriaSoldador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCoriaSoldador" readonly></td></tr>
+                        <tr><td><strong>CARRIZO</strong></td><td><input type="text" id="horasCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraCarrizo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalCarrizo" readonly></td></tr>
+                        <tr><td><strong>PATIÑO</strong></td><td><input type="text" id="horasPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="valorHoraPatino" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatino" readonly></td></tr>
+                        <tr class="grand-total"><td><strong>TOTAL MO</strong></td><td colspan="2" style="text-align:right;">SUMA:</td><td><input type="text" id="totalManoObra" readonly></td></tr>
+                        <tr class="grand-total"><td><strong>TOTAL GRAL</strong></td><td colspan="2" style="text-align:right;">TOTAL:</td><td><input type="text" id="totalGeneral" readonly></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="content-area">
+        <div class="report-container">
+            <div class="filters-sticky">
+                <div class="filtro-meses">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                        <h3 style="color:#38B6B2;margin:0;">📅 FILTRAR POR MES</h3>
+                        <button class="btn-ver-todo active" onclick="limpiarFiltroMes()">Ver Todo el Año</button>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                        <button class="mes-btn" onclick="cambiarMes(0)">Ene</button>
+                        <button class="mes-btn" onclick="cambiarMes(1)">Feb</button>
+                        <button class="mes-btn" onclick="cambiarMes(2)">Mar</button>
+                        <button class="mes-btn" onclick="cambiarMes(3)">Abr</button>
+                        <button class="mes-btn" onclick="cambiarMes(4)">May</button>
+                        <button class="mes-btn" onclick="cambiarMes(5)">Jun</button>
+                        <button class="mes-btn" onclick="cambiarMes(6)">Jul</button>
+                        <button class="mes-btn" onclick="cambiarMes(7)">Ago</button>
+                        <button class="mes-btn" onclick="cambiarMes(8)">Sep</button>
+                        <button class="mes-btn" onclick="cambiarMes(9)">Oct</button>
+                        <button class="mes-btn" onclick="cambiarMes(10)">Nov</button>
+                        <button class="mes-btn" onclick="cambiarMes(11)">Dic</button>
+                    </div>
+                </div>
+            </div>
+            <div class="alert">
+                <span>✏️ <strong>Tablas editables:</strong> Haga clic en cualquier celda para modificar.</span>
+                <span id="lock-indicator" style="color:#e74c3c;">🔒 Solo lectura</span>
+            </div>
+            <div class="cards-sticky">
+                <div class="selection-info" id="selectionInfo">💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar</div>
+                <div class="summary-grid">
+                    <div class="stat-card" onclick="toggleCard('elasticosO',event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elást. ORIG</div></div>
+                    <div class="stat-card" onclick="toggleCard('elasticosF',event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elást. FAB</div></div>
+                    <div class="stat-card" onclick="toggleCard('mazasN',event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas N</div></div>
+                    <div class="stat-card" onclick="toggleCard('mazasR',event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas R</div></div>
+                    <div class="stat-card" onclick="toggleCard('bulonTuerca',event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoNuevo',event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neum. N</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoUsado',event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neum. U</div></div>
+                    <div class="stat-card" onclick="toggleCard('patinFrenoNuevo',event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín N</div></div>
+                    <div class="stat-card" onclick="toggleCard('patinFrenoReparado',event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín R</div></div>
+                    <div class="stat-card" onclick="toggleCard('levaFreno',event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva</div></div>
+                    <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo',event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón N</div></div>
+                    <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado',event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón R</div></div>
+                    <div class="stat-card" onclick="toggleCard('llantas',event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
+                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label">🔧 Amortiguador</div></div>
+                    <div class="stat-card" onclick="toggleCard('bogie',event)"><div class="stat-value" id="totalBogie">0</div><div class="stat-label">🚛 Bogie</div></div>
+                </div>
+            </div>
+            <div class="charts-section">
+                <div class="chart-card"><h4>📈 Evolución Mensual</h4><div class="chart-container"><canvas id="chartLine"></canvas></div></div>
+                <div class="chart-card"><h4>📊 Consumo por Equipo</h4><div class="chart-container"><canvas id="chartBar"></canvas></div></div>
+                <div class="chart-card"><h4>🎯 Distribución</h4><div class="chart-container"><canvas id="chartDoughnut"></canvas></div></div>
+            </div>
+            <div class="editing-only">
+                <div class="accordion-header" onclick="toggleAccordion('accordionElasticosO')"><span>📦 Elásticos ORIGINALES</span><span>▼</span></div>
+                <div id="accordionElasticosO" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosO"><thead id="theadElasticosO"></thead><tbody id="tbodyElasticosO"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionElasticosF')"><span>🔧 Elásticos FABRICADOS</span><span>▼</span></div>
+                <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
+                <div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
+                <div id="accordionMazasR" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')"><span>🔩 Bulón y Tuerca</span><span>▼</span></div>
+                <div id="accordionBulonTuerca" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoNuevo')"><span>🛞 Neumático NUEVO</span><span>▼</span></div>
+                <div id="accordionNeumaticoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoNuevo"><thead id="theadNeumaticoNuevo"></thead><tbody id="tbodyNeumaticoNuevo"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionNeumaticoUsado')"><span>🛞 Neumático USADO</span><span>▼</span></div>
+                <div id="accordionNeumaticoUsado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoUsado"><thead id="theadNeumaticoUsado"></thead><tbody id="tbodyNeumaticoUsado"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')"><span>🛞 Patín NUEVO</span><span>▼</span></div>
+                <div id="accordionPatinFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span>🛞 Patín REPARADO</span><span>▼</span></div>
+                <div id="accordionPatinFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
+                <div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span>💨 Pulmón NUEVO</span><span>▼</span></div>
+                <div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoReparado')"><span>💨 Pulmón REPARADO</span><span>▼</span></div>
+                <div id="accordionPulmonFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionLlantas')"><span>⭕ Llantas Rotas</span><span>▼</span></div>
+                <div id="accordionLlantas" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionAmortiguador')"><span>🔧 Amortiguadores</span><span>▼</span></div>
+                <div id="accordionAmortiguador" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaAmortiguador"><thead id="theadAmortiguador"></thead><tbody id="tbodyAmortiguador"></tbody></table></div></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionBogie')"><span>🚛 Bogie</span><span>▼</span></div>
+                <div id="accordionBogie" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBogie"><thead id="theadBogie"></thead><tbody id="tbodyBogie"></tbody></table></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="floating-controls">
+<button id="unlock-btn" onclick="abrirModal()">🔒 Iniciar Edición</button>
+<button id="save-lock-btn" onclick="guardarYBloquear()">💾 Guardar y Bloquear</button>
+</div>
+<div class="security-overlay" id="securityModal">
+<div class="security-modal">
+<h2>🔐 Acceso Restringido</h2>
+<p>Ingrese contraseña</p>
+<input type="password" id="passwordInput" placeholder="••••••">
+<button class="security-btn security-btn-primary" onclick="verificarPassword()">Desbloquear</button>
+<button class="security-btn security-btn-secondary" onclick="cerrarModal()">Cancelar</button>
+</div>
+</div>
+<div id="toast" class="toast">✅ Listo</div>
+
+<script>
 if (typeof ChartDataLabels === 'undefined') {
     var ChartDataLabels = window['chartjs-plugin-datalabels'] || {};
 }
 
+// ============================================================
+// ===== FIREBASE CONFIG =====
+// ============================================================
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -11,8 +358,17 @@ const firebaseConfig = {
     appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+// ============================================================
+// ===== VERIFICAR QUE FIREBASE ESTÉ CARGADO =====
+// ============================================================
+if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    console.log('✅ Firebase conectado');
+} else {
+    console.warn('⚠️ Firebase no cargado - usando datos locales');
+    var db = null;
+}
 
 const CONFIG = {
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
@@ -32,21 +388,21 @@ let mesFiltrado = null;
 // ===== TODAS LAS CATEGORÍAS =====
 // ============================================================
 const CATEGORIAS = [
-    { id: 'elasticosO', label: 'Elasticos ORIG', cantId: 'cantElasticosO', totalId: 'totalElasticosO', cardId: 'totalElasticosO' },
-    { id: 'elasticosF', label: 'Elasticos FAB', cantId: 'cantElasticosF', totalId: 'totalElasticosF', cardId: 'totalElasticosF' },
-    { id: 'mazasN', label: 'Mazas N', cantId: 'cantMazasN', totalId: 'totalMazaN', cardId: 'totalMazasN' },
-    { id: 'mazasR', label: 'Mazas R', cantId: 'cantMazasR', totalId: 'totalMazaR', cardId: 'totalMazasR' },
-    { id: 'bulonTuerca', label: 'Bulon/Tuerca', cantId: 'cantBulon', totalId: 'totalBulon', cardId: 'totalBulonTuerca' },
-    { id: 'neumaticoNuevo', label: 'Neumatico N', cantId: 'cantNeumaticoNuevo', totalId: 'totalNeumaticoNuevo', cardId: 'totalNeumaticoNuevo' },
-    { id: 'neumaticoUsado', label: 'Neumatico U', cantId: null, totalId: null, cardId: 'totalNeumaticoUsado' },
-    { id: 'patinFrenoNuevo', label: 'Patín N', cantId: 'cantPatinFrenoNuevo', totalId: 'totalPatinFrenoNuevo', cardId: 'totalPatinFrenoNuevo' },
-    { id: 'patinFrenoReparado', label: 'Patín R', cantId: 'cantPatinFrenoReparado', totalId: 'totalPatinFrenoReparado', cardId: 'totalPatinFrenoReparado' },
-    { id: 'levaFreno', label: 'Leva', cantId: 'cantLevaFreno', totalId: 'totalLevaFreno', cardId: 'totalLevaFreno' },
-    { id: 'pulmonFrenoNuevo', label: 'Pulmon N', cantId: 'cantPulmonFrenoNuevo', totalId: 'totalPulmonFrenoNuevo', cardId: 'totalPulmonFrenoNuevo' },
-    { id: 'pulmonFrenoReparado', label: 'Pulmon R', cantId: 'cantPulmonFrenoReparado', totalId: 'totalPulmonFrenoReparado', cardId: 'totalPulmonFrenoReparado' },
-    { id: 'llantas', label: 'Llantas', cantId: 'cantLlantas', totalId: 'totalLlanta', cardId: 'totalLlantas' },
-    { id: 'amortiguador', label: 'Amortiguador', cantId: 'cantAmortiguador', totalId: 'totalAmortiguador', cardId: 'totalAmortiguador' },
-    { id: 'bogie', label: 'Bogie', cantId: 'cantBogie', totalId: 'totalBogie', cardId: 'totalBogie' }
+    { id: 'elasticosO', label: 'Elasticos ORIG' },
+    { id: 'elasticosF', label: 'Elasticos FAB' },
+    { id: 'mazasN', label: 'Mazas N' },
+    { id: 'mazasR', label: 'Mazas R' },
+    { id: 'bulonTuerca', label: 'Bulon/Tuerca' },
+    { id: 'neumaticoNuevo', label: 'Neumatico N' },
+    { id: 'neumaticoUsado', label: 'Neumatico U' },
+    { id: 'patinFrenoNuevo', label: 'Patín N' },
+    { id: 'patinFrenoReparado', label: 'Patín R' },
+    { id: 'levaFreno', label: 'Leva' },
+    { id: 'pulmonFrenoNuevo', label: 'Pulmon N' },
+    { id: 'pulmonFrenoReparado', label: 'Pulmon R' },
+    { id: 'llantas', label: 'Llantas' },
+    { id: 'amortiguador', label: 'Amortiguador' },
+    { id: 'bogie', label: 'Bogie' }
 ];
 
 const CATEGORIAS_IDS = CATEGORIAS.map(c => c.id);
@@ -109,32 +465,35 @@ function asegurarTodasLasCategorias(datos) {
 }
 
 async function init() {
-    try {
-        const doc = await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).get();
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
-                datosPorAnio[añoActual] = data.datosPorAnio[añoActual];
+    // Intentar cargar datos de Firebase si está disponible
+    if (db) {
+        try {
+            const doc = await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).get();
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
+                    datosPorAnio[añoActual] = data.datosPorAnio[añoActual];
+                }
+                if (data.precios) {
+                    Object.keys(data.precios).forEach(key => {
+                        let elId = key === 'llanta' ? 'precioLlanta' :
+                            key === 'amortiguador' ? 'precioAmortiguador' :
+                            key === 'bogie' ? 'precioBogie' :
+                            'precio' + key.charAt(0).toUpperCase() + key.slice(1);
+                        let el = document.getElementById(elId);
+                        if (el) el.value = data.precios[key];
+                    });
+                }
+                if (data.horas) {
+                    Object.keys(data.horas).forEach(key => {
+                        let el = document.getElementById(key);
+                        if (el) el.value = data.horas[key];
+                    });
+                }
             }
-            if (data.precios) {
-                Object.keys(data.precios).forEach(key => {
-                    let elId = key === 'llanta' ? 'precioLlanta' :
-                        key === 'amortiguador' ? 'precioAmortiguador' :
-                        key === 'bogie' ? 'precioBogie' :
-                        'precio' + key.charAt(0).toUpperCase() + key.slice(1);
-                    let el = document.getElementById(elId);
-                    if (el) el.value = data.precios[key];
-                });
-            }
-            if (data.horas) {
-                Object.keys(data.horas).forEach(key => {
-                    let el = document.getElementById(key);
-                    if (el) el.value = data.horas[key];
-                });
-            }
+        } catch (e) {
+            console.log("⚠️ Error cargando Firebase, usando datos locales:", e);
         }
-    } catch (e) {
-        console.log("Cargando datos locales...");
     }
 
     if (!datosPorAnio[añoActual]) {
@@ -243,9 +602,23 @@ function actualizarTodo() {
 
 function actualizarTarjetas() {
     CATEGORIAS.forEach(cat => {
-        if (cat.cardId) {
-            const total = obtenerCantidadPorMes(cat.id);
-            document.getElementById(cat.cardId).textContent = total;
+        const el = document.getElementById(cat.id === 'elasticosO' ? 'totalElasticosO' :
+            cat.id === 'elasticosF' ? 'totalElasticosF' :
+            cat.id === 'mazasN' ? 'totalMazasN' :
+            cat.id === 'mazasR' ? 'totalMazasR' :
+            cat.id === 'bulonTuerca' ? 'totalBulonTuerca' :
+            cat.id === 'neumaticoNuevo' ? 'totalNeumaticoNuevo' :
+            cat.id === 'neumaticoUsado' ? 'totalNeumaticoUsado' :
+            cat.id === 'patinFrenoNuevo' ? 'totalPatinFrenoNuevo' :
+            cat.id === 'patinFrenoReparado' ? 'totalPatinFrenoReparado' :
+            cat.id === 'levaFreno' ? 'totalLevaFreno' :
+            cat.id === 'pulmonFrenoNuevo' ? 'totalPulmonFrenoNuevo' :
+            cat.id === 'pulmonFrenoReparado' ? 'totalPulmonFrenoReparado' :
+            cat.id === 'llantas' ? 'totalLlantas' :
+            cat.id === 'amortiguador' ? 'totalAmortiguador' :
+            cat.id === 'bogie' ? 'totalBogie' : null);
+        if (el) {
+            el.textContent = obtenerCantidadPorMes(cat.id);
         }
     });
 }
@@ -260,10 +633,26 @@ function calcularEconomico() {
     });
 
     // Actualizar cantidades en la tabla
-    CATEGORIAS.forEach(cat => {
-        if (cat.cantId) {
-            document.getElementById(cat.cantId).textContent = cant[cat.id] || 0;
-        }
+    const cantMap = {
+        'elasticosO': 'cantElasticosO',
+        'elasticosF': 'cantElasticosF',
+        'mazasN': 'cantMazasN',
+        'mazasR': 'cantMazasR',
+        'bulonTuerca': 'cantBulon',
+        'neumaticoNuevo': 'cantNeumaticoNuevo',
+        'patinFrenoNuevo': 'cantPatinFrenoNuevo',
+        'patinFrenoReparado': 'cantPatinFrenoReparado',
+        'levaFreno': 'cantLevaFreno',
+        'pulmonFrenoNuevo': 'cantPulmonFrenoNuevo',
+        'pulmonFrenoReparado': 'cantPulmonFrenoReparado',
+        'llantas': 'cantLlantas',
+        'amortiguador': 'cantAmortiguador',
+        'bogie': 'cantBogie'
+    };
+
+    Object.keys(cantMap).forEach(key => {
+        const el = document.getElementById(cantMap[key]);
+        if (el) el.textContent = cant[key] || 0;
     });
 
     // Precios
@@ -695,6 +1084,7 @@ function guardarEnLocalStorage() {
 }
 
 async function guardarEnFirebase() {
+    if (!db) return false;
     try {
         await db.collection("repuestos_minerar").doc("datos_" + añoActual).set({
             añoActual: añoActual,
@@ -724,10 +1114,17 @@ async function resetearDatosCompletos() {
     if (!confirm("⚠️ ¿Resetear TODO?")) return;
     const pass = prompt("Contraseña:");
     if (pass === "NOTOCAR") {
-        await db.collection("repuestos_minerar").doc("datos_" + añoActual).delete();
+        if (db) {
+            try {
+                await db.collection("repuestos_minerar").doc("datos_" + añoActual).delete();
+            } catch(e) {}
+        }
         localStorage.removeItem(CONFIG.storageKey);
         location.reload();
     }
 }
 
 document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
