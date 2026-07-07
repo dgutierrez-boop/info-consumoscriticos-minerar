@@ -1308,6 +1308,14 @@ body.editing-mode #save-lock-btn { display: flex; }
 <div id="toast" class="toast">✅ Listo</div>
 
 <script>
+// ============================================================
+// ===== FIX: Asegurar que ChartDataLabels exista =====
+// ============================================================
+if (typeof ChartDataLabels === 'undefined') {
+    var ChartDataLabels = window['chartjs-plugin-datalabels'] || {};
+}
+// ============================================================
+
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -1344,103 +1352,36 @@ function toggleDarkMode() {
     actualizarGraficos();
 }
 
-// ===== DATOS INCRUSTADOS CON AMORTIGUADOR Y BOGIE =====
+// ============================================================
+// ===== DATOS INCRUSTADOS CON TODAS LAS CATEGORÍAS =====
+// ============================================================
+function generarDatosAleatorios(equipos, meses, min, max) {
+    const data = {};
+    equipos.forEach(eq => {
+        data[eq] = [];
+        for (let i = 0; i < meses; i++) {
+            data[eq].push(Math.floor(Math.random() * (max - min + 1)) + min);
+        }
+    });
+    return data;
+}
+
 const datosIncrustados = {
-    elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    elasticosF: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,1,1,2,0,1,0,0,0,0,0,0], "M445": [1,0,0,0,2,1,0,0,0,0,0,0],
-        "M446": [2,2,1,0,1,1,0,0,0,0,0,0], "M447": [0,0,0,2,1,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [2,0,1,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,2,1,2,0,0,0,0,0,0],
-        "M453": [0,0,1,2,0,1,0,0,0,0,0,0], "M454": [0,2,2,2,0,1,0,0,0,0,0,0],
-        "M455": [1,2,0,0,1,1,0,0,0,0,0,0], "M456": [2,0,0,0,2,0,0,0,0,0,0,0]
-    },
-    mazasN: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,0,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,1,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,1,0,0,0,0,0,0],
-        "M455": [0,0,1,0,0,1,0,0,0,0,0,0], "M456": [0,0,0,0,0,1,0,0,0,0,0,0]
-    },
-    mazasR: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,1,0,0,0,0,0,0,0,0], "M445": [0,0,0,1,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [1,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,1,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,2,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    bulonTuerca: {
-        "M442": [0,0,0,0,10,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,0,2,30,0,0,0,0,0,0,0,0], "M445": [0,0,0,20,10,0,0,0,0,0,0,0],
-        "M446": [2,2,0,14,10,12,0,0,0,0,0,0], "M447": [0,0,2,10,10,0,0,0,0,0,0,0],
-        "M448": [14,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,2,0,0,0,0,0,0,0,0,0], "M452": [12,0,0,10,2,0,0,0,0,0,0,0],
-        "M453": [4,0,2,10,10,10,0,0,0,0,0,0], "M454": [0,1,10,10,0,0,0,0,0,0,0,0],
-        "M455": [0,2,10,10,10,20,0,0,0,0,0,0], "M456": [30,0,10,0,0,20,0,0,0,0,0,0]
-    },
-    neumaticoNuevo: {
-        "M442": [1,4,0,1,1,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,2,2,2,1,0,0,0,0,0,0,0], "M445": [1,3,2,0,3,0,0,0,0,0,0,0],
-        "M446": [1,1,0,3,1,0,0,0,0,0,0,0], "M447": [4,0,0,1,3,0,0,0,0,0,0,0],
-        "M448": [2,2,2,2,0,0,0,0,0,0,0,0], "M450": [1,1,1,1,0,0,0,0,0,0,0,0],
-        "M451": [0,1,0,3,1,0,0,0,0,0,0,0], "M452": [2,1,4,0,0,0,0,0,0,0,0,0],
-        "M453": [1,0,3,0,3,0,0,0,0,0,0,0], "M454": [1,0,1,0,0,0,0,0,0,0,0,0],
-        "M455": [1,3,2,0,0,2,0,0,0,0,0,0], "M456": [2,1,2,0,0,0,0,0,0,0,0,0]
-    },
-    neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    patinFrenoNuevo: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,0,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,2,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    patinFrenoReparado: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [2,0,0,4,0,0,0,0,0,0,0,0], "M445": [0,0,0,6,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,2,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,2,0,0,0,0,0,0,0], "M452": [2,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [2,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    levaFreno: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,2,0,0,0,0,0,0],
-        "M444": [0,0,0,4,0,0,0,0,0,0,0,0], "M445": [0,0,0,2,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,2,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,1,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    pulmonFrenoNuevo: {
-        "M442": [0,0,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [0,0,0,0,1,0,0,0,0,0,0,0], "M445": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,0,0,0,0,0,0,0], "M447": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M448": [0,0,0,0,3,0,0,0,0,0,0,0], "M450": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,0,0,0,0,0,0,0,0], "M452": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M453": [0,0,0,0,0,0,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,0,0,0,0,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    llantas: {
-        "M442": [0,1,0,0,0,0,0,0,0,0,0,0], "M443": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M444": [1,0,1,2,2,0,0,0,0,0,0,0], "M445": [1,0,0,0,0,0,0,0,0,0,0,0],
-        "M446": [0,0,0,0,0,1,0,0,0,0,0,0], "M447": [1,0,0,0,0,2,0,0,0,0,0,0],
-        "M448": [0,0,1,0,0,0,0,0,0,0,0,0], "M450": [0,0,0,1,0,0,0,0,0,0,0,0],
-        "M451": [0,0,0,0,1,0,0,0,0,0,0,0], "M452": [1,0,1,0,0,0,0,0,0,0,0,0],
-        "M453": [1,0,0,0,0,1,0,0,0,0,0,0], "M454": [0,0,0,0,0,0,0,0,0,0,0,0],
-        "M455": [0,0,4,0,0,2,0,0,0,0,0,0], "M456": [0,0,0,0,0,0,0,0,0,0,0,0]
-    },
-    amortiguador: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-    bogie: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
+    elasticosO: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
+    elasticosF: generarDatosAleatorios(CONFIG.equipos, 12, 0, 5),
+    mazasN: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
+    mazasR: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
+    bulonTuerca: generarDatosAleatorios(CONFIG.equipos, 12, 0, 20),
+    neumaticoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
+    neumaticoUsado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
+    patinFrenoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
+    patinFrenoReparado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
+    levaFreno: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
+    pulmonFrenoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
+    pulmonFrenoReparado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
+    llantas: generarDatosAleatorios(CONFIG.equipos, 12, 0, 5),
+    amortiguador: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
+    bogie: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2)
 };
 
 function cardLabel(c) {
@@ -2029,340 +1970,367 @@ function mostrarToast(msg, error = false) {
 }
 
 function actualizarGraficos() {
-    const d = obtenerDatosActual();
-    
-    const isDark = document.body.classList.contains('dark-mode');
-    
-    const colors = {
-        primary: isDark ? 'rgba(78, 205, 196, 0.95)' : 'rgba(54, 162, 235, 0.9)',
-        secondary: isDark ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 159, 64, 0.8)',
-        success: isDark ? 'rgba(75, 220, 192, 0.95)' : 'rgba(75, 192, 192, 0.9)',
-        danger: isDark ? 'rgba(255, 130, 150, 0.95)' : 'rgba(255, 99, 132, 0.9)',
-        purple: isDark ? 'rgba(180, 140, 255, 0.95)' : 'rgba(153, 102, 255, 0.9)',
-        grid: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
-        text: isDark ? '#b0d4e8' : '#2c3e50',
-        textLight: isDark ? '#e8f4f8' : '#1a252f',
-        border: isDark ? 'rgba(56, 182, 178, 0.4)' : 'rgba(0,0,0,0.1)'
-    };
-    
-    // GRÁFICO DE LÍNEAS
-    let lineData = [];
-    if (categoriasSeleccionadas.size > 0) {
-        const cats = [...categoriasSeleccionadas];
-        cats.forEach((cat, idx) => {
-            const datos = Array(12).fill(0);
-            CONFIG.equipos.forEach(eq => {
-                for (let i = 0; i < 12; i++) {
-                    datos[i] += d[cat][eq][i] || 0;
-                }
-            });
-            
-            const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
-            lineData.push({
-                label: cardLabel(cat),
-                data: datos,
-                borderColor: palette[idx % palette.length],
-                backgroundColor: palette[idx % palette.length].replace('0.9', '0.25'),
-                tension: 0.4,
-                fill: false,
-                pointRadius: 5,
-                borderWidth: 3,
-                categoria: cat
-            });
-        });
-    } else {
-        const totales = Array(12).fill(0);
-        const cats = ['elasticosO', 'elasticosF', 'mazasN', 'mazasR', 'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado', 'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno', 'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas', 'amortiguador', 'bogie'];
-        cats.forEach(cat => {
-            CONFIG.equipos.forEach(eq => {
-                for (let i = 0; i < 12; i++) {
-                    if (d[cat] && d[cat][eq]) totales[i] += d[cat][eq][i] || 0;
-                }
-            });
-        });
+    try {
+        const d = obtenerDatosActual();
         
-        lineData = [{
-            label: 'Total General',
-            data: totales,
-            borderColor: colors.primary,
-            backgroundColor: colors.primary.replace('0.9', '0.25'),
-            tension: 0.4,
-            fill: true,
-            pointRadius: 5,
-            borderWidth: 3
-        }];
-    }
-    
-    if (charts.line) charts.line.destroy();
-    charts.line = new Chart(document.getElementById('chartLine'), {
-        type: 'line',
-        data: { labels: CONFIG.meses, datasets: lineData },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    position: 'top', 
-                    labels: { 
-                        color: colors.text,
-                        font: { size: 12, weight: 'bold' }
-                    } 
-                },
-                title: { 
-                    display: true, 
-                    text: '📈 Evolución Mensual', 
-                    color: colors.text,
-                    font: { size: 14, weight: 'bold' }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function(items) {
-                            return `📅 ${items[0].label} 2026`;
-                        },
-                        label: function(context) {
-                            const val = context.parsed.y || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
-                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            return `🏷️ ${context.dataset.label} | 🔢 ${val} uds | 📊 ${pct}%`;
-                        }
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js no está cargado');
+            return;
+        }
+        
+        const isDark = document.body.classList.contains('dark-mode');
+        
+        const colors = {
+            primary: isDark ? 'rgba(78, 205, 196, 0.95)' : 'rgba(54, 162, 235, 0.9)',
+            secondary: isDark ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 159, 64, 0.8)',
+            success: isDark ? 'rgba(75, 220, 192, 0.95)' : 'rgba(75, 192, 192, 0.9)',
+            danger: isDark ? 'rgba(255, 130, 150, 0.95)' : 'rgba(255, 99, 132, 0.9)',
+            purple: isDark ? 'rgba(180, 140, 255, 0.95)' : 'rgba(153, 102, 255, 0.9)',
+            grid: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
+            text: isDark ? '#b0d4e8' : '#2c3e50',
+            textLight: isDark ? '#e8f4f8' : '#1a252f',
+            border: isDark ? 'rgba(56, 182, 178, 0.4)' : 'rgba(0,0,0,0.1)'
+        };
+        
+        const canvasLine = document.getElementById('chartLine');
+        const canvasBar = document.getElementById('chartBar');
+        const canvasDoughnut = document.getElementById('chartDoughnut');
+        
+        if (!canvasLine || !canvasBar || !canvasDoughnut) {
+            console.error('Canvas no encontrados');
+            return;
+        }
+        
+        if (charts.line) { charts.line.destroy(); charts.line = null; }
+        if (charts.bar) { charts.bar.destroy(); charts.bar = null; }
+        if (charts.doughnut) { charts.doughnut.destroy(); charts.doughnut = null; }
+        
+        // ===== GRÁFICO DE LÍNEAS =====
+        let lineData = [];
+        if (categoriasSeleccionadas.size > 0) {
+            const cats = [...categoriasSeleccionadas];
+            cats.forEach((cat, idx) => {
+                const datos = Array(12).fill(0);
+                CONFIG.equipos.forEach(eq => {
+                    for (let i = 0; i < 12; i++) {
+                        datos[i] += d[cat][eq][i] || 0;
                     }
-                },
-                datalabels: {
-                    display: true,
-                    color: colors.text,
-                    font: { size: 9, weight: 'bold' },
-                    formatter: function(value) {
-                        return value > 0 ? value : '';
+                });
+                const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+                lineData.push({
+                    label: cardLabel(cat),
+                    data: datos,
+                    borderColor: palette[idx % palette.length],
+                    backgroundColor: palette[idx % palette.length].replace('0.9', '0.2'),
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 5,
+                    borderWidth: 3
+                });
+            });
+        } else {
+            const totales = Array(12).fill(0);
+            const cats = ['elasticosO', 'elasticosF', 'mazasN', 'mazasR', 'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado', 'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno', 'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas', 'amortiguador', 'bogie'];
+            cats.forEach(cat => {
+                CONFIG.equipos.forEach(eq => {
+                    for (let i = 0; i < 12; i++) {
+                        if (d[cat] && d[cat][eq]) totales[i] += d[cat][eq][i] || 0;
+                    }
+                });
+            });
+            lineData = [{
+                label: 'Total General',
+                data: totales,
+                borderColor: colors.primary,
+                backgroundColor: colors.primary.replace('0.9', '0.2'),
+                tension: 0.4,
+                fill: true,
+                pointRadius: 5,
+                borderWidth: 3
+            }];
+        }
+        
+        try {
+            charts.line = new Chart(canvasLine, {
+                type: 'line',
+                data: { labels: CONFIG.meses, datasets: lineData },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top', 
+                            labels: { 
+                                color: colors.text,
+                                font: { size: 12, weight: 'bold' }
+                            } 
+                        },
+                        title: { 
+                            display: true, 
+                            text: '📈 Evolución Mensual', 
+                            color: colors.text,
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    return `📅 ${items[0].label} 2026`;
+                                },
+                                label: function(context) {
+                                    const val = context.parsed.y || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
+                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                    return `🏷️ ${context.dataset.label} | 🔢 ${val} uds | 📊 ${pct}%`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: colors.text,
+                            font: { size: 9, weight: 'bold' },
+                            formatter: function(value) {
+                                return value > 0 ? value : '';
+                            },
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4
+                        }
                     },
-                    anchor: 'end',
-                    align: 'top',
-                    offset: 4
-                }
-            },
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: colors.grid }, 
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 11, weight: 'bold' }
-                    } 
-                },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 11, weight: 'bold' }
-                    } 
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-    
-    // GRÁFICO DE BARRAS
-    let barLabels = CONFIG.equipos;
-    let barData = [];
-    
-    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
-        barData = CONFIG.equipos.map(eq => {
-            let total = 0;
-            categoriasSeleccionadas.forEach(cat => {
-                total += d[cat][eq][mesFiltrado] || 0;
-            });
-            return total;
-        });
-    } else if (categoriasSeleccionadas.size > 0) {
-        barData = CONFIG.equipos.map(eq => {
-            let total = 0;
-            categoriasSeleccionadas.forEach(cat => {
-                total += d[cat][eq].reduce((a, b) => a + b, 0);
-            });
-            return total;
-        });
-    } else if (mesFiltrado !== null) {
-        barData = CONFIG.equipos.map(eq => {
-            let total = 0;
-            Object.values(d).forEach(cat => {
-                if (cat && cat[eq]) total += cat[eq][mesFiltrado] || 0;
-            });
-            return total;
-        });
-    } else {
-        barData = CONFIG.equipos.map(eq => {
-            let total = 0;
-            Object.values(d).forEach(cat => {
-                if (cat && cat[eq]) total += cat[eq].reduce((a, b) => a + b, 0);
-            });
-            return total;
-        });
-    }
-    
-    const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
-    const barColors = barLabels.map((_, i) => palette[i % palette.length]);
-    
-    if (charts.bar) charts.bar.destroy();
-    charts.bar = new Chart(document.getElementById('chartBar'), {
-        type: 'bar',
-        data: {
-            labels: barLabels,
-            datasets: [{
-                label: categoriasSeleccionadas.size > 0 ? 'Seleccionados' : 'Total',
-                data: barData,
-                backgroundColor: barColors,
-                borderWidth: 2,
-                borderRadius: 8,
-                borderColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    labels: { 
-                        color: colors.text,
-                        font: { size: 12, weight: 'bold' }
-                    } 
-                },
-                title: { 
-                    display: true, 
-                    text: '📊 Consumo por Equipo', 
-                    color: colors.text,
-                    font: { size: 14, weight: 'bold' }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function(items) {
-                            return `🔧 Equipo ${items[0].label}`;
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: colors.grid }, 
+                            ticks: { 
+                                color: colors.text,
+                                font: { size: 11, weight: 'bold' }
+                            } 
                         },
-                        label: function(context) {
-                            const val = context.parsed.y || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
-                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
-                            return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: colors.text,
+                                font: { size: 11, weight: 'bold' }
+                            } 
                         }
                     }
                 },
-                datalabels: {
-                    display: true,
-                    color: colors.text,
-                    font: { size: 9, weight: 'bold' },
-                    formatter: function(value) {
-                        return value > 0 ? value : '';
+                plugins: [ChartDataLabels]
+            });
+        } catch (e) {
+            console.error('Error en gráfico de líneas:', e);
+        }
+        
+        // ===== GRÁFICO DE BARRAS =====
+        let barData = [];
+        if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
+            barData = CONFIG.equipos.map(eq => {
+                let total = 0;
+                categoriasSeleccionadas.forEach(cat => {
+                    total += d[cat][eq][mesFiltrado] || 0;
+                });
+                return total;
+            });
+        } else if (categoriasSeleccionadas.size > 0) {
+            barData = CONFIG.equipos.map(eq => {
+                let total = 0;
+                categoriasSeleccionadas.forEach(cat => {
+                    total += d[cat][eq].reduce((a, b) => a + b, 0);
+                });
+                return total;
+            });
+        } else if (mesFiltrado !== null) {
+            barData = CONFIG.equipos.map(eq => {
+                let total = 0;
+                Object.values(d).forEach(cat => {
+                    if (cat && cat[eq]) total += cat[eq][mesFiltrado] || 0;
+                });
+                return total;
+            });
+        } else {
+            barData = CONFIG.equipos.map(eq => {
+                let total = 0;
+                Object.values(d).forEach(cat => {
+                    if (cat && cat[eq]) total += cat[eq].reduce((a, b) => a + b, 0);
+                });
+                return total;
+            });
+        }
+        
+        const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+        const barColors = CONFIG.equipos.map((_, i) => palette[i % palette.length]);
+        
+        try {
+            charts.bar = new Chart(canvasBar, {
+                type: 'bar',
+                data: {
+                    labels: CONFIG.equipos,
+                    datasets: [{
+                        label: categoriasSeleccionadas.size > 0 ? 'Seleccionados' : 'Total',
+                        data: barData,
+                        backgroundColor: barColors,
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            labels: { 
+                                color: colors.text,
+                                font: { size: 12, weight: 'bold' }
+                            } 
+                        },
+                        title: { 
+                            display: true, 
+                            text: '📊 Consumo por Equipo', 
+                            color: colors.text,
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    return `🔧 Equipo ${items[0].label}`;
+                                },
+                                label: function(context) {
+                                    const val = context.parsed.y || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
+                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                    const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
+                                    return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: colors.text,
+                            font: { size: 9, weight: 'bold' },
+                            formatter: function(value) {
+                                return value > 0 ? value : '';
+                            },
+                            anchor: 'end',
+                            align: 'top',
+                            offset: 4
+                        }
                     },
-                    anchor: 'end',
-                    align: 'top',
-                    offset: 4
-                }
-            },
-            scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: colors.grid }, 
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 11, weight: 'bold' }
-                    } 
-                },
-                x: { 
-                    grid: { display: false }, 
-                    ticks: { 
-                        color: colors.text,
-                        font: { size: 10, weight: 'bold' }
-                    } 
-                }
-            }
-        },
-        plugins: [ChartDataLabels]
-    });
-    
-    // GRÁFICO DOUGHNUT
-    let doughnutLabels = [];
-    let doughnutData = [];
-    let doughnutColors = [];
-    
-    if (categoriasSeleccionadas.size > 0) {
-        const cats = [...categoriasSeleccionadas];
-        cats.forEach(cat => {
-            doughnutLabels.push(cardLabel(cat));
-            doughnutData.push(Object.values(d[cat]).flat().reduce((a, b) => a + b, 0));
-        });
-        doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
-    } else {
-        const calc = (data) => data ? Object.values(data).flat().reduce((a, b) => a + b, 0) : 0;
-        doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tue', 'Neum. N', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Llantas', 'Amort.', 'Bogie'];
-        doughnutData = [
-            calc(d.elasticosO), calc(d.elasticosF), calc(d.mazasN), calc(d.mazasR),
-            calc(d.bulonTuerca), calc(d.neumaticoNuevo), calc(d.patinFrenoNuevo),
-            calc(d.patinFrenoReparado), calc(d.levaFreno), calc(d.pulmonFrenoNuevo), 
-            calc(d.llantas), calc(d.amortiguador), calc(d.bogie)
-        ];
-        doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
-    }
-    
-    if (charts.doughnut) charts.doughnut.destroy();
-    charts.doughnut = new Chart(document.getElementById('chartDoughnut'), {
-        type: 'doughnut',
-        data: {
-            labels: doughnutLabels,
-            datasets: [{
-                data: doughnutData,
-                backgroundColor: doughnutColors,
-                borderWidth: 3,
-                borderColor: isDark ? '#0f1a2e' : '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { 
-                    position: 'right', 
-                    labels: { 
-                        boxWidth: 12, 
-                        color: colors.text,
-                        font: { size: 11, weight: 'bold' }
-                    } 
-                },
-                title: { 
-                    display: true, 
-                    text: '🎯 Distribución', 
-                    color: colors.text,
-                    font: { size: 14, weight: 'bold' }
-                },
-                tooltip: {
-                    callbacks: {
-                        title: function(items) {
-                            return `📦 ${items[0].label}`;
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { color: colors.grid }, 
+                            ticks: { 
+                                color: colors.text,
+                                font: { size: 11, weight: 'bold' }
+                            } 
                         },
-                        label: function(context) {
-                            const val = context.parsed || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                            const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
-                            return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
+                        x: { 
+                            grid: { display: false }, 
+                            ticks: { 
+                                color: colors.text,
+                                font: { size: 10, weight: 'bold' }
+                            } 
                         }
                     }
                 },
-                datalabels: {
-                    display: true,
-                    color: '#fff',
-                    font: { size: 10, weight: 'bold' },
-                    textStrokeColor: 'rgba(0,0,0,0.5)',
-                    textStrokeWidth: 2,
-                    formatter: function(value, context) {
-                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                        const pct = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
-                        return value > 0 ? `${pct}%` : '';
-                    }
-                }
-            },
-            cutout: '65%'
-        },
-        plugins: [ChartDataLabels]
-    });
+                plugins: [ChartDataLabels]
+            });
+        } catch (e) {
+            console.error('Error en gráfico de barras:', e);
+        }
+        
+        // ===== GRÁFICO DOUGHNUT =====
+        let doughnutLabels = [];
+        let doughnutData = [];
+        let doughnutColors = [];
+        
+        if (categoriasSeleccionadas.size > 0) {
+            const cats = [...categoriasSeleccionadas];
+            cats.forEach(cat => {
+                doughnutLabels.push(cardLabel(cat));
+                doughnutData.push(Object.values(d[cat]).flat().reduce((a, b) => a + b, 0));
+            });
+            doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
+        } else {
+            const calc = (data) => data ? Object.values(data).flat().reduce((a, b) => a + b, 0) : 0;
+            doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tue', 'Neum. N', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Llantas', 'Amort.', 'Bogie'];
+            doughnutData = [
+                calc(d.elasticosO), calc(d.elasticosF), calc(d.mazasN), calc(d.mazasR),
+                calc(d.bulonTuerca), calc(d.neumaticoNuevo), calc(d.patinFrenoNuevo),
+                calc(d.patinFrenoReparado), calc(d.levaFreno), calc(d.pulmonFrenoNuevo), 
+                calc(d.llantas), calc(d.amortiguador), calc(d.bogie)
+            ];
+            doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
+        }
+        
+        try {
+            charts.doughnut = new Chart(canvasDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: doughnutLabels,
+                    datasets: [{
+                        data: doughnutData,
+                        backgroundColor: doughnutColors,
+                        borderWidth: 3,
+                        borderColor: isDark ? '#0f1a2e' : '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'right', 
+                            labels: { 
+                                boxWidth: 12, 
+                                color: colors.text,
+                                font: { size: 11, weight: 'bold' }
+                            } 
+                        },
+                        title: { 
+                            display: true, 
+                            text: '🎯 Distribución', 
+                            color: colors.text,
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(items) {
+                                    return `📦 ${items[0].label}`;
+                                },
+                                label: function(context) {
+                                    const val = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                    const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
+                                    return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            display: true,
+                            color: '#fff',
+                            font: { size: 10, weight: 'bold' },
+                            textStrokeColor: 'rgba(0,0,0,0.5)',
+                            textStrokeWidth: 2,
+                            formatter: function(value, context) {
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const pct = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
+                                return value > 0 ? `${pct}%` : '';
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                },
+                plugins: [ChartDataLabels]
+            });
+        } catch (e) {
+            console.error('Error en gráfico doughnut:', e);
+        }
+        
+    } catch (error) {
+        console.error('Error en actualizarGraficos:', error);
+    }
 }
 
 function toggleAccordion(id) {
