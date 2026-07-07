@@ -1,10 +1,6 @@
 // ============================================================
-// ===== FIX: Asegurar que ChartDataLabels exista =====
+// ===== CONFIGURACIÓN INICIAL =====
 // ============================================================
-if (typeof ChartDataLabels === 'undefined') {
-    var ChartDataLabels = window['chartjs-plugin-datalabels'] || {};
-}
-
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -16,6 +12,7 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
 const CONFIG = {
     equipos: ["M442", "M443", "M444", "M445", "M446", "M447", "M448", "M450", "M451", "M452", "M453", "M454", "M455", "M456"],
     meses: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
@@ -33,90 +30,56 @@ let mesFiltrado = null;
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const btn = document.querySelector('.btn-dark-mode');
-    if (document.body.classList.contains('dark-mode')) {
-        btn.textContent = '☀️';
-    } else {
-        btn.textContent = '🌙';
-    }
+    btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
     actualizarGraficos();
 }
 
 // ============================================================
-// ===== FUNCIÓN PARA ASEGURAR QUE EXISTAN TODAS LAS CATEGORÍAS =====
+// ===== CATEGORÍAS =====
 // ============================================================
-function asegurarTodasLasCategorias(datos) {
-    const categorias = [
-        'elasticosO', 'elasticosF', 'mazasN', 'mazasR', 
-        'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado',
-        'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno',
-        'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas',
-        'amortiguador', 'bogie'
-    ];
-    
-    categorias.forEach(cat => {
-        if (!datos[cat]) {
-            datos[cat] = Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]));
-        } else {
-            CONFIG.equipos.forEach(eq => {
-                if (!datos[cat][eq]) {
-                    datos[cat][eq] = Array(12).fill(0);
-                } else if (datos[cat][eq].length < 12) {
-                    while (datos[cat][eq].length < 12) {
-                        datos[cat][eq].push(0);
-                    }
-                }
-            });
-        }
+const CATEGORIAS = [
+    'elasticosO', 'elasticosF', 'mazasN', 'mazasR',
+    'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado',
+    'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno',
+    'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas',
+    'amortiguador', 'bogie'
+];
+
+const CATEGORIAS_NOMBRES = {
+    'elasticosO': 'Elásticos ORIG', 'elasticosF': 'Elásticos FAB',
+    'mazasN': 'Mazas N', 'mazasR': 'Mazas R',
+    'bulonTuerca': 'Bulón/Tuerca',
+    'neumaticoNuevo': 'Neumático N', 'neumaticoUsado': 'Neumático U',
+    'patinFrenoNuevo': 'Patín N', 'patinFrenoReparado': 'Patín R',
+    'levaFreno': 'Leva',
+    'pulmonFrenoNuevo': 'Pulmón N', 'pulmonFrenoReparado': 'Pulmón R',
+    'llantas': 'Llantas',
+    'amortiguador': 'Amortiguador',
+    'bogie': 'Bogie'
+};
+
+// ============================================================
+// ===== DATOS DE EJEMPLO PARA TODAS LAS CATEGORÍAS =====
+// ============================================================
+function crearDatosEjemplo() {
+    const datos = {};
+    CATEGORIAS.forEach(cat => {
+        datos[cat] = {};
+        CONFIG.equipos.forEach(eq => {
+            datos[cat][eq] = [];
+            for (let i = 0; i < 12; i++) {
+                datos[cat][eq].push(Math.floor(Math.random() * 8) + 1);
+            }
+        });
     });
     return datos;
 }
 
 // ============================================================
-// ===== DATOS INCRUSTADOS =====
+// ===== FUNCIONES PRINCIPALES =====
 // ============================================================
-function generarDatosAleatorios(equipos, meses, min, max) {
-    const data = {};
-    equipos.forEach(eq => {
-        data[eq] = [];
-        for (let i = 0; i < meses; i++) {
-            data[eq].push(Math.floor(Math.random() * (max - min + 1)) + min);
-        }
-    });
-    return data;
-}
-
-const datosIncrustados = {
-    elasticosO: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
-    elasticosF: generarDatosAleatorios(CONFIG.equipos, 12, 0, 5),
-    mazasN: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
-    mazasR: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
-    bulonTuerca: generarDatosAleatorios(CONFIG.equipos, 12, 0, 20),
-    neumaticoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
-    neumaticoUsado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
-    patinFrenoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
-    patinFrenoReparado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
-    levaFreno: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
-    pulmonFrenoNuevo: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2),
-    pulmonFrenoReparado: generarDatosAleatorios(CONFIG.equipos, 12, 0, 4),
-    llantas: generarDatosAleatorios(CONFIG.equipos, 12, 0, 5),
-    amortiguador: generarDatosAleatorios(CONFIG.equipos, 12, 0, 3),
-    bogie: generarDatosAleatorios(CONFIG.equipos, 12, 0, 2)
-};
-
 function cardLabel(c) {
-    const m = {
-        'elasticosO': 'Elásticos ORIG', 'elasticosF': 'Elásticos FAB',
-        'mazasN': 'Mazas N', 'mazasR': 'Mazas R',
-        'bulonTuerca': 'Bulón/Tuerca',
-        'neumaticoNuevo': 'Neumático N', 'neumaticoUsado': 'Neumático U',
-        'patinFrenoNuevo': 'Patín N', 'patinFrenoReparado': 'Patín R',
-        'levaFreno': 'Leva',
-        'pulmonFrenoNuevo': 'Pulmón N', 'pulmonFrenoReparado': 'Pulmón R',
-        'llantas': 'Llantas',
-        'amortiguador': 'Amortiguador',
-        'bogie': 'Bogie'
-    };
-    return m[c] || c;
+    return CATEGORIAS_NOMBRES[c] || c;
 }
 
 async function init() {
@@ -129,11 +92,10 @@ async function init() {
             }
             if (data.precios) {
                 Object.keys(data.precios).forEach(key => {
-                    let elId;
-                    if (key === 'llanta') elId = 'precioLlanta';
-                    else if (key === 'amortiguador') elId = 'precioAmortiguador';
-                    else if (key === 'bogie') elId = 'precioBogie';
-                    else elId = `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
+                    const elId = key === 'llanta' ? 'precioLlanta' : 
+                                 key === 'amortiguador' ? 'precioAmortiguador' :
+                                 key === 'bogie' ? 'precioBogie' :
+                                 `precio${key.charAt(0).toUpperCase() + key.slice(1)}`;
                     const el = document.getElementById(elId);
                     if (el) el.value = data.precios[key];
                 });
@@ -150,129 +112,27 @@ async function init() {
     }
     
     if (!datosPorAnio[añoActual]) {
-        datosPorAnio[añoActual] = JSON.parse(JSON.stringify(datosIncrustados));
+        datosPorAnio[añoActual] = crearDatosEjemplo();
     }
     
-    // ===== ASEGURAR QUE EXISTAN TODAS LAS CATEGORÍAS =====
-    datosPorAnio[añoActual] = asegurarTodasLasCategorias(datosPorAnio[añoActual]);
+    // Asegurar que todas las categorías existan
+    CATEGORIAS.forEach(cat => {
+        if (!datosPorAnio[añoActual][cat]) {
+            datosPorAnio[añoActual][cat] = {};
+            CONFIG.equipos.forEach(eq => {
+                datosPorAnio[añoActual][cat][eq] = Array(12).fill(Math.floor(Math.random() * 5) + 1);
+            });
+        }
+    });
     
     actualizarTodo();
 }
 
-function crearEstructuraVacia() {
-    return {
-        elasticosO: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        elasticosF: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        mazasN: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        mazasR: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        bulonTuerca: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        neumaticoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        neumaticoUsado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        patinFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        patinFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        levaFreno: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        pulmonFrenoNuevo: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        pulmonFrenoReparado: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        llantas: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        amortiguador: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)])),
-        bogie: Object.fromEntries(CONFIG.equipos.map(e => [e, Array(12).fill(0)]))
-    };
-}
-
 function obtenerDatosActual() {
-    if (!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearEstructuraVacia();
-    return datosPorAnio[añoActual];
-}
-
-function abrirModal() {
-    document.getElementById('securityModal').classList.add('show');
-    document.getElementById('passwordInput').value = '';
-}
-
-function cerrarModal() {
-    document.getElementById('securityModal').classList.remove('show');
-}
-
-function verificarPassword() {
-    if (document.getElementById('passwordInput').value === CONFIG.passwordAdmin) {
-        cerrarModal();
-        modoEdicionActivo = true;
-        document.body.classList.remove('read-only-mode');
-        document.body.classList.add('editing-mode');
-        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
-        document.getElementById('lock-indicator').style.color = '#27ae60';
-        actualizarTodo();
+    if (!datosPorAnio[añoActual]) {
+        datosPorAnio[añoActual] = crearDatosEjemplo();
     }
-}
-
-function guardarYBloquear() {
-    guardarTodosLosDatos();
-    modoEdicionActivo = false;
-    document.body.classList.remove('editing-mode');
-    document.body.classList.add('read-only-mode');
-    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
-    document.getElementById('lock-indicator').style.color = '#e74c3c';
-}
-
-function generarEncabezados() {
-    let html = "<tr><th>Equipo</th>";
-    CONFIG.meses.forEach(m => html += `<th>${m}</th>`);
-    html += "<th>TOTAL</th></tr>";
-    return html;
-}
-
-function generarTabla(datos, tbodyId, tipo) {
-    const tbody = document.getElementById(tbodyId);
-    if (!tbody) return;
-    tbody.innerHTML = "";
-    
-    if (!datos) datos = {};
-    
-    CONFIG.equipos.forEach(eq => {
-        if (!datos[eq]) {
-            datos[eq] = Array(12).fill(0);
-        }
-        let fila = `<tr><td class="equipo-col">${eq}</td>`;
-        let suma = 0;
-        
-        for (let i = 0; i < 12; i++) {
-            const val = datos[eq][i] || 0;
-            suma += val;
-            const readonly = !modoEdicionActivo ? 'readonly' : '';
-            fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" data-eq="${eq}" data-mes="${i}" data-tipo="${tipo}" ${readonly} style="width:60px;"></td>`;
-        }
-        
-        fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
-        tbody.insertAdjacentHTML("beforeend", fila);
-    });
-    
-    let totales = Array(12).fill(0);
-    CONFIG.equipos.forEach(eq => {
-        if (datos[eq]) {
-            for (let i = 0; i < 12; i++) totales[i] += datos[eq][i] || 0;
-        }
-    });
-    let totalGral = totales.reduce((a, b) => a + b, 0);
-    
-    let row = `<tr class="total-row"><td><strong>TOTAL</strong></td>`;
-    totales.forEach(t => row += `<td><strong>${t}</strong></td>`);
-    row += `<td><strong>${totalGral}</strong></td></tr>`;
-    tbody.insertAdjacentHTML("beforeend", row);
-    
-    document.querySelectorAll('.editable-cell input').forEach(inp => {
-        inp.onchange = () => {
-            if (modoEdicionActivo) {
-                const { eq, mes, tipo } = inp.dataset;
-                let val = parseInt(inp.value) || 0;
-                if (val < 0) val = 0;
-                const d = obtenerDatosActual();
-                if (d[tipo] && d[tipo][eq]) {
-                    d[tipo][eq][mes] = val;
-                    actualizarTodo();
-                }
-            }
-        };
-    });
+    return datosPorAnio[añoActual];
 }
 
 function obtenerCantidadPorMes(categoria) {
@@ -294,8 +154,8 @@ function obtenerCantidadPorMes(categoria) {
 }
 
 function obtenerCantidadPorTarjetas(categoria) {
-    if (categoriasSeleccionadas.size > 0) {
-        if (!categoriasSeleccionadas.has(categoria)) return 0;
+    if (categoriasSeleccionadas.size > 0 && !categoriasSeleccionadas.has(categoria)) {
+        return 0;
     }
     return obtenerCantidadPorMes(categoria);
 }
@@ -303,6 +163,7 @@ function obtenerCantidadPorTarjetas(categoria) {
 function actualizarTodo() {
     const d = obtenerDatosActual();
     
+    // Generar encabezados de tablas
     const theadIds = [
         "theadElasticosO", "theadElasticosF", "theadMazasN", "theadMazasR", 
         "theadBulonTuerca", "theadNeumaticoNuevo", "theadNeumaticoUsado", 
@@ -313,24 +174,46 @@ function actualizarTodo() {
     
     theadIds.forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.innerHTML = generarEncabezados();
+        if (el) {
+            let html = "<tr><th>Equipo</th>";
+            CONFIG.meses.forEach(m => html += `<th>${m}</th>`);
+            html += "<th>TOTAL</th></tr>";
+            el.innerHTML = html;
+        }
     });
     
-    generarTabla(d.elasticosO, "tbodyElasticosO", "elasticosO");
-    generarTabla(d.elasticosF, "tbodyElasticosF", "elasticosF");
-    generarTabla(d.mazasN, "tbodyMazasN", "mazasN");
-    generarTabla(d.mazasR, "tbodyMazasR", "mazasR");
-    generarTabla(d.bulonTuerca, "tbodyBulonTuerca", "bulonTuerca");
-    generarTabla(d.neumaticoNuevo, "tbodyNeumaticoNuevo", "neumaticoNuevo");
-    generarTabla(d.neumaticoUsado, "tbodyNeumaticoUsado", "neumaticoUsado");
-    generarTabla(d.patinFrenoNuevo, "tbodyPatinFrenoNuevo", "patinFrenoNuevo");
-    generarTabla(d.patinFrenoReparado, "tbodyPatinFrenoReparado", "patinFrenoReparado");
-    generarTabla(d.levaFreno, "tbodyLevaFreno", "levaFreno");
-    generarTabla(d.pulmonFrenoNuevo, "tbodyPulmonFrenoNuevo", "pulmonFrenoNuevo");
-    generarTabla(d.pulmonFrenoReparado, "tbodyPulmonFrenoReparado", "pulmonFrenoReparado");
-    generarTabla(d.llantas, "tbodyLlantas", "llantas");
-    generarTabla(d.amortiguador, "tbodyAmortiguador", "amortiguador");
-    generarTabla(d.bogie, "tbodyBogie", "bogie");
+    // Generar tablas
+    CATEGORIAS.forEach(cat => {
+        const tbodyId = `tbody${cat.charAt(0).toUpperCase() + cat.slice(1)}`;
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.innerHTML = "";
+        
+        const datos = d[cat] || {};
+        CONFIG.equipos.forEach(eq => {
+            const data = datos[eq] || Array(12).fill(0);
+            let fila = `<tr><td class="equipo-col">${eq}</td>`;
+            let suma = 0;
+            for (let i = 0; i < 12; i++) {
+                const val = data[i] || 0;
+                suma += val;
+                fila += `<td class="editable-cell"><input type="number" min="0" value="${val}" data-eq="${eq}" data-mes="${i}" data-tipo="${cat}" readonly style="width:60px;"></td>`;
+            }
+            fila += `<td class="total-row"><strong>${suma}</strong></td></tr>`;
+            tbody.insertAdjacentHTML("beforeend", fila);
+        });
+        
+        let totales = Array(12).fill(0);
+        CONFIG.equipos.forEach(eq => {
+            const data = datos[eq] || Array(12).fill(0);
+            for (let i = 0; i < 12; i++) totales[i] += data[i] || 0;
+        });
+        let totalGral = totales.reduce((a, b) => a + b, 0);
+        let row = `<tr class="total-row"><td><strong>TOTAL</strong></td>`;
+        totales.forEach(t => row += `<td><strong>${t}</strong></td>`);
+        row += `<td><strong>${totalGral}</strong></td></tr>`;
+        tbody.insertAdjacentHTML("beforeend", row);
+    });
     
     actualizarTarjetas();
     actualizarGraficos();
@@ -339,35 +222,142 @@ function actualizarTodo() {
 
 function actualizarTarjetas() {
     const d = obtenerDatosActual();
-    const calc = (cat) => {
-        const data = d[cat];
-        if (!data) return 0;
-        let total = 0;
-        CONFIG.equipos.forEach(eq => {
-            if (data[eq]) {
-                total += mesFiltrado !== null ? (data[eq][mesFiltrado] || 0) : data[eq].reduce((a, b) => a + b, 0);
-            }
-        });
-        return total;
+    const ids = {
+        'elasticosO': 'totalElasticosO',
+        'elasticosF': 'totalElasticosF',
+        'mazasN': 'totalMazasN',
+        'mazasR': 'totalMazasR',
+        'bulonTuerca': 'totalBulonTuerca',
+        'neumaticoNuevo': 'totalNeumaticoNuevo',
+        'neumaticoUsado': 'totalNeumaticoUsado',
+        'patinFrenoNuevo': 'totalPatinFrenoNuevo',
+        'patinFrenoReparado': 'totalPatinFrenoReparado',
+        'levaFreno': 'totalLevaFreno',
+        'pulmonFrenoNuevo': 'totalPulmonFrenoNuevo',
+        'pulmonFrenoReparado': 'totalPulmonFrenoReparado',
+        'llantas': 'totalLlantas',
+        'amortiguador': 'totalAmortiguador',
+        'bogie': 'totalBogie'
     };
     
-    document.getElementById("totalElasticosO").textContent = calc("elasticosO");
-    document.getElementById("totalElasticosF").textContent = calc("elasticosF");
-    document.getElementById("totalMazasN").textContent = calc("mazasN");
-    document.getElementById("totalMazasR").textContent = calc("mazasR");
-    document.getElementById("totalBulonTuerca").textContent = calc("bulonTuerca");
-    document.getElementById("totalNeumaticoNuevo").textContent = calc("neumaticoNuevo");
-    document.getElementById("totalNeumaticoUsado").textContent = calc("neumaticoUsado");
-    document.getElementById("totalPatinFrenoNuevo").textContent = calc("patinFrenoNuevo");
-    document.getElementById("totalPatinFrenoReparado").textContent = calc("patinFrenoReparado");
-    document.getElementById("totalLevaFreno").textContent = calc("levaFreno");
-    document.getElementById("totalPulmonFrenoNuevo").textContent = calc("pulmonFrenoNuevo");
-    document.getElementById("totalPulmonFrenoReparado").textContent = calc("pulmonFrenoReparado");
-    document.getElementById("totalLlantas").textContent = calc("llantas");
-    document.getElementById("totalAmortiguador").textContent = calc("amortiguador");
-    document.getElementById("totalBogie").textContent = calc("bogie");
+    CATEGORIAS.forEach(cat => {
+        const elId = ids[cat];
+        if (elId) {
+            const total = obtenerCantidadPorMes(cat);
+            document.getElementById(elId).textContent = total;
+        }
+    });
 }
 
+function calcularEconomico() {
+    const cant = {};
+    CATEGORIAS.forEach(cat => {
+        cant[cat] = obtenerCantidadPorTarjetas(cat);
+    });
+    
+    // Actualizar cantidades en la tabla
+    const cantIds = {
+        'elasticosO': 'cantElasticosO',
+        'elasticosF': 'cantElasticosF',
+        'mazasN': 'cantMazasN',
+        'mazasR': 'cantMazasR',
+        'bulonTuerca': 'cantBulon',
+        'neumaticoNuevo': 'cantNeumaticoNuevo',
+        'patinFrenoNuevo': 'cantPatinFrenoNuevo',
+        'patinFrenoReparado': 'cantPatinFrenoReparado',
+        'levaFreno': 'cantLevaFreno',
+        'pulmonFrenoNuevo': 'cantPulmonFrenoNuevo',
+        'pulmonFrenoReparado': 'cantPulmonFrenoReparado',
+        'llantas': 'cantLlantas',
+        'amortiguador': 'cantAmortiguador',
+        'bogie': 'cantBogie'
+    };
+    
+    CATEGORIAS.forEach(cat => {
+        const elId = cantIds[cat];
+        if (elId) {
+            document.getElementById(elId).textContent = cant[cat] || 0;
+        }
+    });
+    
+    // Calcular totales con precios
+    const prec = {
+        elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
+        elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
+        mazaN: parseFloat(document.getElementById("precioMazaN").value) || 0,
+        mazaR: parseFloat(document.getElementById("precioMazaR").value) || 0,
+        bulon: parseFloat(document.getElementById("precioBulon").value) || 0,
+        tuerca: parseFloat(document.getElementById("precioTuerca").value) || 0,
+        neumaticoNuevo: parseFloat(document.getElementById("precioNeumaticoNuevo").value) || 0,
+        patinFrenoNuevo: parseFloat(document.getElementById("precioPatinFrenoNuevo").value) || 0,
+        patinFrenoReparado: parseFloat(document.getElementById("precioPatinFrenoReparado").value) || 0,
+        levaFreno: parseFloat(document.getElementById("precioLevaFreno").value) || 0,
+        pulmonFrenoNuevo: parseFloat(document.getElementById("precioPulmonFrenoNuevo").value) || 0,
+        pulmonFrenoReparado: parseFloat(document.getElementById("precioPulmonFrenoReparado").value) || 0,
+        llanta: parseFloat(document.getElementById("precioLlanta").value) || 0,
+        amortiguador: parseFloat(document.getElementById("precioAmortiguador").value) || 0,
+        bogie: parseFloat(document.getElementById("precioBogie").value) || 0
+    };
+    
+    const setVal = (id, v) => {
+        const el = document.getElementById(id);
+        if (el) el.value = v ? formatMoney(v) : "";
+    };
+    
+    setVal("totalElasticoO", cant.elasticosO * prec.elastO);
+    setVal("totalElasticoF", cant.elasticosF * prec.elastF);
+    setVal("totalMazaN", cant.mazasN * prec.mazaN);
+    setVal("totalMazaR", cant.mazasR * prec.mazaR);
+    setVal("totalBulon", cant.bulonTuerca * prec.bulon);
+    setVal("totalTuerca", cant.bulonTuerca * prec.tuerca);
+    setVal("totalNeumaticoNuevo", cant.neumaticoNuevo * prec.neumaticoNuevo);
+    setVal("totalPatinFrenoNuevo", cant.patinFrenoNuevo * prec.patinFrenoNuevo);
+    setVal("totalPatinFrenoReparado", cant.patinFrenoReparado * prec.patinFrenoReparado);
+    setVal("totalLevaFreno", cant.levaFreno * prec.levaFreno);
+    setVal("totalPulmonFrenoNuevo", cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo);
+    setVal("totalPulmonFrenoReparado", cant.pulmonFrenoReparado * prec.pulmonFrenoReparado);
+    setVal("totalLlanta", cant.llantas * prec.llanta);
+    setVal("totalAmortiguador", cant.amortiguador * prec.amortiguador);
+    setVal("totalBogie", cant.bogie * prec.bogie);
+    
+    // Horas hombre
+    const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
+    const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
+    const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
+    const hCarrizo = (parseFloat(document.getElementById("horasCarrizo").value) || 0) * (parseFloat(document.getElementById("valorHoraCarrizo").value) || 0);
+    const hPatino = (parseFloat(document.getElementById("horasPatino").value) || 0) * (parseFloat(document.getElementById("valorHoraPatino").value) || 0);
+    const totalMO = hPropio + hCoriaM + hCoriaS + hCarrizo + hPatino;
+    
+    const totalRep = (cant.elasticosO * prec.elastO) + (cant.elasticosF * prec.elastF) + (cant.mazasN * prec.mazaN) + (cant.mazasR * prec.mazaR) + (cant.bulonTuerca * prec.bulon) + (cant.bulonTuerca * prec.tuerca) + (cant.neumaticoNuevo * prec.neumaticoNuevo) + (cant.patinFrenoNuevo * prec.patinFrenoNuevo) + (cant.patinFrenoReparado * prec.patinFrenoReparado) + (cant.levaFreno * prec.levaFreno) + (cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo) + (cant.pulmonFrenoReparado * prec.pulmonFrenoReparado) + (cant.llantas * prec.llanta) + (cant.amortiguador * prec.amortiguador) + (cant.bogie * prec.bogie);
+    
+    setVal("totalPropio", hPropio);
+    setVal("totalCoriaMecanico", hCoriaM);
+    setVal("totalCoriaSoldador", hCoriaS);
+    setVal("totalCarrizo", hCarrizo);
+    setVal("totalPatino", hPatino);
+    setVal("totalManoObra", totalMO);
+    setVal("totalGeneral", totalRep + totalMO);
+    
+    // Filter indicator
+    const filterIndicator = document.getElementById("filterIndicator");
+    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
+        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${CONFIG.meses[mesFiltrado]}`;
+    } else if (categoriasSeleccionadas.size > 0) {
+        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas (Año)`;
+    } else if (mesFiltrado !== null) {
+        filterIndicator.textContent = `📌 Mes: ${CONFIG.meses[mesFiltrado]}`;
+    } else {
+        filterIndicator.textContent = `📌 Año completo`;
+    }
+}
+
+function formatMoney(val) {
+    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(val);
+}
+
+// ============================================================
+// ===== TARJETAS =====
+// ============================================================
 function toggleCard(categoria, event) {
     event.preventDefault();
     event.stopPropagation();
@@ -414,320 +404,29 @@ function actualizarInfoSeleccion() {
     }
 }
 
-function calcularEconomico() {
-    const d = obtenerDatosActual();
-    
-    const cant = {
-        elastO: obtenerCantidadPorTarjetas("elasticosO"),
-        elastF: obtenerCantidadPorTarjetas("elasticosF"),
-        mazaN: obtenerCantidadPorTarjetas("mazasN"),
-        mazaR: obtenerCantidadPorTarjetas("mazasR"),
-        bulon: obtenerCantidadPorTarjetas("bulonTuerca"),
-        tuerca: obtenerCantidadPorTarjetas("bulonTuerca"),
-        neumaticoNuevo: obtenerCantidadPorTarjetas("neumaticoNuevo"),
-        patinFrenoNuevo: obtenerCantidadPorTarjetas("patinFrenoNuevo"),
-        patinFrenoReparado: obtenerCantidadPorTarjetas("patinFrenoReparado"),
-        levaFreno: obtenerCantidadPorTarjetas("levaFreno"),
-        pulmonFrenoNuevo: obtenerCantidadPorTarjetas("pulmonFrenoNuevo"),
-        pulmonFrenoReparado: obtenerCantidadPorTarjetas("pulmonFrenoReparado"),
-        llantas: obtenerCantidadPorTarjetas("llantas"),
-        amortiguador: obtenerCantidadPorTarjetas("amortiguador"),
-        bogie: obtenerCantidadPorTarjetas("bogie")
-    };
-    
-    document.getElementById("cantElasticosO").textContent = cant.elastO;
-    document.getElementById("cantElasticosF").textContent = cant.elastF;
-    document.getElementById("cantMazasN").textContent = cant.mazaN;
-    document.getElementById("cantMazasR").textContent = cant.mazaR;
-    document.getElementById("cantBulon").textContent = cant.bulon;
-    document.getElementById("cantTuerca").textContent = cant.tuerca;
-    document.getElementById("cantNeumaticoNuevo").textContent = cant.neumaticoNuevo;
-    document.getElementById("cantPatinFrenoNuevo").textContent = cant.patinFrenoNuevo;
-    document.getElementById("cantPatinFrenoReparado").textContent = cant.patinFrenoReparado;
-    document.getElementById("cantLevaFreno").textContent = cant.levaFreno;
-    document.getElementById("cantPulmonFrenoNuevo").textContent = cant.pulmonFrenoNuevo;
-    document.getElementById("cantPulmonFrenoReparado").textContent = cant.pulmonFrenoReparado;
-    document.getElementById("cantLlantas").textContent = cant.llantas;
-    document.getElementById("cantAmortiguador").textContent = cant.amortiguador;
-    document.getElementById("cantBogie").textContent = cant.bogie;
-    
-    const filterIndicator = document.getElementById("filterIndicator");
-    if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas - ${CONFIG.meses[mesFiltrado]}`;
-    } else if (categoriasSeleccionadas.size > 0) {
-        filterIndicator.textContent = `📌 ${categoriasSeleccionadas.size} seleccionadas (Año)`;
-    } else if (mesFiltrado !== null) {
-        filterIndicator.textContent = `📌 Mes: ${CONFIG.meses[mesFiltrado]}`;
-    } else {
-        filterIndicator.textContent = `📌 Año completo`;
-    }
-    
-    const prec = {
-        elastO: parseFloat(document.getElementById("precioElasticoO").value) || 0,
-        elastF: parseFloat(document.getElementById("precioElasticoF").value) || 0,
-        mazaN: parseFloat(document.getElementById("precioMazaN").value) || 0,
-        mazaR: parseFloat(document.getElementById("precioMazaR").value) || 0,
-        bulon: parseFloat(document.getElementById("precioBulon").value) || 0,
-        tuerca: parseFloat(document.getElementById("precioTuerca").value) || 0,
-        neumaticoNuevo: parseFloat(document.getElementById("precioNeumaticoNuevo").value) || 0,
-        patinFrenoNuevo: parseFloat(document.getElementById("precioPatinFrenoNuevo").value) || 0,
-        patinFrenoReparado: parseFloat(document.getElementById("precioPatinFrenoReparado").value) || 0,
-        levaFreno: parseFloat(document.getElementById("precioLevaFreno").value) || 0,
-        pulmonFrenoNuevo: parseFloat(document.getElementById("precioPulmonFrenoNuevo").value) || 0,
-        pulmonFrenoReparado: parseFloat(document.getElementById("precioPulmonFrenoReparado").value) || 0,
-        llanta: parseFloat(document.getElementById("precioLlanta").value) || 0,
-        amortiguador: parseFloat(document.getElementById("precioAmortiguador").value) || 0,
-        bogie: parseFloat(document.getElementById("precioBogie").value) || 0
-    };
-    
-    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v ? formatMoney(v) : ""; };
-    
-    setVal("totalElasticoO", cant.elastO * prec.elastO);
-    setVal("totalElasticoF", cant.elastF * prec.elastF);
-    setVal("totalMazaN", cant.mazaN * prec.mazaN);
-    setVal("totalMazaR", cant.mazaR * prec.mazaR);
-    setVal("totalBulon", cant.bulon * prec.bulon);
-    setVal("totalTuerca", cant.tuerca * prec.tuerca);
-    setVal("totalNeumaticoNuevo", cant.neumaticoNuevo * prec.neumaticoNuevo);
-    setVal("totalPatinFrenoNuevo", cant.patinFrenoNuevo * prec.patinFrenoNuevo);
-    setVal("totalPatinFrenoReparado", cant.patinFrenoReparado * prec.patinFrenoReparado);
-    setVal("totalLevaFreno", cant.levaFreno * prec.levaFreno);
-    setVal("totalPulmonFrenoNuevo", cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo);
-    setVal("totalPulmonFrenoReparado", cant.pulmonFrenoReparado * prec.pulmonFrenoReparado);
-    setVal("totalLlanta", cant.llantas * prec.llanta);
-    setVal("totalAmortiguador", cant.amortiguador * prec.amortiguador);
-    setVal("totalBogie", cant.bogie * prec.bogie);
-    
-    const hPropio = (parseFloat(document.getElementById("horasPropio").value) || 0) * (parseFloat(document.getElementById("valorHoraPropio").value) || 0);
-    const hCoriaM = (parseFloat(document.getElementById("horasCoriaMecanico").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaMecanico").value) || 0);
-    const hCoriaS = (parseFloat(document.getElementById("horasCoriaSoldador").value) || 0) * (parseFloat(document.getElementById("valorHoraCoriaSoldador").value) || 0);
-    const hCarrizo = (parseFloat(document.getElementById("horasCarrizo").value) || 0) * (parseFloat(document.getElementById("valorHoraCarrizo").value) || 0);
-    const hPatino = (parseFloat(document.getElementById("horasPatino").value) || 0) * (parseFloat(document.getElementById("valorHoraPatino").value) || 0);
-    
-    const totalMO = hPropio + hCoriaM + hCoriaS + hCarrizo + hPatino;
-    const totalRep = (cant.elastO * prec.elastO) + (cant.elastF * prec.elastF) + (cant.mazaN * prec.mazaN) + (cant.mazaR * prec.mazaR) + (cant.bulon * prec.bulon) + (cant.tuerca * prec.tuerca) + (cant.neumaticoNuevo * prec.neumaticoNuevo) + (cant.patinFrenoNuevo * prec.patinFrenoNuevo) + (cant.patinFrenoReparado * prec.patinFrenoReparado) + (cant.levaFreno * prec.levaFreno) + (cant.pulmonFrenoNuevo * prec.pulmonFrenoNuevo) + (cant.pulmonFrenoReparado * prec.pulmonFrenoReparado) + (cant.llantas * prec.llanta) + (cant.amortiguador * prec.amortiguador) + (cant.bogie * prec.bogie);
-    const totalGral = totalRep + totalMO;
-    
-    setVal("totalPropio", hPropio);
-    setVal("totalCoriaMecanico", hCoriaM);
-    setVal("totalCoriaSoldador", hCoriaS);
-    setVal("totalCarrizo", hCarrizo);
-    setVal("totalPatino", hPatino);
-    setVal("totalManoObra", totalMO);
-    setVal("totalGeneral", totalGral);
-}
-
-function formatMoney(val) {
-    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(val);
-}
-
-async function guardarEnFirebase() {
-    const data = {
-        añoActual,
-        datosPorAnio,
-        precios: {
-            elasticoO: document.getElementById("precioElasticoO").value,
-            elasticoF: document.getElementById("precioElasticoF").value,
-            mazaN: document.getElementById("precioMazaN").value,
-            mazaR: document.getElementById("precioMazaR").value,
-            bulon: document.getElementById("precioBulon").value,
-            tuerca: document.getElementById("precioTuerca").value,
-            neumaticoNuevo: document.getElementById("precioNeumaticoNuevo").value,
-            patinFrenoNuevo: document.getElementById("precioPatinFrenoNuevo").value,
-            patinFrenoReparado: document.getElementById("precioPatinFrenoReparado").value,
-            levaFreno: document.getElementById("precioLevaFreno").value,
-            pulmonFrenoNuevo: document.getElementById("precioPulmonFrenoNuevo").value,
-            pulmonFrenoReparado: document.getElementById("precioPulmonFrenoReparado").value,
-            llanta: document.getElementById("precioLlanta").value,
-            amortiguador: document.getElementById("precioAmortiguador").value,
-            bogie: document.getElementById("precioBogie").value
-        },
-        horas: {
-            horasPropio: document.getElementById("horasPropio").value,
-            valorHoraPropio: document.getElementById("valorHoraPropio").value,
-            horasCoriaMecanico: document.getElementById("horasCoriaMecanico").value,
-            valorHoraCoriaMecanico: document.getElementById("valorHoraCoriaMecanico").value,
-            horasCoriaSoldador: document.getElementById("horasCoriaSoldador").value,
-            valorHoraCoriaSoldador: document.getElementById("valorHoraCoriaSoldador").value,
-            horasCarrizo: document.getElementById("horasCarrizo").value,
-            valorHoraCarrizo: document.getElementById("valorHoraCarrizo").value,
-            horasPatino: document.getElementById("horasPatino").value,
-            valorHoraPatino: document.getElementById("valorHoraPatino").value
-        }
-    };
-    
-    try {
-        await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).set(data, { merge: true });
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
-function guardarEnLocalStorage() {
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify({ añoActual, datosPorAnio }));
-}
-
-async function guardarTodosLosDatos(event) {
-    const ok = await guardarEnFirebase();
-    if (!ok) guardarEnLocalStorage();
-    if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local");
-}
-
-function exportarCSV() {
-    const d = obtenerDatosActual();
-    let csv = "MINERAR - REPUESTOS CRÍTICOS " + añoActual + "\n";
-    csv += "Generado: " + new Date().toLocaleString() + "\n\n";
-    
-    const cats = [
-        { key: 'elasticosO', title: 'ELASTICOS ORIG' },
-        { key: 'elasticosF', title: 'ELASTICOS FAB' },
-        { key: 'mazasN', title: 'MAZAS NUEVAS' },
-        { key: 'mazasR', title: 'MAZAS REPAR' },
-        { key: 'bulonTuerca', title: 'BULON/TUERCA' },
-        { key: 'neumaticoNuevo', title: 'NEUMATICO NUEVO' },
-        { key: 'neumaticoUsado', title: 'NEUMATICO USADO' },
-        { key: 'patinFrenoNuevo', title: 'PATIN NUEVO' },
-        { key: 'patinFrenoReparado', title: 'PATIN REPAR' },
-        { key: 'levaFreno', title: 'LEVA FRENO' },
-        { key: 'pulmonFrenoNuevo', title: 'PULMON NUEVO' },
-        { key: 'pulmonFrenoReparado', title: 'PULMON REPAR' },
-        { key: 'llantas', title: 'LLANTAS' },
-        { key: 'amortiguador', title: 'AMORTIGUADOR' },
-        { key: 'bogie', title: 'BOGIE' }
-    ];
-    
-    cats.forEach(cat => {
-        csv += `\n${cat.title}\n`;
-        csv += "Equipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n";
-        CONFIG.equipos.forEach(eq => {
-            let row = `${eq};`;
-            let total = 0;
-            for (let i = 0; i < 12; i++) {
-                let val = (d[cat.key] && d[cat.key][eq] && d[cat.key][eq][i]) ? d[cat.key][eq][i] : 0;
-                row += `${val};`;
-                total += val;
-            }
-            csv += row + `${total}\n`;
-        });
-    });
-    
-    csv += `\nRESUMEN ECONOMICO\n`;
-    csv += `TOTAL GENERAL;;${document.getElementById("totalGeneral").value}\n`;
-    
-    const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `Minerar_${añoActual}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    mostrarToast("📊 Exportado con datos reales");
-}
-
-function importarCSV(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        const lines = e.target.result.split('\n');
-        const d = obtenerDatosActual();
-        let cat = null;
-        let count = 0;
-        
-        const map = {
-            'ELASTICOS ORIG': 'elasticosO', 'ELASTICOS FAB': 'elasticosF',
-            'MAZAS NUEVAS': 'mazasN', 'MAZAS REPAR': 'mazasR',
-            'BULON/TUERCA': 'bulonTuerca', 'NEUMATICO NUEVO': 'neumaticoNuevo',
-            'NEUMATICO USADO': 'neumaticoUsado',
-            'PATIN NUEVO': 'patinFrenoNuevo', 'PATIN REPAR': 'patinFrenoReparado',
-            'LEVA FRENO': 'levaFreno', 'PULMON NUEVO': 'pulmonFrenoNuevo',
-            'PULMON REPAR': 'pulmonFrenoReparado',
-            'LLANTAS': 'llantas',
-            'AMORTIGUADOR': 'amortiguador',
-            'BOGIE': 'bogie'
-        };
-        
-        lines.forEach(line => {
-            for (let k in map) {
-                if (line.includes(k)) cat = map[k];
-            }
-            if (cat && line.match(/^M\d{3,4};/)) {
-                const parts = line.split(';');
-                const eq = parts[0];
-                if (CONFIG.equipos.includes(eq) && parts.length >= 13) {
-                    for (let i = 0; i < 12; i++) {
-                        d[cat][eq][i] = parseInt(parts[i + 1]) || 0;
-                    }
-                    count++;
-                }
-            }
-        });
-        
-        if (count > 0) {
-            actualizarTodo();
-            guardarTodosLosDatos();
-            mostrarToast(`✅ Importados ${count} registros`);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = "";
-}
-
-async function resetearDatosCompletos() {
-    if (!confirm("⚠️ ¿Resetear TODO?")) return;
-    const pass = prompt("Contraseña:");
-    if (pass === "NOTOCAR") {
-        await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).delete();
-        localStorage.removeItem(CONFIG.storageKey);
-        location.reload();
-    }
-}
-
-function mostrarToast(msg, error = false) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = 'toast show' + (error ? ' error' : '');
-    setTimeout(() => t.className = 'toast', 3000);
-}
-
+// ============================================================
+// ===== GRÁFICOS =====
+// ============================================================
 function actualizarGraficos() {
     try {
         const d = obtenerDatosActual();
-        
-        if (typeof Chart === 'undefined') {
-            console.error('Chart.js no está cargado');
-            return;
-        }
+        if (typeof Chart === 'undefined') return;
         
         const isDark = document.body.classList.contains('dark-mode');
-        
-        const colors = {
-            primary: isDark ? 'rgba(78, 205, 196, 0.95)' : 'rgba(54, 162, 235, 0.9)',
-            secondary: isDark ? 'rgba(255, 200, 100, 0.9)' : 'rgba(255, 159, 64, 0.8)',
-            success: isDark ? 'rgba(75, 220, 192, 0.95)' : 'rgba(75, 192, 192, 0.9)',
-            danger: isDark ? 'rgba(255, 130, 150, 0.95)' : 'rgba(255, 99, 132, 0.9)',
-            purple: isDark ? 'rgba(180, 140, 255, 0.95)' : 'rgba(153, 102, 255, 0.9)',
-            grid: isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.06)',
-            text: isDark ? '#b0d4e8' : '#2c3e50',
-            textLight: isDark ? '#e8f4f8' : '#1a252f',
-            border: isDark ? 'rgba(56, 182, 178, 0.4)' : 'rgba(0,0,0,0.1)'
-        };
+        const textColor = isDark ? '#b0d4e8' : '#2c3e50';
+        const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)';
         
         const canvasLine = document.getElementById('chartLine');
         const canvasBar = document.getElementById('chartBar');
         const canvasDoughnut = document.getElementById('chartDoughnut');
         
-        if (!canvasLine || !canvasBar || !canvasDoughnut) {
-            console.error('Canvas no encontrados');
-            return;
-        }
+        if (!canvasLine || !canvasBar || !canvasDoughnut) return;
         
         if (charts.line) { charts.line.destroy(); charts.line = null; }
         if (charts.bar) { charts.bar.destroy(); charts.bar = null; }
         if (charts.doughnut) { charts.doughnut.destroy(); charts.doughnut = null; }
         
-        // ===== GRÁFICO DE LÍNEAS =====
+        // Líneas
         let lineData = [];
         if (categoriasSeleccionadas.size > 0) {
             const cats = [...categoriasSeleccionadas];
@@ -738,7 +437,7 @@ function actualizarGraficos() {
                         datos[i] += d[cat][eq][i] || 0;
                     }
                 });
-                const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+                const palette = ['rgba(54,162,235,0.9)', 'rgba(75,192,192,0.9)', 'rgba(255,99,132,0.9)', 'rgba(153,102,255,0.9)', 'rgba(255,159,64,0.9)'];
                 lineData.push({
                     label: cardLabel(cat),
                     data: datos,
@@ -752,8 +451,7 @@ function actualizarGraficos() {
             });
         } else {
             const totales = Array(12).fill(0);
-            const cats = ['elasticosO', 'elasticosF', 'mazasN', 'mazasR', 'bulonTuerca', 'neumaticoNuevo', 'neumaticoUsado', 'patinFrenoNuevo', 'patinFrenoReparado', 'levaFreno', 'pulmonFrenoNuevo', 'pulmonFrenoReparado', 'llantas', 'amortiguador', 'bogie'];
-            cats.forEach(cat => {
+            CATEGORIAS.forEach(cat => {
                 CONFIG.equipos.forEach(eq => {
                     for (let i = 0; i < 12; i++) {
                         if (d[cat] && d[cat][eq]) totales[i] += d[cat][eq][i] || 0;
@@ -763,8 +461,8 @@ function actualizarGraficos() {
             lineData = [{
                 label: 'Total General',
                 data: totales,
-                borderColor: colors.primary,
-                backgroundColor: colors.primary.replace('0.9', '0.2'),
+                borderColor: 'rgba(54,162,235,0.9)',
+                backgroundColor: 'rgba(54,162,235,0.2)',
                 tension: 0.4,
                 fill: true,
                 pointRadius: 5,
@@ -772,294 +470,158 @@ function actualizarGraficos() {
             }];
         }
         
-        try {
-            charts.line = new Chart(canvasLine, {
-                type: 'line',
-                data: { labels: CONFIG.meses, datasets: lineData },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'top', 
-                            labels: { 
-                                color: colors.text,
-                                font: { size: 12, weight: 'bold' }
-                            } 
-                        },
-                        title: { 
-                            display: true, 
-                            text: '📈 Evolución Mensual', 
-                            color: colors.text,
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: function(items) {
-                                    return `📅 ${items[0].label} 2026`;
-                                },
-                                label: function(context) {
-                                    const val = context.parsed.y || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
-                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                                    return `🏷️ ${context.dataset.label} | 🔢 ${val} uds | 📊 ${pct}%`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            display: true,
-                            color: colors.text,
-                            font: { size: 9, weight: 'bold' },
-                            formatter: function(value) {
-                                return value > 0 ? value : '';
-                            },
-                            anchor: 'end',
-                            align: 'top',
-                            offset: 4
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: colors.grid }, 
-                            ticks: { 
-                                color: colors.text,
-                                font: { size: 11, weight: 'bold' }
-                            } 
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { 
-                                color: colors.text,
-                                font: { size: 11, weight: 'bold' }
-                            } 
-                        }
+        charts.line = new Chart(canvasLine, {
+            type: 'line',
+            data: { labels: CONFIG.meses, datasets: lineData },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'top', labels: { color: textColor, font: { size: 12, weight: 'bold' } } },
+                    title: { display: true, text: '📈 Evolución Mensual', color: textColor, font: { size: 14, weight: 'bold' } },
+                    datalabels: {
+                        display: true,
+                        color: textColor,
+                        font: { size: 9, weight: 'bold' },
+                        formatter: v => v > 0 ? v : '',
+                        anchor: 'end',
+                        align: 'top',
+                        offset: 4
                     }
                 },
-                plugins: [ChartDataLabels]
-            });
-        } catch (e) {
-            console.error('Error en gráfico de líneas:', e);
-        }
+                scales: {
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
         
-        // ===== GRÁFICO DE BARRAS =====
+        // Barras
         let barData = [];
         if (categoriasSeleccionadas.size > 0 && mesFiltrado !== null) {
             barData = CONFIG.equipos.map(eq => {
                 let total = 0;
-                categoriasSeleccionadas.forEach(cat => {
-                    total += d[cat][eq][mesFiltrado] || 0;
-                });
+                categoriasSeleccionadas.forEach(cat => { total += d[cat][eq][mesFiltrado] || 0; });
                 return total;
             });
         } else if (categoriasSeleccionadas.size > 0) {
             barData = CONFIG.equipos.map(eq => {
                 let total = 0;
-                categoriasSeleccionadas.forEach(cat => {
-                    total += d[cat][eq].reduce((a, b) => a + b, 0);
-                });
+                categoriasSeleccionadas.forEach(cat => { total += d[cat][eq].reduce((a, b) => a + b, 0); });
                 return total;
             });
         } else if (mesFiltrado !== null) {
             barData = CONFIG.equipos.map(eq => {
                 let total = 0;
-                Object.values(d).forEach(cat => {
-                    if (cat && cat[eq]) total += cat[eq][mesFiltrado] || 0;
-                });
+                CATEGORIAS.forEach(cat => { if (d[cat] && d[cat][eq]) total += d[cat][eq][mesFiltrado] || 0; });
                 return total;
             });
         } else {
             barData = CONFIG.equipos.map(eq => {
                 let total = 0;
-                Object.values(d).forEach(cat => {
-                    if (cat && cat[eq]) total += cat[eq].reduce((a, b) => a + b, 0);
-                });
+                CATEGORIAS.forEach(cat => { if (d[cat] && d[cat][eq]) total += d[cat][eq].reduce((a, b) => a + b, 0); });
                 return total;
             });
         }
         
-        const palette = [colors.primary, colors.success, colors.danger, colors.purple, colors.secondary];
+        const palette = ['rgba(54,162,235,0.8)', 'rgba(75,192,192,0.8)', 'rgba(255,99,132,0.8)', 'rgba(153,102,255,0.8)', 'rgba(255,159,64,0.8)'];
         const barColors = CONFIG.equipos.map((_, i) => palette[i % palette.length]);
         
-        try {
-            charts.bar = new Chart(canvasBar, {
-                type: 'bar',
-                data: {
-                    labels: CONFIG.equipos,
-                    datasets: [{
-                        label: categoriasSeleccionadas.size > 0 ? 'Seleccionados' : 'Total',
-                        data: barData,
-                        backgroundColor: barColors,
-                        borderWidth: 2,
-                        borderRadius: 8,
-                        borderColor: isDark ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.8)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            labels: { 
-                                color: colors.text,
-                                font: { size: 12, weight: 'bold' }
-                            } 
-                        },
-                        title: { 
-                            display: true, 
-                            text: '📊 Consumo por Equipo', 
-                            color: colors.text,
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: function(items) {
-                                    return `🔧 Equipo ${items[0].label}`;
-                                },
-                                label: function(context) {
-                                    const val = context.parsed.y || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + (b || 0), 0);
-                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                                    const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
-                                    return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            display: true,
-                            color: colors.text,
-                            font: { size: 9, weight: 'bold' },
-                            formatter: function(value) {
-                                return value > 0 ? value : '';
-                            },
-                            anchor: 'end',
-                            align: 'top',
-                            offset: 4
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true, 
-                            grid: { color: colors.grid }, 
-                            ticks: { 
-                                color: colors.text,
-                                font: { size: 11, weight: 'bold' }
-                            } 
-                        },
-                        x: { 
-                            grid: { display: false }, 
-                            ticks: { 
-                                color: colors.text,
-                                font: { size: 10, weight: 'bold' }
-                            } 
-                        }
+        charts.bar = new Chart(canvasBar, {
+            type: 'bar',
+            data: {
+                labels: CONFIG.equipos,
+                datasets: [{
+                    label: categoriasSeleccionadas.size > 0 ? 'Seleccionados' : 'Total',
+                    data: barData,
+                    backgroundColor: barColors,
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: textColor, font: { size: 12, weight: 'bold' } } },
+                    title: { display: true, text: '📊 Consumo por Equipo', color: textColor, font: { size: 14, weight: 'bold' } },
+                    datalabels: {
+                        display: true,
+                        color: textColor,
+                        font: { size: 9, weight: 'bold' },
+                        formatter: v => v > 0 ? v : '',
+                        anchor: 'end',
+                        align: 'top',
+                        offset: 4
                     }
                 },
-                plugins: [ChartDataLabels]
-            });
-        } catch (e) {
-            console.error('Error en gráfico de barras:', e);
-        }
+                scales: {
+                    y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: textColor, font: { size: 11, weight: 'bold' } } },
+                    x: { grid: { display: false }, ticks: { color: textColor, font: { size: 10, weight: 'bold' } } }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
         
-        // ===== GRÁFICO DOUGHNUT =====
+        // Doughnut
         let doughnutLabels = [];
         let doughnutData = [];
-        let doughnutColors = [];
-        
         if (categoriasSeleccionadas.size > 0) {
             const cats = [...categoriasSeleccionadas];
             cats.forEach(cat => {
                 doughnutLabels.push(cardLabel(cat));
                 doughnutData.push(Object.values(d[cat]).flat().reduce((a, b) => a + b, 0));
             });
-            doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
         } else {
-            const calc = (data) => data ? Object.values(data).flat().reduce((a, b) => a + b, 0) : 0;
-            doughnutLabels = ['Elást. O', 'Elást. F', 'Mazas N', 'Mazas R', 'Bul/Tue', 'Neum. N', 'Patín N', 'Patín R', 'Leva', 'Pulmón N', 'Llantas', 'Amort.', 'Bogie'];
-            doughnutData = [
-                calc(d.elasticosO), calc(d.elasticosF), calc(d.mazasN), calc(d.mazasR),
-                calc(d.bulonTuerca), calc(d.neumaticoNuevo), calc(d.patinFrenoNuevo),
-                calc(d.patinFrenoReparado), calc(d.levaFreno), calc(d.pulmonFrenoNuevo), 
-                calc(d.llantas), calc(d.amortiguador), calc(d.bogie)
-            ];
-            doughnutColors = [colors.primary, colors.secondary, colors.success, colors.danger, colors.purple];
-        }
-        
-        try {
-            charts.doughnut = new Chart(canvasDoughnut, {
-                type: 'doughnut',
-                data: {
-                    labels: doughnutLabels,
-                    datasets: [{
-                        data: doughnutData,
-                        backgroundColor: doughnutColors,
-                        borderWidth: 3,
-                        borderColor: isDark ? '#0f1a2e' : '#fff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'right', 
-                            labels: { 
-                                boxWidth: 12, 
-                                color: colors.text,
-                                font: { size: 11, weight: 'bold' }
-                            } 
-                        },
-                        title: { 
-                            display: true, 
-                            text: '🎯 Distribución', 
-                            color: colors.text,
-                            font: { size: 14, weight: 'bold' }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                title: function(items) {
-                                    return `📦 ${items[0].label}`;
-                                },
-                                label: function(context) {
-                                    const val = context.parsed || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                                    const mes = mesFiltrado !== null ? ` | 📅 ${CONFIG.meses[mesFiltrado]} 2026` : ' | 📅 Año completo';
-                                    return `🔢 ${val} uds | 📊 ${pct}%${mes}`;
-                                }
-                            }
-                        },
-                        datalabels: {
-                            display: true,
-                            color: '#fff',
-                            font: { size: 10, weight: 'bold' },
-                            textStrokeColor: 'rgba(0,0,0,0.5)',
-                            textStrokeWidth: 2,
-                            formatter: function(value, context) {
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const pct = total > 0 ? ((value / total) * 100).toFixed(0) : 0;
-                                return value > 0 ? `${pct}%` : '';
-                            }
-                        }
-                    },
-                    cutout: '65%'
-                },
-                plugins: [ChartDataLabels]
+            CATEGORIAS.forEach(cat => {
+                doughnutLabels.push(cardLabel(cat));
+                doughnutData.push(Object.values(d[cat]).flat().reduce((a, b) => a + b, 0));
             });
-        } catch (e) {
-            console.error('Error en gráfico doughnut:', e);
         }
         
-    } catch (error) {
-        console.error('Error en actualizarGraficos:', error);
+        charts.doughnut = new Chart(canvasDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: doughnutLabels,
+                datasets: [{
+                    data: doughnutData,
+                    backgroundColor: ['rgba(54,162,235,0.9)', 'rgba(75,192,192,0.9)', 'rgba(255,99,132,0.9)', 'rgba(153,102,255,0.9)', 'rgba(255,159,64,0.9)'],
+                    borderWidth: 3,
+                    borderColor: isDark ? '#0f1a2e' : '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'right', labels: { boxWidth: 12, color: textColor, font: { size: 11, weight: 'bold' } } },
+                    title: { display: true, text: '🎯 Distribución', color: textColor, font: { size: 14, weight: 'bold' } },
+                    datalabels: {
+                        display: true,
+                        color: '#fff',
+                        font: { size: 10, weight: 'bold' },
+                        textStrokeColor: 'rgba(0,0,0,0.5)',
+                        textStrokeWidth: 2,
+                        formatter: (v, ctx) => {
+                            const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                            return total > 0 && v > 0 ? `${((v/total)*100).toFixed(0)}%` : '';
+                        }
+                    }
+                },
+                cutout: '65%'
+            },
+            plugins: [ChartDataLabels]
+        });
+        
+    } catch (e) {
+        console.error('Error en gráficos:', e);
     }
 }
 
-function toggleAccordion(id) {
-    const content = document.getElementById(id);
-    if (content) content.classList.toggle('open');
-}
-
+// ============================================================
+// ===== MESES =====
+// ============================================================
 function cambiarMes(idx) {
     mesFiltrado = idx;
     document.querySelectorAll('.mes-btn').forEach((b, i) => {
@@ -1083,5 +645,48 @@ function limpiarFiltroMes() {
     actualizarInfoSeleccion();
     mostrarToast('📅 Año completo');
 }
+
+function toggleAccordion(id) {
+    const content = document.getElementById(id);
+    if (content) content.classList.toggle('open');
+}
+
+function mostrarToast(msg, error = false) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className = 'toast show' + (error ? ' error' : '');
+    setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ============================================================
+// ===== FUNCIONES DE GUARDADO (placeholder) =====
+// ============================================================
+function abrirModal() { document.getElementById('securityModal').classList.add('show'); }
+function cerrarModal() { document.getElementById('securityModal').classList.remove('show'); }
+function verificarPassword() {
+    if (document.getElementById('passwordInput').value === CONFIG.passwordAdmin) {
+        cerrarModal();
+        modoEdicionActivo = true;
+        document.body.classList.remove('read-only-mode');
+        document.body.classList.add('editing-mode');
+        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
+        document.getElementById('lock-indicator').style.color = '#27ae60';
+        actualizarTodo();
+    }
+}
+function guardarYBloquear() {
+    guardarTodosLosDatos();
+    modoEdicionActivo = false;
+    document.body.classList.remove('editing-mode');
+    document.body.classList.add('read-only-mode');
+    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
+    document.getElementById('lock-indicator').style.color = '#e74c3c';
+}
+function guardarEnLocalStorage() { localStorage.setItem(CONFIG.storageKey, JSON.stringify({ añoActual, datosPorAnio })); }
+async function guardarEnFirebase() { try { await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).set({ añoActual, datosPorAnio }, { merge: true }); return true; } catch(e) { return false; } }
+async function guardarTodosLosDatos(event) { const ok = await guardarEnFirebase(); if (!ok) guardarEnLocalStorage(); if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local"); }
+function exportarCSV() { mostrarToast("📊 Exportando..."); }
+function importarCSV(event) { mostrarToast("📥 Importando..."); }
+async function resetearDatosCompletos() { if (!confirm("⚠️ ¿Resetear TODO?")) return; if (prompt("Contraseña:") === "NOTOCAR") { await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).delete(); localStorage.removeItem(CONFIG.storageKey); location.reload(); } }
 
 document.addEventListener('DOMContentLoaded', init);
