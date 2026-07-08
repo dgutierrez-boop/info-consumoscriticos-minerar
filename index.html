@@ -256,6 +256,7 @@ body.editing-mode #save-lock-btn{display:flex}
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
         <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
         <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
+        <button class="btn btn-outline" onclick="debugDatos()" style="font-size:0.7rem">🐛 Debug</button>
     </div>
 </div>
 <input type="file" id="importFile" class="file-input" accept=".csv" onchange="importarCSV(event)">
@@ -482,61 +483,105 @@ function asegurarTodasLasCategorias(datos){
     return datos;
 }
 
+// ===== FUNCIONES CORREGIDAS =====
+
 function init(){
-    // Intentar cargar datos guardados
+    console.log('🚀 Iniciando aplicación...');
+    
+    // Intentar cargar datos guardados localmente primero
     try{
         const saved=localStorage.getItem(CONFIG.storageKey);
         if(saved){
             const parsed=JSON.parse(saved);
             if(parsed.datosPorAnio && parsed.datosPorAnio[añoActual]){
                 datosPorAnio[añoActual]=parsed.datosPorAnio[añoActual];
+                console.log('✅ Datos cargados de localStorage');
             }
         }
-    }catch(e){}
+    }catch(e){
+        console.error('❌ Error cargando localStorage:', e);
+    }
     
     // Si no hay datos, crear ejemplo
     if(!datosPorAnio[añoActual]){
+        console.log('📝 Creando datos de ejemplo...');
         datosPorAnio[añoActual]=crearDatosEjemplo();
     }
     datosPorAnio[añoActual]=asegurarTodasLasCategorias(datosPorAnio[añoActual]);
     
-    // Intentar cargar desde Firebase si está disponible
+    // Actualizar UI inicial
+    actualizarTodo();
+    
+    // Luego cargar desde Firebase si está disponible
     if(window.db){
+        console.log('🔥 Cargando desde Firebase...');
         cargarDesdeFirebase();
-    } else {
-        actualizarTodo();
     }
 }
 
 async function cargarDesdeFirebase(){
+    if (!window.db) {
+        console.log('⚠️ Firebase no disponible');
+        return;
+    }
+    
     try {
+        console.log('📡 Consultando Firebase para año', añoActual);
         const doc = await window.db.collection("repuestos_minerar").doc("datos_" + añoActual).get();
+        
         if (doc.exists) {
             const data = doc.data();
+            console.log('📦 Datos recibidos de Firebase:', data);
+            
+            // Corregir: los datos se guardan directamente, no anidados
             if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
                 datosPorAnio[añoActual] = data.datosPorAnio[añoActual];
+                console.log('✅ Datos cargados (estructura anidada)');
+            } else if (data[añoActual] || data.datos) {
+                // Intentar otras estructuras posibles
+                datosPorAnio[añoActual] = data[añoActual] || data.datos;
+                console.log('✅ Datos cargados (estructura alternativa)');
             }
+            
+            // Cargar precios si existen
             if (data.precios) {
+                console.log('💰 Cargando precios:', data.precios);
                 Object.keys(data.precios).forEach(key => {
                     let elId = key === 'llanta' ? 'precioLlanta' :
                         key === 'amortiguador' ? 'precioAmortiguador' :
                         key === 'bogie' ? 'precioBogie' :
                         'precio' + key.charAt(0).toUpperCase() + key.slice(1);
                     let el = document.getElementById(elId);
-                    if (el) el.value = data.precios[key];
+                    if (el) {
+                        el.value = data.precios[key];
+                        console.log(`  - ${elId}: ${data.precios[key]}`);
+                    }
                 });
             }
+            
+            // Cargar horas si existen
             if (data.horas) {
+                console.log('⏱️ Cargando horas:', data.horas);
                 Object.keys(data.horas).forEach(key => {
                     let el = document.getElementById(key);
-                    if (el) el.value = data.horas[key];
+                    if (el) {
+                        el.value = data.horas[key];
+                    }
                 });
             }
+            
+            // IMPORTANTE: Actualizar TODO después de cargar Firebase
+            console.log('🔄 Actualizando UI con datos de Firebase...');
+            actualizarTodo();
+            mostrarToast('✅ Datos sincronizados');
+            
+        } else {
+            console.log('📄 No existe documento en Firebase, se usará localStorage');
         }
     } catch(e) {
-        console.log("⚠️ Error cargando Firebase:", e);
+        console.error("⚠️ Error cargando Firebase:", e);
+        mostrarToast('⚠️ Usando datos locales', true);
     }
-    actualizarTodo();
 }
 
 function obtenerDatosActual(){
@@ -545,16 +590,29 @@ function obtenerDatosActual(){
 }
 
 function obtenerCantidadPorMes(categoria){
-    const d=obtenerDatosActual();
-    const data=d[categoria];
-    if(!data)return 0;
-    let total=0;
-    CONFIG.equipos.forEach(eq=>{
-        if(data[eq]){
-            if(mesFiltrado!==null){total+=data[eq][mesFiltrado]||0;}
-            else{total+=data[eq].reduce((a,b)=>a+b,0);}
+    const d = obtenerDatosActual();
+    const data = d[categoria];
+    
+    if (!data) {
+        console.warn(`⚠️ No hay datos para categoría: ${categoria}`);
+        return 0;
+    }
+    
+    let total = 0;
+    CONFIG.equipos.forEach(eq => {
+        if (data[eq]) {
+            if (mesFiltrado !== null) {
+                total += data[eq][mesFiltrado] || 0;
+            } else {
+                total += data[eq].reduce((a, b) => a + b, 0);
+            }
         }
     });
+    
+    if (total > 0) {
+        console.log(`✓ ${categoria}: ${total} (mesFiltrado: ${mesFiltrado})`);
+    }
+    
     return total;
 }
 
@@ -610,7 +668,8 @@ function actualizarTodo(){
 }
 
 function actualizarTarjetas(){
-    // Mapeo directo de categoría a ID de tarjeta
+    console.log('🎯 Actualizando tarjetas...');
+    
     const mapa = {
         'elasticosO': 'totalElasticosO',
         'elasticosF': 'totalElasticosF',
@@ -629,6 +688,13 @@ function actualizarTarjetas(){
         'bogie': 'totalBogie'
     };
     
+    const datos = obtenerDatosActual();
+    console.log('📊 Datos actuales:', {
+        categorias: Object.keys(datos),
+        levaFreno: datos.levaFreno ? 'existe' : 'NO existe',
+        pulmonFrenoNuevo: datos.pulmonFrenoNuevo ? 'existe' : 'NO existe'
+    });
+    
     CATEGORIAS.forEach(cat => {
         const elId = mapa[cat.id];
         if (elId) {
@@ -636,9 +702,16 @@ function actualizarTarjetas(){
             const el = document.getElementById(elId);
             if (el) {
                 el.textContent = total;
+                if (total === 0 && datos[cat.id]) {
+                    console.warn(`⚠️ Tarjeta ${cat.id} muestra 0 pero existen datos:`, datos[cat.id]);
+                }
+            } else {
+                console.error(`❌ Elemento no encontrado: ${elId}`);
             }
         }
     });
+    
+    console.log('✅ Tarjetas actualizadas');
 }
 
 function calcularEconomico(){
@@ -811,21 +884,52 @@ function guardarTodosLosDatos(){
 }
 
 async function guardarEnFirebase(){
-    if(!window.db) return;
+    if(!window.db) {
+        console.log('⚠️ Firebase no disponible para guardar');
+        return;
+    }
+    
     try {
+        console.log('💾 Guardando en Firebase...', {
+            añoActual: añoActual,
+            datosPorAnio: datosPorAnio,
+            categorias: Object.keys(datosPorAnio[añoActual] || {})
+        });
+        
         await window.db.collection("repuestos_minerar").doc("datos_" + añoActual).set({
             añoActual: añoActual,
-            datosPorAnio: datosPorAnio
+            datosPorAnio: datosPorAnio,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         }, { merge: true });
-        console.log('✅ Guardado en Firebase');
+        
+        console.log('✅ Guardado exitoso en Firebase');
     } catch(e) {
-        console.warn('⚠️ Error guardando en Firebase:', e);
+        console.error('⚠️ Error guardando en Firebase:', e);
+        mostrarToast('❌ Error al guardar en nube', true);
     }
 }
 
 function exportarCSV(){mostrarToast("📊 Exportando...");}
 function importarCSV(event){mostrarToast("📥 Importando...");}
 function resetearDatosCompletos(){if(!confirm("⚠️ ¿Resetear TODO?"))return;if(prompt("Contraseña:")==="NOTOCAR"){localStorage.removeItem(CONFIG.storageKey);location.reload();}}
+
+// Función de debug
+function debugDatos(){
+    console.log('=== 🔍 DEBUG COMPLETO ===');
+    const datos = obtenerDatosActual();
+    console.log('📂 Categorías disponibles:', Object.keys(datos));
+    console.log('🔧 Leva Freno:', datos.levaFreno);
+    console.log('💨 Pulmón Nuevo:', datos.pulmonFrenoNuevo);
+    console.log('🔧 Pulmón Reparado:', datos.pulmonFrenoReparado);
+    
+    console.log('\n📊 Totales por categoría:');
+    CATEGORIAS.forEach(cat => {
+        const total = obtenerCantidadPorMes(cat.id);
+        console.log(`${cat.label}: ${total}`);
+    });
+    
+    alert('🔍 Revisa la consola del navegador (F12) para ver el debug completo');
+}
 
 // Variable para evitar que init se ejecute dos veces
 if (!window._initEjecutado) {
