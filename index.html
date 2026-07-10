@@ -1031,13 +1031,14 @@ function importarCSV(event){
             const lineas = contenido.split('\n');
             const datos = crearDatosVacios();
             let seccionActual = null;
+            let enSeccionEconomica = false;
             
             const mapeoSecciones = {
-                'ELÁSTICOS ORIGINALES': 'elasticosO',
-                'ELÁSTICOS FABRICADOS': 'elasticosF',
+                'PAQUETES ELÁSTICOS ORIGINALES': 'elasticosO',
+                'PAQUETES ELÁSTICOS FABRICADOS': 'elasticosF',
                 'MAZAS NUEVAS': 'mazasN',
                 'MAZAS REPARADAS': 'mazasR',
-                'BULÓN Y TUERCA': 'bulonTuerca',
+                'BULÓN Y TUERCA SCANIA': 'bulonTuerca',
                 'NEUMÁTICO NUEVO': 'neumaticoNuevo',
                 'NEUMÁTICO USADO': 'neumaticoUsado',
                 'PATÍN DE FRENO NUEVO': 'patinFrenoNuevo',
@@ -1048,26 +1049,85 @@ function importarCSV(event){
                 'LLANTAS ROTAS': 'llantas'
             };
             
+            // Mapeo de conceptos económicos a IDs de inputs
+            const mapeoEconomico = {
+                'Elásticos Originales': 'precioElasticoO',
+                'Elásticos Fabricados': 'precioElasticoF',
+                'Mazas Nuevas': 'precioMazaN',
+                'Mazas Reparadas': 'precioMazaR',
+                'Bulón Scania': 'precioBulon',
+                'Tuerca Scania': 'precioTuerca',
+                'Neumático Nuevo': 'precioNeumaticoNuevo',
+                'Patín Freno Nuevo': 'precioPatinFrenoNuevo',
+                'Patín Freno Reparado': 'precioPatinFrenoReparado',
+                'Leva de Freno': 'precioLevaFreno',
+                'Pulmón Freno Nuevo': 'precioPulmonFrenoNuevo',
+                'Pulmón Freno Reparado': 'precioPulmonFrenoReparado',
+                'Llantas Rotas': 'precioLlanta'
+            };
+            
             for(let i=0; i<lineas.length; i++){
                 const linea = lineas[i].trim();
                 
-                for(const [nombre, cat] of Object.entries(mapeoSecciones)){
-                    if(linea.includes(nombre)){
-                        seccionActual = cat;
-                        break;
-                    }
+                // Detectar si entramos en la sección económica
+                if(linea.includes('RESUMEN ECONÓMICO')){
+                    enSeccionEconomica = true;
+                    continue;
                 }
                 
-                if(seccionActual && linea.startsWith('M4')){
-                    const partes = linea.split(';');
-                    if(partes.length >= 14){
-                        const equipo = partes[0];
-                        if(CONFIG.equipos.includes(equipo)){
-                            const valores = [];
-                            for(let j=1; j<=12; j++){
-                                valores.push(parseInt(partes[j]) || 0);
+                // Detectar sección de repuestos
+                if(!enSeccionEconomica){
+                    for(const [nombre, cat] of Object.entries(mapeoSecciones)){
+                        if(linea.includes(nombre)){
+                            seccionActual = cat;
+                            break;
+                        }
+                    }
+                    
+                    // Procesar datos de equipos
+                    if(seccionActual && linea.startsWith('M4')){
+                        const partes = linea.split(';');
+                        if(partes.length >= 14){
+                            const equipo = partes[0];
+                            if(CONFIG.equipos.includes(equipo)){
+                                const valores = [];
+                                for(let j=1; j<=12; j++){
+                                    valores.push(parseInt(partes[j]) || 0);
+                                }
+                                datos[seccionActual][equipo] = valores;
                             }
-                            datos[seccionActual][equipo] = valores;
+                        }
+                    }
+                } else {
+                    // Procesar sección económica (Concepto;Cantidad;Valor Unitario;Total)
+                    if(linea.includes('Elásticos') || linea.includes('Mazas') || 
+                       linea.includes('Bulón') || linea.includes('Tuerca') ||
+                       linea.includes('Neumático') || linea.includes('Patín') ||
+                       linea.includes('Leva') || linea.includes('Pulmón') ||
+                       linea.includes('Llantas')){
+                        
+                        const partes = linea.split(';');
+                        if(partes.length >= 3){
+                            const concepto = partes[0].trim();
+                            const valorUnitario = partes[2].trim();
+                            
+                            // Buscar si existe en el mapeo
+                            for(const [key, inputId] of Object.entries(mapeoEconomico)){
+                                if(concepto.includes(key)){
+                                    // Limpiar el valor (quitar $, puntos, espacios)
+                                    let valorLimpio = valorUnitario.replace(/\$/g, '').replace(/\./g, '').replace(/\s/g, '').trim();
+                                    
+                                    // Si no es "SIN VALOR" o vacío, convertir a número
+                                    if(valorLimpio && valorLimpio !== 'SINVALOR' && !isNaN(valorLimpio)){
+                                        const input = document.getElementById(inputId);
+                                        if(input){
+                                            input.value = valorLimpio;
+                                            console.log(`✅ ${concepto}: ${valorLimpio}`);
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -1075,7 +1135,11 @@ function importarCSV(event){
             
             datosPorAnio[añoActual] = asegurarTodasLasCategorias(datos);
             actualizarTodo();
-            mostrarToast('✅ CSV importado correctamente');
+            
+            // Recalcular económicos con los nuevos valores
+            calcularEconomico();
+            
+            mostrarToast('✅ CSV importado correctamente con valores económicos');
             
         }catch(err){
             console.error('Error importando CSV:', err);
@@ -1085,7 +1149,6 @@ function importarCSV(event){
     reader.readAsText(file);
     event.target.value = '';
 }
-
 function resetearDatosCompletos(){
     if(!confirm("⚠️ ¿Resetear TODO? Se perderán todos los datos."))return;
     const pass=prompt("Contraseña de administrador:");
