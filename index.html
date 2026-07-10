@@ -487,7 +487,116 @@ function guardarEnLocalStorage(){localStorage.setItem(CONFIG.storageKey,JSON.str
 async function guardarEnFirebase(){if(!db)return false;try{await db.collection("repuestos_minerar").doc("datos_"+añoActual).set({añoActual:añoActual,datosPorAnio:datosPorAnio},{merge:true});return true;}catch(e){return false;}}
 async function guardarTodosLosDatos(event){guardarEnLocalStorage();const ok=await guardarEnFirebase();if(event)mostrarToast(ok?"☁️ Guardado en nube":"💾 Guardado local");}
 function exportarCSV(){mostrarToast("📊 Exportando...");}
-function importarCSV(event){mostrarToast("📥 Importando...");}
+function importarCSV(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e){
+        try{
+            const contenido = e.target.result;
+            const lineas = contenido.split('\n');
+            let seccionActual = null;
+            let cambios = 0;
+            
+            // Mapeo de secciones (funciona con ambos CSV)
+            const mapeo = {
+                'PAQUETES ELÁSTICOS ORIGINALES':'elasticosO',
+                'PAQUETES ELÁSTICOS FABRICADOS':'elasticosF',
+                'MAZAS NUEVAS':'mazasN',
+                'MAZAS REPARADAS':'mazasR',
+                'BULÓN Y TUERCA':'bulonTuerca',
+                'NEUMÁTICO NUEVO':'neumaticoNuevo',
+                'NEUMÁTICO USADO':'neumaticoUsado',
+                'PATÍN DE FRENO NUEVO':'patinFrenoNuevo',
+                'PATÍN DE FRENO REPARADO':'patinFrenoReparado',
+                'LEVA DE FRENO':'levaFreno',
+                'PULMÓN DE FRENO NUEVO':'pulmonFrenoNuevo',
+                'PULMÓN DE FRENO REPARADO':'pulmonFrenoReparado',
+                'LLANTAS':'llantas',
+                'AMORTIGUADORES':'amortiguador',
+                'BOGIE':'bogie',
+                'ELASTICOS ORIG':'elasticosO',
+                'ELASTICOS FAB':'elasticosF',
+                'MAZAS N':'mazasN',
+                'MAZAS R':'mazasR',
+                'BULON/TUERCA':'bulonTuerca',
+                'NEUMATICO N':'neumaticoNuevo',
+                'NEUMATICO U':'neumaticoUsado',
+                'PATÍN N':'patinFrenoNuevo',
+                'PATÍN R':'patinFrenoReparado',
+                'LEVA':'levaFreno',
+                'PULMON N':'pulmonFrenoNuevo',
+                'PULMON R':'pulmonFrenoReparado'
+            };
+            
+            for(let linea of lineas){
+                linea = linea.trim();
+                if(!linea) continue;
+                
+                // Detectar sección
+                for(const [nombre, catId] of Object.entries(mapeo)){
+                    if(linea.includes(nombre)){
+                        seccionActual = catId;
+                        break;
+                    }
+                }
+                
+                // Procesar datos de equipos (líneas que empiezan con M4)
+                if(seccionActual && linea.startsWith('M4') && linea.includes(';')){
+                    const partes = linea.split(';');
+                    const equipo = partes[0];
+                    
+                    if(CONFIG.equipos.includes(equipo) && partes.length >= 13){
+                        if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = {};
+                        if(!datosPorAnio[añoActual][seccionActual]) datosPorAnio[añoActual][seccionActual] = {};
+                        
+                        const valores = [];
+                        for(let j = 1; j <= 12; j++){
+                            valores.push(parseInt(partes[j]) || 0);
+                        }
+                        
+                        datosPorAnio[añoActual][seccionActual][equipo] = valores;
+                        cambios++;
+                    }
+                }
+            }
+            
+            if(cambios > 0){
+                // Guardar
+                localStorage.setItem(CONFIG.storageKey, JSON.stringify({
+                    añoActual: añoActual,
+                    datosPorAnio: datosPorAnio
+                }));
+                
+                // Actualizar UI
+                actualizarTodo();
+                
+                // Intentar guardar en Firebase
+                if(db){
+                    db.collection("repuestos_minerar").doc("datos_"+añoActual)
+                      .set({añoActual: añoActual, datosPorAnio: datosPorAnio}, {merge:true})
+                      .catch(e => console.log("Firebase:", e));
+                }
+                
+                mostrarToast(`✅ Importados ${cambios} registros correctamente`);
+            } else {
+                mostrarToast("️ No se encontraron datos válidos", true);
+            }
+            
+        } catch(err){
+            console.error(err);
+            mostrarToast("❌ Error: " + err.message, true);
+        }
+    };
+    
+    reader.readAsText(file, 'UTF-8');
+    event.target.value = '';
+}    };
+    
+    reader.readAsText(file, 'UTF-8');
+    event.target.value = '';
+}mostrarToast("📥 Importando...");}
 async function resetearDatosCompletos(){if(!confirm("⚠️ ¿Resetear TODO?"))return;const pass=prompt("Contraseña:");if(pass==="NOTOCAR"){if(db){try{await db.collection("repuestos_minerar").doc("datos_"+añoActual).delete();}catch(e){}}localStorage.removeItem(CONFIG.storageKey);location.reload();}}
 document.addEventListener('DOMContentLoaded', init);
 </script>
