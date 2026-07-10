@@ -1049,7 +1049,6 @@ function importarCSV(event){
                 'LLANTAS ROTAS': 'llantas'
             };
             
-            // Mapeo de conceptos económicos a IDs de inputs
             const mapeoEconomico = {
                 'Elásticos Originales': 'precioElasticoO',
                 'Elásticos Fabricados': 'precioElasticoF',
@@ -1069,13 +1068,11 @@ function importarCSV(event){
             for(let i=0; i<lineas.length; i++){
                 const linea = lineas[i].trim();
                 
-                // Detectar si entramos en la sección económica
                 if(linea.includes('RESUMEN ECONÓMICO')){
                     enSeccionEconomica = true;
                     continue;
                 }
                 
-                // Detectar sección de repuestos
                 if(!enSeccionEconomica){
                     for(const [nombre, cat] of Object.entries(mapeoSecciones)){
                         if(linea.includes(nombre)){
@@ -1084,7 +1081,6 @@ function importarCSV(event){
                         }
                     }
                     
-                    // Procesar datos de equipos
                     if(seccionActual && linea.startsWith('M4')){
                         const partes = linea.split(';');
                         if(partes.length >= 14){
@@ -1099,7 +1095,6 @@ function importarCSV(event){
                         }
                     }
                 } else {
-                    // Procesar sección económica (Concepto;Cantidad;Valor Unitario;Total)
                     if(linea.includes('Elásticos') || linea.includes('Mazas') || 
                        linea.includes('Bulón') || linea.includes('Tuerca') ||
                        linea.includes('Neumático') || linea.includes('Patín') ||
@@ -1111,18 +1106,14 @@ function importarCSV(event){
                             const concepto = partes[0].trim();
                             const valorUnitario = partes[2].trim();
                             
-                            // Buscar si existe en el mapeo
                             for(const [key, inputId] of Object.entries(mapeoEconomico)){
                                 if(concepto.includes(key)){
-                                    // Limpiar el valor (quitar $, puntos, espacios)
                                     let valorLimpio = valorUnitario.replace(/\$/g, '').replace(/\./g, '').replace(/\s/g, '').trim();
                                     
-                                    // Si no es "SIN VALOR" o vacío, convertir a número
                                     if(valorLimpio && valorLimpio !== 'SINVALOR' && !isNaN(valorLimpio)){
                                         const input = document.getElementById(inputId);
                                         if(input){
                                             input.value = valorLimpio;
-                                            console.log(`✅ ${concepto}: ${valorLimpio}`);
                                         }
                                     }
                                     break;
@@ -1135,11 +1126,35 @@ function importarCSV(event){
             
             datosPorAnio[añoActual] = asegurarTodasLasCategorias(datos);
             actualizarTodo();
-            
-            // Recalcular económicos con los nuevos valores
             calcularEconomico();
             
-            mostrarToast('✅ CSV importado correctamente con valores económicos');
+            // ===== GUARDADO AUTOMÁTICO =====
+            const precios = {};
+            ['precioElasticoO','precioElasticoF','precioMazaN','precioMazaR','precioBulon','precioTuerca','precioNeumaticoNuevo','precioPatinFrenoNuevo','precioPatinFrenoReparado','precioLevaFreno','precioPulmonFrenoNuevo','precioPulmonFrenoReparado','precioLlanta','precioAmortiguador','precioBogie'].forEach(id=>{
+                const el = document.getElementById(id);
+                if(el) precios[id] = el.value;
+            });
+            
+            const horas = {};
+            ['horasPropio','valorHoraPropio','horasCoriaMecanico','valorHoraCoriaMecanico','horasCoriaSoldador','valorHoraCoriaSoldador','horasCarrizo','valorHoraCarrizo','horasPatino','valorHoraPatino'].forEach(id=>{
+                const el = document.getElementById(id);
+                if(el) horas[id] = el.value;
+            });
+            
+            localStorage.setItem(CONFIG.storageKey, JSON.stringify({
+                añoActual: añoActual,
+                datosPorAnio: datosPorAnio,
+                precios: precios,
+                horas: horas
+            }));
+            
+            console.log('✅ Datos guardados automáticamente en localStorage');
+            
+            if(window.db){
+                guardarEnFirebase(precios, horas);
+            }
+            
+            mostrarToast('✅ CSV importado y guardado automáticamente');
             
         }catch(err){
             console.error('Error importando CSV:', err);
@@ -1148,8 +1163,7 @@ function importarCSV(event){
     };
     reader.readAsText(file);
     event.target.value = '';
-}
-function resetearDatosCompletos(){
+}function resetearDatosCompletos(){
     if(!confirm("⚠️ ¿Resetear TODO? Se perderán todos los datos."))return;
     const pass=prompt("Contraseña de administrador:");
     if(pass==="NOTOCAR"){
