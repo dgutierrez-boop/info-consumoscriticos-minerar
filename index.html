@@ -444,6 +444,14 @@ function actualizarTarjetas(){
     document.getElementById('totalLlantas').textContent = obtenerCantidadPorMes('llantas');
     document.getElementById('totalAmortiguador').textContent = obtenerCantidadPorMes('amortiguador');
     document.getElementById('totalBogie').textContent = obtenerCantidadPorMes('bogie');
+    
+    console.log('📊 TARJETAS ACTUALIZADAS:');
+    console.log('Neum. N:', document.getElementById('totalNeumaticoNuevo').textContent);
+    console.log('Patín N:', document.getElementById('totalPatinFrenoNuevo').textContent);
+    console.log('Patín R:', document.getElementById('totalPatinFrenoReparado').textContent);
+    console.log('Leva:', document.getElementById('totalLevaFreno').textContent);
+    console.log('Pulmón N:', document.getElementById('totalPulmonFrenoNuevo').textContent);
+    console.log('Pulmón R:', document.getElementById('totalPulmonFrenoReparado').textContent);
 }
 
 function calcularEconomico(){const cant={};CATEGORIAS_IDS.forEach(c=>{cant[c]=obtenerCantidadPorTarjetas(c);});
