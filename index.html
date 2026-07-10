@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -11,7 +11,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
-/* ===== ESTILOS COMPLETOS (los mismos que tenías) ===== */
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:16px;min-height:100vh;transition:.4s}
 body.dark-mode{background:#0a0e1a}
@@ -296,8 +295,22 @@ body.editing-mode #save-lock-btn{display:flex}
             </div>
             <div class="cards-sticky">
                 <div class="selection-info" id="selectionInfo">💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar</div>
-                <div class="summary-grid" id="summaryGrid">
-                    <!-- Las tarjetas se generan dinámicamente con JavaScript -->
+                <div class="summary-grid">
+                    <div class="stat-card" onclick="toggleCard('elasticosO',event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elást. ORIG</div></div>
+                    <div class="stat-card" onclick="toggleCard('elasticosF',event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elást. FAB</div></div>
+                    <div class="stat-card" onclick="toggleCard('mazasN',event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas N</div></div>
+                    <div class="stat-card" onclick="toggleCard('mazasR',event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas R</div></div>
+                    <div class="stat-card" onclick="toggleCard('bulonTuerca',event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoNuevo',event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neum. N</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoUsado',event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neum. U</div></div>
+                    <div class="stat-card" onclick="toggleCard('patinFrenoNuevo',event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín N</div></div>
+                    <div class="stat-card" onclick="toggleCard('patinFrenoReparado',event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín R</div></div>
+                    <div class="stat-card" onclick="toggleCard('levaFreno',event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva</div></div>
+                    <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo',event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón N</div></div>
+                    <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado',event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón R</div></div>
+                    <div class="stat-card" onclick="toggleCard('llantas',event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
+                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label">🔧 Amortiguador</div></div>
+                    <div class="stat-card" onclick="toggleCard('bogie',event)"><div class="stat-value" id="totalBogie">0</div><div class="stat-label">🚛 Bogie</div></div>
                 </div>
             </div>
             <div class="charts-section">
@@ -355,9 +368,6 @@ body.editing-mode #save-lock-btn{display:flex}
 </div>
 <div id="toast" class="toast">✅ Listo</div>
 <script>
-// ============================================================
-// ===== CONFIGURACIÓN Y DECLARACIONES =====
-// ============================================================
 if(typeof ChartDataLabels==='undefined'){var ChartDataLabels=window['chartjs-plugin-datalabels']||{};}
 const firebaseConfig={apiKey:"AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",authDomain:"minerar-repuestos.firebaseapp.com",projectId:"minerar-repuestos",storageBucket:"minerar-repuestos.firebasestorage.app",messagingSenderId:"470761239890",appId:"1:470761239890:web:17bae94b1ade6ef42a368b"};
 try{if(typeof firebase!=='undefined'){firebase.initializeApp(firebaseConfig);var db=firebase.firestore();console.log('✅ Firebase conectado');}else{console.warn('⚠️ Firebase no disponible');var db=null;}}catch(e){console.warn('⚠️ Error Firebase:',e);var db=null;}
@@ -366,406 +376,119 @@ let añoActual=2026,datosPorAnio={},charts={},modoEdicionActivo=false,categorias
 const CATEGORIAS_IDS=['elasticosO','elasticosF','mazasN','mazasR','bulonTuerca','neumaticoNuevo','neumaticoUsado','patinFrenoNuevo','patinFrenoReparado','levaFreno','pulmonFrenoNuevo','pulmonFrenoReparado','llantas','amortiguador','bogie'];
 const CATEGORIAS_NOMBRES={elasticosO:'Elasticos ORIG',elasticosF:'Elasticos FAB',mazasN:'Mazas N',mazasR:'Mazas R',bulonTuerca:'Bulon/Tuerca',neumaticoNuevo:'Neumatico N',neumaticoUsado:'Neumatico U',patinFrenoNuevo:'Patín N',patinFrenoReparado:'Patín R',levaFreno:'Leva',pulmonFrenoNuevo:'Pulmon N',pulmonFrenoReparado:'Pulmon R',llantas:'Llantas',amortiguador:'Amortiguador',bogie:'Bogie'};
 function getLabel(c){return CATEGORIAS_NOMBRES[c]||c;}
-
-// ============================================================
-// ===== FUNCIONES DE DATOS =====
-// ============================================================
 function toggleDarkMode(){document.body.classList.toggle('dark-mode');document.querySelector('.btn-dark-mode').textContent=document.body.classList.contains('dark-mode')?'☀️':'🌙';actualizarGraficos();}
 function crearDatosEjemplo(){const d={};CATEGORIAS_IDS.forEach(c=>{d[c]={};CONFIG.equipos.forEach(e=>{d[c][e]=Array(12).fill(0);});});return d;}
 function asegurarTodasLasCategorias(d){CATEGORIAS_IDS.forEach(c=>{if(!d[c]){d[c]={};CONFIG.equipos.forEach(e=>{d[c][e]=Array(12).fill(0);});}else{CONFIG.equipos.forEach(e=>{if(!d[c][e]){d[c][e]=Array(12).fill(0);}else if(d[c][e].length<12){while(d[c][e].length<12)d[c][e].push(0);}});}});return d;}
+async function init(){try{const saved=localStorage.getItem(CONFIG.storageKey);if(saved){const parsed=JSON.parse(saved);if(parsed.datosPorAnio&&parsed.datosPorAnio[añoActual])datosPorAnio[añoActual]=parsed.datosPorAnio[añoActual];}}catch(e){}
+if(!datosPorAnio[añoActual]&&db){try{const doc=await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).get();if(doc.exists){const data=doc.data();if(data.datosPorAnio&&data.datosPorAnio[añoActual])datosPorAnio[añoActual]=data.datosPorAnio[añoActual];if(data.precios){Object.keys(data.precios).forEach(key=>{let elId=key==='llanta'?'precioLlanta':key==='amortiguador'?'precioAmortiguador':key==='bogie'?'precioBogie':'precio'+key.charAt(0).toUpperCase()+key.slice(1);let el=document.getElementById(elId);if(el)el.value=data.precios[key];});}if(data.horas){Object.keys(data.horas).forEach(key=>{let el=document.getElementById(key);if(el)el.value=data.horas[key];});}}}catch(e){console.log("⚠️ Error Firebase:",e);}}
+if(!datosPorAnio[añoActual])datosPorAnio[añoActual]=crearDatosEjemplo();
+datosPorAnio[añoActual]=asegurarTodasLasCategorias(datosPorAnio[añoActual]);
+actualizarTodo();}
 function obtenerDatosActual(){if(!datosPorAnio[añoActual])datosPorAnio[añoActual]=crearDatosEjemplo();return datosPorAnio[añoActual];}
 function obtenerCantidadPorMes(categoria){const d=obtenerDatosActual(),data=d[categoria];if(!data)return 0;let total=0;CONFIG.equipos.forEach(eq=>{if(data[eq]){if(mesFiltrado!==null)total+=data[eq][mesFiltrado]||0;else total+=data[eq].reduce((a,b)=>a+b,0);}});return total;}
-
-// ============================================================
-// ===== GENERAR TARJETAS DINÁMICAMENTE =====
-// ============================================================
-function generarTarjetas() {
-    console.log('🔄 GENERANDO TARJETAS...');
-    const grid = document.getElementById('summaryGrid');
-    if (!grid) return;
-    
-    // Definir las tarjetas con sus valores
-    const tarjetas = [
-        { id: 'totalElasticosO', label: '🔧 Elást. ORIG', categoria: 'elasticosO' },
-        { id: 'totalElasticosF', label: '🔧 Elást. FAB', categoria: 'elasticosF' },
-        { id: 'totalMazasN', label: '⚙️ Mazas N', categoria: 'mazasN' },
-        { id: 'totalMazasR', label: '⚙️ Mazas R', categoria: 'mazasR' },
-        { id: 'totalBulonTuerca', label: '🔩 Bulón/Tuerca', categoria: 'bulonTuerca' },
-        { id: 'totalNeumaticoNuevo', label: '🛞 Neum. N', categoria: 'neumaticoNuevo' },
-        { id: 'totalNeumaticoUsado', label: '🛞 Neum. U', categoria: 'neumaticoUsado' },
-        { id: 'totalPatinFrenoNuevo', label: '🛞 Patín N', categoria: 'patinFrenoNuevo' },
-        { id: 'totalPatinFrenoReparado', label: '🛞 Patín R', categoria: 'patinFrenoReparado' },
-        { id: 'totalLevaFreno', label: '⚙️ Leva', categoria: 'levaFreno' },
-        { id: 'totalPulmonFrenoNuevo', label: '💨 Pulmón N', categoria: 'pulmonFrenoNuevo' },
-        { id: 'totalPulmonFrenoReparado', label: '💨 Pulmón R', categoria: 'pulmonFrenoReparado' },
-        { id: 'totalLlantas', label: '⭕ Llantas', categoria: 'llantas' },
-        { id: 'totalAmortiguador', label: '🔧 Amortiguador', categoria: 'amortiguador' },
-        { id: 'totalBogie', label: '🚛 Bogie', categoria: 'bogie' }
-    ];
-    
-    grid.innerHTML = '';
-    
-    tarjetas.forEach((tarjeta, index) => {
-        const card = document.createElement('div');
-        card.className = 'stat-card';
-        card.dataset.categoria = tarjeta.categoria;
-        
-        const valorDiv = document.createElement('div');
-        valorDiv.className = 'stat-value';
-        valorDiv.id = tarjeta.id;
-        valorDiv.textContent = '0';
-        
-        const labelDiv = document.createElement('div');
-        labelDiv.className = 'stat-label';
-        labelDiv.textContent = tarjeta.label;
-        
-        card.appendChild(valorDiv);
-        card.appendChild(labelDiv);
-        
-        card.addEventListener('click', function(e) {
-            toggleCard(tarjeta.categoria, e);
-        });
-        
-        grid.appendChild(card);
-    });
-    
-    console.log(`✅ ${tarjetas.length} tarjetas generadas`);
-}
+function obtenerCantidadPorTarjetas(categoria){if(categoriasSeleccionadas.size>0&&!categoriasSeleccionadas.has(categoria))return 0;return obtenerCantidadPorMes(categoria);}
+function actualizarTodo(){const d=obtenerDatosActual();
+const theadIds=["theadElasticosO","theadElasticosF","theadMazasN","theadMazasR","theadBulonTuerca","theadNeumaticoNuevo","theadNeumaticoUsado","theadPatinFrenoNuevo","theadPatinFrenoReparado","theadLevaFreno","theadPulmonFrenoNuevo","theadPulmonFrenoReparado","theadLlantas","theadAmortiguador","theadBogie"];
+theadIds.forEach(id=>{const el=document.getElementById(id);if(el){let html="<tr><th>Equipo</th>";CONFIG.meses.forEach(m=>html+="<th>"+m+"</th>");html+="<th>TOTAL</th></tr>";el.innerHTML=html;}});
+CATEGORIAS_IDS.forEach(cat=>{const tbodyId="tbody"+cat.charAt(0).toUpperCase()+cat.slice(1);const tbody=document.getElementById(tbodyId);if(!tbody)return;tbody.innerHTML="";const datos=d[cat]||{};CONFIG.equipos.forEach(eq=>{const data=datos[eq]||Array(12).fill(0);let fila="<tr><td class='equipo-col'>"+eq+"</td>";let suma=0;for(let i=0;i<12;i++){const val=data[i]||0;suma+=val;const readonly=!modoEdicionActivo?'readonly':'';fila+="<td class='editable-cell'><input type='number' min='0' value='"+val+"' data-eq='"+eq+"' data-mes='"+i+"' data-tipo='"+cat+"' "+readonly+" style='width:60px;'></td>";}fila+="<td class='total-row'><strong>"+suma+"</strong></td></tr>";tbody.insertAdjacentHTML("beforeend",fila);});
+let totales=Array(12).fill(0);CONFIG.equipos.forEach(eq=>{const data=datos[eq]||Array(12).fill(0);for(let i=0;i<12;i++)totales[i]+=data[i]||0;});let totalGral=totales.reduce((a,b)=>a+b,0);let row="<tr class='total-row'><td><strong>TOTAL</strong></td>";totales.forEach(t=>row+="<td><strong>"+t+"</strong></td>");row+="<td><strong>"+totalGral+"</strong></td></tr>";tbody.insertAdjacentHTML("beforeend",row);});
+actualizarTarjetas();actualizarGraficos();calcularEconomico();}
 
 // ============================================================
 // ===== FUNCIÓN CORREGIDA - TARJETAS CON TODOS LOS DATOS =====
 // ============================================================
-function actualizarTarjetas() {
-    console.log('🔄 ACTUALIZANDO TARJETAS...');
-    
-    const d = obtenerDatosActual();
-    
-    // Mapeo de categorías a IDs de elementos
-    const mapaTarjetas = {
-        'elasticosO': 'totalElasticosO',
-        'elasticosF': 'totalElasticosF',
-        'mazasN': 'totalMazasN',
-        'mazasR': 'totalMazasR',
-        'bulonTuerca': 'totalBulonTuerca',
-        'neumaticoNuevo': 'totalNeumaticoNuevo',
-        'neumaticoUsado': 'totalNeumaticoUsado',
-        'patinFrenoNuevo': 'totalPatinFrenoNuevo',
-        'patinFrenoReparado': 'totalPatinFrenoReparado',
-        'levaFreno': 'totalLevaFreno',
-        'pulmonFrenoNuevo': 'totalPulmonFrenoNuevo',
-        'pulmonFrenoReparado': 'totalPulmonFrenoReparado',
-        'llantas': 'totalLlantas',
-        'amortiguador': 'totalAmortiguador',
-        'bogie': 'totalBogie'
+function actualizarTarjetas(){
+    // Primero actualizar todas con el mapa
+    const mapa = {
+        'elasticosO':'totalElasticosO',
+        'elasticosF':'totalElasticosF',
+        'mazasN':'totalMazasN',
+        'mazasR':'totalMazasR',
+        'bulonTuerca':'totalBulonTuerca',
+        'neumaticoNuevo':'totalNeumaticoNuevo',
+        'neumaticoUsado':'totalNeumaticoUsado',
+        'patinFrenoNuevo':'totalPatinFrenoNuevo',
+        'patinFrenoReparado':'totalPatinFrenoReparado',
+        'levaFreno':'totalLevaFreno',
+        'pulmonFrenoNuevo':'totalPulmonFrenoNuevo',
+        'pulmonFrenoReparado':'totalPulmonFrenoReparado',
+        'llantas':'totalLlantas',
+        'amortiguador':'totalAmortiguador',
+        'bogie':'totalBogie'
     };
     
-    // Actualizar CADA tarjeta con su valor correcto
     CATEGORIAS_IDS.forEach(cat => {
-        const elId = mapaTarjetas[cat];
-        if (!elId) return;
-        
-        let total = 0;
-        const data = d[cat];
-        if (data) {
-            CONFIG.equipos.forEach(eq => {
-                if (data[eq]) {
-                    if (mesFiltrado !== null) {
-                        total += data[eq][mesFiltrado] || 0;
-                    } else {
-                        for (let i = 0; i < 12; i++) {
-                            total += data[eq][i] || 0;
-                        }
-                    }
-                }
-            });
-        }
-        
-        const el = document.getElementById(elId);
-        if (el) {
-            el.textContent = total;
-            el.innerText = total;
-            el.innerHTML = total;
+        const elId = mapa[cat];
+        if (elId) {
+            const total = obtenerCantidadPorMes(cat);
+            const el = document.getElementById(elId);
+            if (el) {
+                el.textContent = total;
+            }
         }
     });
     
-    // ACTUALIZAR LAS CANTIDADES EN LA TABLA ECONÓMICA
-    const mapaCantidades = {
-        'elasticosO': 'cantElasticosO',
-        'elasticosF': 'cantElasticosF',
-        'mazasN': 'cantMazasN',
-        'mazasR': 'cantMazasR',
-        'bulonTuerca': 'cantBulon',
-        'neumaticoNuevo': 'cantNeumaticoNuevo',
-        'patinFrenoNuevo': 'cantPatinFrenoNuevo',
-        'patinFrenoReparado': 'cantPatinFrenoReparado',
-        'levaFreno': 'cantLevaFreno',
-        'pulmonFrenoNuevo': 'cantPulmonFrenoNuevo',
-        'pulmonFrenoReparado': 'cantPulmonFrenoReparado',
-        'llantas': 'cantLlantas',
-        'amortiguador': 'cantAmortiguador',
-        'bogie': 'cantBogie'
-    };
-    
-    Object.keys(mapaCantidades).forEach(cat => {
-        const elId = mapaCantidades[cat];
-        let total = 0;
-        const data = d[cat];
-        if (data) {
-            CONFIG.equipos.forEach(eq => {
-                if (data[eq]) {
-                    if (mesFiltrado !== null) {
-                        total += data[eq][mesFiltrado] || 0;
-                    } else {
-                        for (let i = 0; i < 12; i++) {
-                            total += data[eq][i] || 0;
-                        }
-                    }
-                }
-            });
-        }
-        const el = document.getElementById(elId);
-        if (el) {
-            el.textContent = total;
-            el.innerText = total;
-        }
-    });
+    // ===== FORZAR ACTUALIZACIÓN DIRECTA DE TODAS LAS TARJETAS =====
+    document.getElementById('totalElasticosO').textContent = obtenerCantidadPorMes('elasticosO');
+    document.getElementById('totalElasticosF').textContent = obtenerCantidadPorMes('elasticosF');
+    document.getElementById('totalMazasN').textContent = obtenerCantidadPorMes('mazasN');
+    document.getElementById('totalMazasR').textContent = obtenerCantidadPorMes('mazasR');
+    document.getElementById('totalBulonTuerca').textContent = obtenerCantidadPorMes('bulonTuerca');
+    document.getElementById('totalNeumaticoNuevo').textContent = obtenerCantidadPorMes('neumaticoNuevo');
+    document.getElementById('totalNeumaticoUsado').textContent = obtenerCantidadPorMes('neumaticoUsado');
+    document.getElementById('totalPatinFrenoNuevo').textContent = obtenerCantidadPorMes('patinFrenoNuevo');
+    document.getElementById('totalPatinFrenoReparado').textContent = obtenerCantidadPorMes('patinFrenoReparado');
+    document.getElementById('totalLevaFreno').textContent = obtenerCantidadPorMes('levaFreno');
+    document.getElementById('totalPulmonFrenoNuevo').textContent = obtenerCantidadPorMes('pulmonFrenoNuevo');
+    document.getElementById('totalPulmonFrenoReparado').textContent = obtenerCantidadPorMes('pulmonFrenoReparado');
+    document.getElementById('totalLlantas').textContent = obtenerCantidadPorMes('llantas');
+    document.getElementById('totalAmortiguador').textContent = obtenerCantidadPorMes('amortiguador');
+    document.getElementById('totalBogie').textContent = obtenerCantidadPorMes('bogie');
     
     console.log('📊 TARJETAS ACTUALIZADAS:');
-    console.log('Neum. N:', document.getElementById('totalNeumaticoNuevo')?.textContent || '0');
-    console.log('Patín N:', document.getElementById('totalPatinFrenoNuevo')?.textContent || '0');
-    console.log('Patín R:', document.getElementById('totalPatinFrenoReparado')?.textContent || '0');
-    console.log('Leva:', document.getElementById('totalLevaFreno')?.textContent || '0');
-    console.log('Pulmón N:', document.getElementById('totalPulmonFrenoNuevo')?.textContent || '0');
-    console.log('Pulmón R:', document.getElementById('totalPulmonFrenoReparado')?.textContent || '0');
+    console.log('Neum. N:', document.getElementById('totalNeumaticoNuevo').textContent);
+    console.log('Patín N:', document.getElementById('totalPatinFrenoNuevo').textContent);
+    console.log('Patín R:', document.getElementById('totalPatinFrenoReparado').textContent);
+    console.log('Leva:', document.getElementById('totalLevaFreno').textContent);
+    console.log('Pulmón N:', document.getElementById('totalPulmonFrenoNuevo').textContent);
+    console.log('Pulmón R:', document.getElementById('totalPulmonFrenoReparado').textContent);
 }
 
-// ============================================================
-// ===== FUNCIÓN PARA FORZAR VALORES DE PRUEBA =====
-// ============================================================
-function forzarValoresPrueba() {
-    console.log('💥 FORZANDO VALORES DE PRUEBA...');
-    const valores = {
-        'totalNeumaticoNuevo': 102,
-        'totalPatinFrenoNuevo': 2,
-        'totalPatinFrenoReparado': 28,
-        'totalLevaFreno': 16,
-        'totalPulmonFrenoNuevo': 5,
-        'totalPulmonFrenoReparado': 21
-    };
-    
-    Object.keys(valores).forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-            el.textContent = valores[id];
-            el.innerText = valores[id];
-            el.innerHTML = `<span style="color:#fff;font-size:1.5rem;">${valores[id]}</span>`;
-            console.log(`✅ ${id} = ${valores[id]}`);
-        } else {
-            console.warn(`⚠️ Elemento no encontrado: ${id}`);
-        }
-    });
-}
-
-// ============================================================
-// ===== RESTO DE FUNCIONES (calcularEconomico, toggleCard, etc.) =====
-// ============================================================
-// [Aquí van todas las demás funciones que ya tenías]
-
-function calcularEconomico(){
-    actualizarTarjetas();
-    // El resto de la función...
-}
-
-function toggleCard(categoria, event) {
-    // Tu función existente
-}
-
-// ============================================================
-// ===== INICIALIZACIÓN =====
-// ============================================================
-async function init() {
-    console.log('🚀 INICIANDO APLICACIÓN...');
-    
-    // Cargar datos
-    try {
-        const saved = localStorage.getItem(CONFIG.storageKey);
-        if (saved) {
-            const parsed = JSON.parse(saved);
-            if (parsed.datosPorAnio && parsed.datosPorAnio[añoActual]) {
-                datosPorAnio[añoActual] = parsed.datosPorAnio[añoActual];
-            }
-        }
-    } catch(e) {}
-    
-    if (!datosPorAnio[añoActual] && db) {
-        try {
-            const doc = await db.collection("repuestos_minerar").doc(`datos_${añoActual}`).get();
-            if (doc.exists) {
-                const data = doc.data();
-                if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
-                    datosPorAnio[añoActual] = data.datosPorAnio[añoActual];
-                }
-            }
-        } catch(e) {
-            console.log("⚠️ Error Firebase:", e);
-        }
-    }
-    
-    if (!datosPorAnio[añoActual]) {
-        datosPorAnio[añoActual] = crearDatosEjemplo();
-    }
-    
-    datosPorAnio[añoActual] = asegurarTodasLasCategorias(datosPorAnio[añoActual]);
-    
-    // Generar tarjetas dinámicamente
-    generarTarjetas();
-    
-    // Actualizar todo
-    actualizarTodo();
-    
-    // Forzar actualización de tarjetas después de cargar
-    setTimeout(() => {
-        console.log('🔄 ACTUALIZACIÓN POST-CARGA...');
-        actualizarTarjetas();
-        forzarValoresPrueba();
-    }, 500);
-    
-    console.log('✅ APLICACIÓN INICIADA');
-}
-
-function actualizarTodo() {
-    // Tu función existente
-    actualizarTarjetas();
-    actualizarGraficos();
-    calcularEconomico();
-}
-
-function actualizarGraficos() {
-    // Tu función existente
-}
-
-function cambiarMes(idx) {
-    mesFiltrado = idx;
-    document.querySelectorAll('.mes-btn').forEach((b,i) => {
-        b.classList.toggle('active', i === idx);
-    });
-    document.querySelector('.btn-ver-todo').classList.remove('active');
-    actualizarTarjetas();
-    actualizarGraficos();
-    calcularEconomico();
-    actualizarInfoSeleccion();
-    mostrarToast("📅 " + CONFIG.meses[idx]);
-}
-
-function limpiarFiltroMes() {
-    mesFiltrado = null;
-    document.querySelectorAll('.mes-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector('.btn-ver-todo').classList.add('active');
-    actualizarTarjetas();
-    actualizarGraficos();
-    calcularEconomico();
-    actualizarInfoSeleccion();
-    mostrarToast('📅 Año completo');
-}
-
-function actualizarInfoSeleccion() {
-    // Tu función existente
-}
-
-function toggleAccordion(id) {
-    const content = document.getElementById(id);
-    if (content) content.classList.toggle('open');
-}
-
-function mostrarToast(msg, error) {
-    error = error || false;
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.className = 'toast show' + (error ? ' error' : '');
-    setTimeout(() => t.className = 'toast', 3000);
-}
-
-function abrirModal() {
-    document.getElementById('securityModal').classList.add('show');
-    document.getElementById('passwordInput').value = '';
-}
-
-function cerrarModal() {
-    document.getElementById('securityModal').classList.remove('show');
-}
-
-function verificarPassword() {
-    if (document.getElementById('passwordInput').value === CONFIG.passwordAdmin) {
-        cerrarModal();
-        modoEdicionActivo = true;
-        document.body.classList.remove('read-only-mode');
-        document.body.classList.add('editing-mode');
-        document.getElementById('lock-indicator').innerHTML = '🔓 Modo edición';
-        document.getElementById('lock-indicator').style.color = '#27ae60';
-        actualizarTodo();
-    }
-}
-
-function guardarYBloquear() {
-    guardarTodosLosDatos();
-    modoEdicionActivo = false;
-    document.body.classList.remove('editing-mode');
-    document.body.classList.add('read-only-mode');
-    document.getElementById('lock-indicator').innerHTML = '🔒 Solo lectura';
-    document.getElementById('lock-indicator').style.color = '#e74c3c';
-}
-
-function guardarEnLocalStorage() {
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify({
-        añoActual: añoActual,
-        datosPorAnio: datosPorAnio
-    }));
-}
-
-async function guardarEnFirebase() {
-    if (!db) return false;
-    try {
-        await db.collection("repuestos_minerar").doc("datos_" + añoActual).set({
-            añoActual: añoActual,
-            datosPorAnio: datosPorAnio
-        }, { merge: true });
-        return true;
-    } catch(e) {
-        return false;
-    }
-}
-
-async function guardarTodosLosDatos(event) {
-    guardarEnLocalStorage();
-    const ok = await guardarEnFirebase();
-    if (event) mostrarToast(ok ? "☁️ Guardado en nube" : "💾 Guardado local");
-}
-
-function exportarCSV() {
-    mostrarToast("📊 Exportando...");
-}
-
-function importarCSV(event) {
-    mostrarToast("📥 Importando...");
-}
-
-async function resetearDatosCompletos() {
-    if (!confirm("⚠️ ¿Resetear TODO?")) return;
-    const pass = prompt("Contraseña:");
-    if (pass === "NOTOCAR") {
-        if (db) {
-            try {
-                await db.collection("repuestos_minerar").doc("datos_" + añoActual).delete();
-            } catch(e) {}
-        }
-        localStorage.removeItem(CONFIG.storageKey);
-        location.reload();
-    }
-}
-
-// ============================================================
-// ===== INICIAR =====
-// ============================================================
+function calcularEconomico(){const cant={};CATEGORIAS_IDS.forEach(c=>{cant[c]=obtenerCantidadPorTarjetas(c);});
+const cantMap={elasticosO:'cantElasticosO',elasticosF:'cantElasticosF',mazasN:'cantMazasN',mazasR:'cantMazasR',bulonTuerca:'cantBulon',neumaticoNuevo:'cantNeumaticoNuevo',patinFrenoNuevo:'cantPatinFrenoNuevo',patinFrenoReparado:'cantPatinFrenoReparado',levaFreno:'cantLevaFreno',pulmonFrenoNuevo:'cantPulmonFrenoNuevo',pulmonFrenoReparado:'cantPulmonFrenoReparado',llantas:'cantLlantas',amortiguador:'cantAmortiguador',bogie:'cantBogie'};
+Object.keys(cantMap).forEach(key=>{const el=document.getElementById(cantMap[key]);if(el)el.textContent=cant[key]||0;});actualizarTarjetas();
+const prec={elastO:parseFloat(document.getElementById("precioElasticoO").value)||0,elastF:parseFloat(document.getElementById("precioElasticoF").value)||0,mazaN:parseFloat(document.getElementById("precioMazaN").value)||0,mazaR:parseFloat(document.getElementById("precioMazaR").value)||0,bulon:parseFloat(document.getElementById("precioBulon").value)||0,tuerca:parseFloat(document.getElementById("precioTuerca").value)||0,neumaticoNuevo:parseFloat(document.getElementById("precioNeumaticoNuevo").value)||0,patinFrenoNuevo:parseFloat(document.getElementById("precioPatinFrenoNuevo").value)||0,patinFrenoReparado:parseFloat(document.getElementById("precioPatinFrenoReparado").value)||0,levaFreno:parseFloat(document.getElementById("precioLevaFreno").value)||0,pulmonFrenoNuevo:parseFloat(document.getElementById("precioPulmonFrenoNuevo").value)||0,pulmonFrenoReparado:parseFloat(document.getElementById("precioPulmonFrenoReparado").value)||0,llanta:parseFloat(document.getElementById("precioLlanta").value)||0,amortiguador:parseFloat(document.getElementById("precioAmortiguador").value)||0,bogie:parseFloat(document.getElementById("precioBogie").value)||0};
+const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v?formatMoney(v):"";};
+setVal("totalElasticoO",cant.elasticosO*prec.elastO);setVal("totalElasticoF",cant.elasticosF*prec.elastF);setVal("totalMazaN",cant.mazasN*prec.mazaN);setVal("totalMazaR",cant.mazasR*prec.mazaR);setVal("totalBulon",cant.bulonTuerca*prec.bulon);setVal("totalTuerca",cant.bulonTuerca*prec.tuerca);setVal("totalNeumaticoNuevo",cant.neumaticoNuevo*prec.neumaticoNuevo);setVal("totalPatinFrenoNuevo",cant.patinFrenoNuevo*prec.patinFrenoNuevo);setVal("totalPatinFrenoReparado",cant.patinFrenoReparado*prec.patinFrenoReparado);setVal("totalLevaFreno",cant.levaFreno*prec.levaFreno);setVal("totalPulmonFrenoNuevo",cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo);setVal("totalPulmonFrenoReparado",cant.pulmonFrenoReparado*prec.pulmonFrenoReparado);setVal("totalLlanta",cant.llantas*prec.llanta);setVal("totalAmortiguador",cant.amortiguador*prec.amortiguador);setVal("totalBogie",cant.bogie*prec.bogie);
+const hPropio=(parseFloat(document.getElementById("horasPropio").value)||0)*(parseFloat(document.getElementById("valorHoraPropio").value)||0);const hCoriaM=(parseFloat(document.getElementById("horasCoriaMecanico").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaMecanico").value)||0);const hCoriaS=(parseFloat(document.getElementById("horasCoriaSoldador").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaSoldador").value)||0);const hCarrizo=(parseFloat(document.getElementById("horasCarrizo").value)||0)*(parseFloat(document.getElementById("valorHoraCarrizo").value)||0);const hPatino=(parseFloat(document.getElementById("horasPatino").value)||0)*(parseFloat(document.getElementById("valorHoraPatino").value)||0);const totalMO=hPropio+hCoriaM+hCoriaS+hCarrizo+hPatino;
+const totalRep=(cant.elasticosO*prec.elastO)+(cant.elasticosF*prec.elastF)+(cant.mazasN*prec.mazaN)+(cant.mazasR*prec.mazaR)+(cant.bulonTuerca*prec.bulon)+(cant.bulonTuerca*prec.tuerca)+(cant.neumaticoNuevo*prec.neumaticoNuevo)+(cant.patinFrenoNuevo*prec.patinFrenoNuevo)+(cant.patinFrenoReparado*prec.patinFrenoReparado)+(cant.levaFreno*prec.levaFreno)+(cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo)+(cant.pulmonFrenoReparado*prec.pulmonFrenoReparado)+(cant.llantas*prec.llanta)+(cant.amortiguador*prec.amortiguador)+(cant.bogie*prec.bogie);
+setVal("totalPropio",hPropio);setVal("totalCoriaMecanico",hCoriaM);setVal("totalCoriaSoldador",hCoriaS);setVal("totalCarrizo",hCarrizo);setVal("totalPatino",hPatino);setVal("totalManoObra",totalMO);setVal("totalGeneral",totalRep+totalMO);
+const filterIndicator=document.getElementById("filterIndicator");if(categoriasSeleccionadas.size>0&&mesFiltrado!==null){filterIndicator.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+CONFIG.meses[mesFiltrado];}else if(categoriasSeleccionadas.size>0){filterIndicator.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas (Año)";}else if(mesFiltrado!==null){filterIndicator.textContent="📌 Mes: "+CONFIG.meses[mesFiltrado];}else{filterIndicator.textContent="📌 Año completo";}}
+function formatMoney(val){return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',minimumFractionDigits:0}).format(val);}
+function toggleCard(categoria,event){event.preventDefault();event.stopPropagation();const card=event.currentTarget;const isCtrl=event.ctrlKey||event.metaKey;const yaSeleccionada=categoriasSeleccionadas.has(categoria);if(isCtrl){if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}}else{if(yaSeleccionada&&categoriasSeleccionadas.size===1){categoriasSeleccionadas.clear();card.classList.remove('selected');}else if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}}
+actualizarInfoSeleccion();actualizarGraficos();calcularEconomico();}
+function actualizarInfoSeleccion(){const info=document.getElementById('selectionInfo');if(categoriasSeleccionadas.size===0){info.textContent='💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar';}else if(categoriasSeleccionadas.size===1){info.textContent="📌 Seleccionado: "+getLabel([...categoriasSeleccionadas][0])+" - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}else{const nombres=[...categoriasSeleccionadas].map(c=>getLabel(c)).join(', ');info.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}}
+function actualizarGraficos(){try{const d=obtenerDatosActual();if(typeof Chart==='undefined')return;const isDark=document.body.classList.contains('dark-mode');const textColor=isDark?'#b0d4e8':'#2c3e50';const gridColor=isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.06)';const canvasLine=document.getElementById('chartLine');const canvasBar=document.getElementById('chartBar');const canvasDoughnut=document.getElementById('chartDoughnut');if(!canvasLine||!canvasBar||!canvasDoughnut)return;if(charts.line){charts.line.destroy();charts.line=null;}if(charts.bar){charts.bar.destroy();charts.bar=null;}if(charts.doughnut){charts.doughnut.destroy();charts.doughnut=null;}
+let lineData=[];if(categoriasSeleccionadas.size>0){const cats=[...categoriasSeleccionadas];cats.forEach((cat,idx)=>{if(d[cat]===undefined){console.warn('⚠️ Sin datos:',cat);return;}const datos=Array(12).fill(0);CONFIG.equipos.forEach(eq=>{if(d[cat]&&d[cat][eq]){for(let i=0;i<12;i++){datos[i]+=d[cat][eq][i]||0;}}});const tieneDatos=datos.some(v=>v>0);if(!tieneDatos){console.warn('⚠️ Categoría sin valores >0:',cat);return;}const palette=['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)'];lineData.push({label:getLabel(cat),data:datos,borderColor:palette[idx%palette.length],backgroundColor:palette[idx%palette.length].replace('0.9','0.2'),tension:.4,fill:true,pointRadius:5,borderWidth:3});});if(lineData.length===0){lineData=[{label:'Sin datos en la selección',data:Array(12).fill(0),borderColor:'rgba(200,200,200,0.5)',backgroundColor:'rgba(200,200,200,0.1)',tension:.4,fill:true,pointRadius:5,borderWidth:1,borderDash:[5,5]}];}}else{const totales=Array(12).fill(0);CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){CONFIG.equipos.forEach(eq=>{if(d[cat][eq]){for(let i=0;i<12;i++){totales[i]+=d[cat][eq][i]||0;}}});}});lineData=[{label:'Total General',data:totales,borderColor:'rgba(54,162,235,0.9)',backgroundColor:'rgba(54,162,235,0.2)',tension:.4,fill:true,pointRadius:5,borderWidth:3}];}
+charts.line=new Chart(canvasLine,{type:'line',data:{labels:CONFIG.meses,datasets:lineData},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:'📈 Evolución Mensual',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:11,weight:'bold'}}}}},plugins:[ChartDataLabels]});
+let barData=[];if(categoriasSeleccionadas.size>0){barData=CONFIG.equipos.map(eq=>{let total=0;categoriasSeleccionadas.forEach(cat=>{if(d[cat]&&d[cat][eq]){if(mesFiltrado!==null){total+=d[cat][eq][mesFiltrado]||0;}else{total+=d[cat][eq].reduce((a,b)=>a+b,0);}}});return total;});}else if(mesFiltrado!==null){barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq][mesFiltrado]||0;});return total;});}else{barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq].reduce((a,b)=>a+b,0);});return total;});}
+const palette2=['rgba(54,162,235,0.8)','rgba(75,192,192,0.8)','rgba(255,99,132,0.8)','rgba(153,102,255,0.8)','rgba(255,159,64,0.8)'];const barColors=CONFIG.equipos.map((_,i)=>palette2[i%palette2.length]);charts.bar=new Chart(canvasBar,{type:'bar',data:{labels:CONFIG.equipos,datasets:[{label:categoriasSeleccionadas.size>0?'Seleccionados':'Total',data:barData,backgroundColor:barColors,borderWidth:2,borderRadius:8,borderColor:isDark?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.8)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:'📊 Consumo por Equipo',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'bold'}}}}},plugins:[ChartDataLabels]});
+let doughnutLabels=[],doughnutData=[];if(categoriasSeleccionadas.size>0){const cats=[...categoriasSeleccionadas];cats.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}else{CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}if(doughnutData.length===0){doughnutLabels=['Sin datos'];doughnutData=[1];}
+charts.doughnut=new Chart(canvasDoughnut,{type:'doughnut',data:{labels:doughnutLabels,datasets:[{data:doughnutData,backgroundColor:['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)'],borderWidth:3,borderColor:isDark?'#0f1a2e':'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,color:textColor,font:{size:11,weight:'bold'}}},title:{display:true,text:'🎯 Distribución',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:'#fff',font:{size:10,weight:'bold'},textStrokeColor:'rgba(0,0,0,0.5)',textStrokeWidth:2,formatter:(v,ctx)=>{const total=ctx.dataset.data.reduce((a,b)=>a+b,0);return total>0&&v>0&&total>1?Math.round((v/total)*100)+'%':'';}}},cutout:'65%'},plugins:[ChartDataLabels]});}catch(e){console.error('Error en gráficos:',e);}}
+function cambiarMes(idx){mesFiltrado=idx;document.querySelectorAll('.mes-btn').forEach((b,i)=>{b.classList.toggle('active',i===idx);});document.querySelector('.btn-ver-todo').classList.remove('active');actualizarTarjetas();actualizarGraficos();calcularEconomico();actualizarInfoSeleccion();mostrarToast("📅 "+CONFIG.meses[idx]);}
+function limpiarFiltroMes(){mesFiltrado=null;document.querySelectorAll('.mes-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.btn-ver-todo').classList.add('active');actualizarTarjetas();actualizarGraficos();calcularEconomico();actualizarInfoSeleccion();mostrarToast('📅 Año completo');}
+function toggleAccordion(id){const content=document.getElementById(id);if(content)content.classList.toggle('open');}
+function mostrarToast(msg,error){error=error||false;const t=document.getElementById("toast");t.textContent=msg;t.className='toast show'+(error?' error':'');setTimeout(()=>t.className='toast',3000);}
+function abrirModal(){document.getElementById('securityModal').classList.add('show');document.getElementById('passwordInput').value='';}
+function cerrarModal(){document.getElementById('securityModal').classList.remove('show');}
+function verificarPassword(){if(document.getElementById('passwordInput').value===CONFIG.passwordAdmin){cerrarModal();modoEdicionActivo=true;document.body.classList.remove('read-only-mode');document.body.classList.add('editing-mode');document.getElementById('lock-indicator').innerHTML='🔓 Modo edición';document.getElementById('lock-indicator').style.color='#27ae60';actualizarTodo();}}
+function guardarYBloquear(){guardarTodosLosDatos();modoEdicionActivo=false;document.body.classList.remove('editing-mode');document.body.classList.add('read-only-mode');document.getElementById('lock-indicator').innerHTML='🔒 Solo lectura';document.getElementById('lock-indicator').style.color='#e74c3c';}
+function guardarEnLocalStorage(){localStorage.setItem(CONFIG.storageKey,JSON.stringify({añoActual:añoActual,datosPorAnio:datosPorAnio}));}
+async function guardarEnFirebase(){if(!db)return false;try{await db.collection("repuestos_minerar").doc("datos_"+añoActual).set({añoActual:añoActual,datosPorAnio:datosPorAnio},{merge:true});return true;}catch(e){return false;}}
+async function guardarTodosLosDatos(event){guardarEnLocalStorage();const ok=await guardarEnFirebase();if(event)mostrarToast(ok?"☁️ Guardado en nube":"💾 Guardado local");}
+function exportarCSV(){mostrarToast("📊 Exportando...");}
+function importarCSV(event){mostrarToast("📥 Importando...");}
+async function resetearDatosCompletos(){if(!confirm("⚠️ ¿Resetear TODO?"))return;const pass=prompt("Contraseña:");if(pass==="NOTOCAR"){if(db){try{await db.collection("repuestos_minerar").doc("datos_"+añoActual).delete();}catch(e){}}localStorage.removeItem(CONFIG.storageKey);location.reload();}}
 document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
