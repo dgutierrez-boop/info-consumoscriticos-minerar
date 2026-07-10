@@ -1284,55 +1284,62 @@ function importarCSV(event){
             let seccionActual = null;
             let enSeccionEconomica = false;
             
+            // Mapeo CORREGIDO según tu CSV real
             const mapeoSecciones = {
-                'ELASTICOS ORIGINALES': 'elasticosO',
-                'ELASTICOS FABRICADOS': 'elasticosF',
-                'MAZAS NUEVAS': 'mazasN',
-                'MAZAS REPARADAS': 'mazasR',
-                'BULON Y TUERCA': 'bulonTuerca',
-                'NEUMATICO NUEVO': 'neumaticoNuevo',
-                'NEUMATICO USADO': 'neumaticoUsado',
-                'PATIN DE FRENO NUEVO': 'patinFrenoNuevo',
-                'PATIN DE FRENO REPARADO': 'patinFrenoReparado',
-                'LEVA DE FRENO': 'levaFreno',
-                'PULMON DE FRENO NUEVO': 'pulmonFrenoNuevo',
-                'PULMON DE FRENO REPARADO': 'pulmonFrenoReparado',
-                'LLANTAS ROTAS': 'llantas',
-                'AMORTIGUADORES': 'amortiguador',
+                'ELASTICOS ORIG': 'elasticosO',
+                'ELASTICOS FAB': 'elasticosF',
+                'MAZAS N': 'mazasN',
+                'MAZAS R': 'mazasR',
+                'BULON/TUERCA': 'bulonTuerca',
+                'NEUMATICO N': 'neumaticoNuevo',
+                'NEUMATICO U': 'neumaticoUsado',
+                'PATÍN N': 'patinFrenoNuevo',
+                'PATÍN R': 'patinFrenoReparado',
+                'LEVA': 'levaFreno',
+                'PULMON N': 'pulmonFrenoNuevo',
+                'PULMON R': 'pulmonFrenoReparado',
+                'LLANTAS': 'llantas',
+                'AMORTIGUADOR': 'amortiguador',
                 'BOGIE': 'bogie'
             };
             
             const mapeoEconomico = {
-                'Elasticos Originales': 'precioElasticoO',
-                'Elasticos Fabricados': 'precioElasticoF',
+                'Elásticos Originales': 'precioElasticoO',
+                'Elásticos Fabricados': 'precioElasticoF',
                 'Mazas Nuevas': 'precioMazaN',
                 'Mazas Reparadas': 'precioMazaR',
-                'Bulon Scania': 'precioBulon',
+                'Bulón Scania': 'precioBulon',
                 'Tuerca Scania': 'precioTuerca',
-                'Neumatico Nuevo': 'precioNeumaticoNuevo',
-                'Patin Freno Nuevo': 'precioPatinFrenoNuevo',
-                'Patin Freno Reparado': 'precioPatinFrenoReparado',
+                'Neumático Nuevo': 'precioNeumaticoNuevo',
+                'Patín Freno Nuevo': 'precioPatinFrenoNuevo',
+                'Patín Freno Reparado': 'precioPatinFrenoReparado',
                 'Leva de Freno': 'precioLevaFreno',
-                'Pulmon Freno Nuevo': 'precioPulmonFrenoNuevo',
-                'Pulmon Freno Reparado': 'precioPulmonFrenoReparado',
-                'Llantas Rotas': 'precioLlanta',
-                'Amortiguador': 'precioAmortiguador',
-                'Bogie': 'precioBogie'
+                'Pulmón Freno Nuevo': 'precioPulmonFrenoNuevo',
+                'Pulmón Freno Reparado': 'precioPulmonFrenoReparado',
+                'Llantas Rotas': 'precioLlanta'
             };
             
             for(let i=0; i<lineas.length; i++){
                 const linea = lineas[i].trim();
+                
+                // Detectar sección económica
                 if(linea.includes('RESUMEN ECONOMICO')){
                     enSeccionEconomica = true;
                     continue;
                 }
+                
+                // Detectar sección de repuestos
                 if(!enSeccionEconomica){
+                    // Buscar si es un header de sección
                     for(const [nombre, cat] of Object.entries(mapeoSecciones)){
-                        if(linea.includes(nombre)){
+                        if(linea === nombre || linea.includes(nombre)){
                             seccionActual = cat;
+                            console.log('Sección detectada:', nombre, '->', cat);
                             break;
                         }
                     }
+                    
+                    // Procesar datos de equipos (líneas que empiezan con M4)
                     if(seccionActual && linea.startsWith('M4')){
                         const partes = linea.split(';');
                         if(partes.length >= 14){
@@ -1347,11 +1354,13 @@ function importarCSV(event){
                         }
                     }
                 } else {
-                    if(linea.includes('Elasticos') || linea.includes('Mazas') || linea.includes('Bulon') || linea.includes('Tuerca') || linea.includes('Neumatico') || linea.includes('Patin') || linea.includes('Leva') || linea.includes('Pulmon') || linea.includes('Llantas') || linea.includes('Amortiguador') || linea.includes('Bogie')){
+                    // Procesar sección económica
+                    if(linea.includes('Elásticos') || linea.includes('Mazas') || linea.includes('Bulón') || linea.includes('Tuerca') || linea.includes('Neumático') || linea.includes('Patín') || linea.includes('Leva') || linea.includes('Pulmón') || linea.includes('Llantas')){
                         const partes = linea.split(';');
                         if(partes.length >= 3){
                             const concepto = partes[0].trim();
                             const valorUnitario = partes[2].trim();
+                            
                             for(const [key, inputId] of Object.entries(mapeoEconomico)){
                                 if(concepto.includes(key)){
                                     let valorLimpio = valorUnitario.replace(/\$/g,'').replace(/\./g,'').replace(/\s/g,'').replace(/\u00A0/g,'').trim();
@@ -1391,10 +1400,10 @@ function importarCSV(event){
             
             if(db) guardarEnFirebase(horas);
             
-            mostrarToast('CSV importado y guardado automaticamente');
+            mostrarToast('CSV importado correctamente - ' + Object.keys(datos).length + ' categorías cargadas');
         } catch(err){
             console.error('Error importando CSV:', err);
-            mostrarToast('Error al importar CSV', true);
+            mostrarToast('Error al importar CSV: ' + err.message, true);
         }
     };
     reader.readAsText(file);
