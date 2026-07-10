@@ -1,21 +1,4 @@
 <script>
-function cargarScript(url, callback) {
-    var script = document.createElement('script');
-    script.src = url;
-    script.async = true;
-    
-    script.onload = function() {
-        console.log('✅ Script cargado:', url);
-        if (callback) callback();
-    };
-    
-    script.onerror = function() {
-        console.error('❌ Error cargando script:', url);
-        // NO llamar al callback si hay error
-    };
-    
-    document.head.appendChild(script);
-}
 const firebaseConfig = {
     apiKey: "AIzaSyD_nGBEHnS3VQ12QmSBCD7UCSM7EfLGyw",
     authDomain: "minerar-repuestos.firebaseapp.com",
@@ -24,27 +7,85 @@ const firebaseConfig = {
     messagingSenderId: "470761239890",
     appId: "1:470761239890:web:17bae94b1ade6ef42a368b"
 };
+
 window.db = null;
 var firebaseCargado = false;
-cargarScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js', function() {
-    cargarScript('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js', function() {
+
+// Cargar Firebase de forma secuencial y segura
+function cargarFirebase() {
+    return new Promise((resolve, reject) => {
+        const appScript = document.createElement('script');
+        appScript.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js';
+        
+        appScript.onload = function() {
+            console.log('✅ Firebase App cargado');
+            
+            const firestoreScript = document.createElement('script');
+            firestoreScript.src = 'https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js';
+            
+            firestoreScript.onload = function() {
+                console.log('✅ Firebase Firestore cargado');
+                resolve();
+            };
+            
+            firestoreScript.onerror = function() {
+                console.error('❌ Error cargando Firestore');
+                reject(new Error('Firestore failed'));
+            };
+            
+            document.head.appendChild(firestoreScript);
+        };
+        
+        appScript.onerror = function() {
+            console.error('❌ Error cargando Firebase App');
+            reject(new Error('App failed'));
+        };
+        
+        document.head.appendChild(appScript);
+    });
+}
+
+// Ejecutar carga de Firebase
+cargarFirebase()
+    .then(() => {
         firebaseCargado = true;
         inicializarFirebase();
+    })
+    .catch((error) => {
+        console.warn('⚠️ Firebase no disponible, usando modo local:', error.message);
+        inicializarFirebase();
     });
-});
-setTimeout(function() { if (!firebaseCargado) inicializarFirebase(); }, 5000);
+
+// Timeout de seguridad
+setTimeout(function() {
+    if (!firebaseCargado) {
+        console.warn('⚠️ Timeout Firebase - usando modo local');
+        inicializarFirebase();
+    }
+}, 8000);
+
 function inicializarFirebase() {
     try {
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(firebaseConfig);
             window.db = firebase.firestore();
-        } else { window.db = null; }
-    } catch (e) { window.db = null; }
+            console.log('✅ Firebase inicializado correctamente');
+        } else {
+            console.warn('⚠️ Firebase no disponible - modo local');
+            window.db = null;
+        }
+    } catch (e) {
+        console.warn('⚠️ Error inicializando Firebase:', e);
+        window.db = null;
+    }
+    
     if (typeof init === 'function' && !window._iniciado) {
         window._iniciado = true;
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
-        } else { init(); }
+        } else {
+            init();
+        }
     }
 }
 </script>
