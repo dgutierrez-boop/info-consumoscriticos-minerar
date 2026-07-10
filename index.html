@@ -50,26 +50,50 @@ function inicializarFirebase() {
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:16px;min-height:100vh}
-body.dark-mode{background:#0a0e1a}
-body.dark-mode .top-bar{background:#0f1a2e;border:1px solid #1a3a5a}
-body.dark-mode .btn-outline{background:#0f1a2e;color:#7fdbff;border-color:#1a3a5a}
-body.dark-mode .report-container{background:#0f1a2e;border:1px solid #1a3a5a}
-body.dark-mode .values-section{background:#0f1a2e;border:1px solid #1a3a5a}
-body.dark-mode .values-section h3{color:#4ECDC4}
-body.dark-mode .values-table{background:#0a0e1a}
-body.dark-mode .values-table th{background:#0f1a2e;color:#7fdbff}
-body.dark-mode .values-table td{border-bottom-color:#1a2a4a;color:#b0d4e8}
-body.dark-mode .values-table input[readonly]{background:#0a0e1a;color:#7fdbff}
-body.dark-mode .accordion-header{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);border:1px solid #1a3a5a;color:#7fdbff}
-body.dark-mode table{background:#0a0e1a;border-color:#1a3a5a}
-body.dark-mode th{background:linear-gradient(135deg,#0f1a2e,#1a2a4a);color:#7fdbff}
-body.dark-mode td{border-bottom-color:#1a2a4a;color:#b0d4e8}
-body.dark-mode .equipo-col{background:#0f1a2e;color:#7fdbff}
-body.dark-mode .total-row{background:linear-gradient(135deg,#1a2a4a,#0f1a2e);color:#7fdbff}
+body{font-family:'Segoe UI',sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);padding:16px;min-height:100vh;transition:all 0.4s}
+body.dark-mode{background:linear-gradient(135deg,#0a1628,#1a2a4a)}
+body.dark-mode .top-bar{background:rgba(10,22,40,0.95);border:1px solid #4ECDC4;box-shadow:0 0 20px rgba(78,205,196,0.3)}
+body.dark-mode .btn-outline{background:rgba(10,22,40,0.8);color:#7fdbff;border-color:#4ECDC4}
+body.dark-mode .btn-outline:hover{background:rgba(78,205,196,0.2);border-color:#7fdbff}
+body.dark-mode .report-container{background:rgba(10,22,40,0.95);border:1px solid #4ECDC4;box-shadow:0 0 30px rgba(78,205,196,0.2)}
+body.dark-mode .values-section{background:rgba(10,22,40,0.95);border:1px solid #4ECDC4;box-shadow:0 0 20px rgba(78,205,196,0.2)}
+body.dark-mode .values-section h3{color:#4ECDC4;text-shadow:0 0 10px rgba(78,205,196,0.5)}
+body.dark-mode .values-table{background:rgba(10,22,40,0.8)}
+body.dark-mode .values-table th{background:rgba(26,42,74,0.9);color:#7fdbff;border-bottom:1px solid #4ECDC4}
+body.dark-mode .values-table td{border-bottom-color:#1a3a5a;color:#b0d4e8}
+body.dark-mode .values-table input[readonly]{background:rgba(10,22,40,0.6);color:#7fdbff;border:1px solid #4ECDC4}
+body.dark-mode .values-table input{background:rgba(10,22,40,0.6);border-color:#4ECDC4;color:#7fdbff}
+body.dark-mode .values-table input:focus{border-color:#7fdbff;box-shadow:0 0 10px rgba(78,205,196,0.3)}
+body.dark-mode .accordion-header{background:linear-gradient(135deg,#0a1628,#1a2a4a);border:1px solid #4ECDC4;color:#7fdbff;box-shadow:0 0 15px rgba(78,205,196,0.2)}
+body.dark-mode table{background:rgba(10,22,40,0.8);border-color:#4ECDC4}
+body.dark-mode th{background:linear-gradient(135deg,#0a1628,#1a2a4a);color:#7fdbff;border-bottom:1px solid #4ECDC4}
+body.dark-mode td{border-bottom-color:#1a3a5a;color:#b0d4e8}
+body.dark-mode .equipo-col{background:rgba(26,42,74,0.6);color:#7fdbff}
+body.dark-mode .total-row{background:linear-gradient(135deg,#1a2a4a,#0a1628);color:#7fdbff}
+body.dark-mode .filters-sticky{background:rgba(10,22,40,0.95);border-bottom-color:#4ECDC4}
+body.dark-mode .filtro-meses{background:rgba(78,205,196,0.08);border-color:#4ECDC4}
+body.dark-mode .filtro-meses h3{color:#4ECDC4;text-shadow:0 0 10px rgba(78,205,196,0.5)}
+body.dark-mode .mes-btn{border-color:#4ECDC4;color:#7fdbff;background:transparent}
+body.dark-mode .mes-btn:hover,body.dark-mode .mes-btn.active{background:#4ECDC4;color:#0a1628;box-shadow:0 0 15px rgba(78,205,196,0.5)}
+body.dark-mode .btn-ver-todo{border-color:#4ECDC4;color:#7fdbff}
+body.dark-mode .btn-ver-todo.active{background:#4ECDC4;color:#0a1628}
+body.dark-mode .alert{background:rgba(78,205,196,0.12);border-left-color:#4ECDC4;color:#b0d4e8}
+body.dark-mode .cards-sticky{background:rgba(10,22,40,0.95);box-shadow:0 0 20px rgba(78,205,196,0.2)}
+body.dark-mode .selection-info{background:rgba(78,205,196,0.1);border-color:#4ECDC4;color:#b0d4e8}
+body.dark-mode .chart-card{background:rgba(10,22,40,0.95);border:1px solid #4ECDC4;box-shadow:0 0 20px rgba(78,205,196,0.2)}
+body.dark-mode .chart-card h4{color:#7fdbff;text-shadow:0 0 10px rgba(78,205,196,0.3)}
+body.dark-mode .grand-total{background:linear-gradient(135deg,#1a2a4a,#0a1628)!important;color:#7fdbff}
+body.dark-mode .logo-text{background:linear-gradient(135deg,#4ECDC4,#7fdbff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+body.dark-mode .logo-sub{color:#7fdbff}
+body.dark-mode .year-selector label{color:#7fdbff}
+body.dark-mode .year-selector select{background:rgba(10,22,40,0.8);color:#7fdbff;border-color:#4ECDC4}
+body.dark-mode .security-modal{background:rgba(10,22,40,0.95);border:1px solid #4ECDC4;color:#b0d4e8}
+body.dark-mode .security-modal h2{color:#7fdbff}
+body.dark-mode .security-modal input{background:rgba(10,22,40,0.6);border-color:#4ECDC4;color:#7fdbff}
+body.dark-mode .toast{background:linear-gradient(135deg,#0a1628,#1a2a4a);border:1px solid #4ECDC4;color:#7fdbff}
 body.read-only-mode .editing-only{display:none}
 body.editing-mode .editing-only{display:block}
-.top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.15);margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 24px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.15);margin-bottom:24px;flex-wrap:wrap;gap:12px;transition:all 0.4s}
 .top-bar-left{display:flex;align-items:center;gap:14px}
 .top-bar-logo{width:50px;height:50px;object-fit:contain;background:#fff;border-radius:12px;padding:5px}
 .logo-text{font-weight:800;font-size:1.5rem;background:linear-gradient(135deg,#2c3e50,#e67e22);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
@@ -87,7 +111,7 @@ body.editing-mode .editing-only{display:block}
 .btn-dark-mode{background:linear-gradient(135deg,#2c3e50,#1a252f);color:#fff;border:2px solid #34495e}
 .main-layout{display:grid;grid-template-columns:500px 1fr;gap:24px;max-width:2000px;margin:0 auto}
 .values-sidebar{position:sticky;top:20px;height:fit-content;max-height:calc(100vh - 40px);overflow-y:auto;width:500px}
-.values-section{background:linear-gradient(135deg,#667eea,#764ba2);padding:20px;border-radius:20px;box-shadow:0 15px 50px rgba(0,0,0,.2)}
+.values-section{background:linear-gradient(135deg,#667eea,#764ba2);padding:20px;border-radius:20px;box-shadow:0 15px 50px rgba(0,0,0,.2);transition:all 0.4s}
 .values-section h3{color:#fff;margin-bottom:16px;font-size:1.1rem;font-weight:800;text-align:center}
 .values-table-wrapper{overflow-x:auto;border-radius:12px}
 .values-table{width:100%;background:#fff;border-radius:12px;overflow:hidden;font-size:.8rem;table-layout:fixed;min-width:450px}
@@ -99,15 +123,15 @@ body.editing-mode .editing-only{display:block}
 .values-table input[readonly]{background:#ecf0f1;font-weight:800;border:none}
 .grand-total{background:linear-gradient(135deg,#f39c12,#e67e22)!important;font-weight:800!important}
 .content-area{display:flex;flex-direction:column;gap:24px}
-.report-container{background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.2);padding:24px}
-.filters-sticky{position:sticky;top:0;background:#fff;z-index:50;padding:16px 0;border-bottom:3px solid #38B6B2;margin-bottom:24px}
+.report-container{background:#fff;border-radius:16px;box-shadow:0 15px 50px rgba(0,0,0,.2);padding:24px;transition:all 0.4s}
+.filters-sticky{position:sticky;top:0;background:#fff;z-index:50;padding:16px 0;border-bottom:3px solid #38B6B2;margin-bottom:24px;transition:all 0.4s}
 .filtro-meses{padding:16px;background:rgba(56,182,178,.1);border-radius:12px;border:2px solid #38B6B2}
 .btn-ver-todo{background:transparent;border:2px solid #38B6B2;color:#38B6B2;padding:6px 16px;border-radius:20px;cursor:pointer;font-weight:600}
 .btn-ver-todo.active{background:#38B6B2!important;color:#fff!important}
 .mes-btn{padding:10px;border:2px solid #38B6B2;background:transparent;color:#38B6B2;border-radius:8px;cursor:pointer;font-weight:600;margin:2px}
 .mes-btn:hover,.mes-btn.active{background:#38B6B2;color:#fff}
 .alert{background:linear-gradient(135deg,#d4edda,#c3e6cb);border-left:5px solid #27ae60;padding:12px 16px;margin-bottom:24px;border-radius:12px;font-weight:600;display:flex;justify-content:space-between;align-items:center}
-.cards-sticky{position:sticky;top:140px;background:#fff;padding:16px 0;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:40}
+.cards-sticky{position:sticky;top:140px;background:#fff;padding:16px 0;margin-bottom:24px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:40;transition:all 0.4s}
 .selection-info{background:rgba(52,152,219,.1);border:2px solid #3498db;border-radius:12px;padding:10px;margin-bottom:12px;text-align:center;font-weight:600;color:#2c3e50;font-size:.85rem}
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(105px,1fr));gap:8px}
 .stat-card{border-radius:12px;padding:10px 6px;text-align:center;cursor:pointer;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.1);position:relative;border:3px solid transparent}
@@ -132,7 +156,7 @@ body.editing-mode .editing-only{display:block}
 .stat-value{font-size:1.2rem;font-weight:800;color:#fff;margin:2px 0}
 .stat-label{font-size:.5rem;text-transform:uppercase;color:rgba(255,255,255,.95);font-weight:700;line-height:1.2}
 .charts-section{display:grid;grid-template-columns:repeat(auto-fit,minmax(350px,1fr));gap:24px;margin:24px 0}
-.chart-card{background:#fff;border-radius:16px;padding:24px;border:3px solid rgba(255,255,255,.5);box-shadow:0 6px 20px rgba(0,0,0,.1)}
+.chart-card{background:#fff;border-radius:16px;padding:24px;border:3px solid rgba(255,255,255,.5);box-shadow:0 6px 20px rgba(0,0,0,.1);transition:all 0.4s}
 .chart-card h4{font-size:1.1rem;color:#2c3e50;margin-bottom:20px;font-weight:700}
 .chart-container{position:relative;height:320px}
 .accordion-header{display:flex;justify-content:space-between;align-items:center;margin:20px 0 0;padding:14px 20px;background:linear-gradient(135deg,#2c3e50,#1a252f);border-radius:12px;color:#fff;cursor:pointer}
@@ -174,7 +198,7 @@ body.editing-mode #save-lock-btn{display:flex}
     </div>
     <div class="controls">
         <div class="year-selector">
-            <label>📅 Año:</label>
+            <label> Año:</label>
             <select id="selectorAnio" onchange="cambiarAño(this.value)">
                 <option value="2025">2025</option>
                 <option value="2026" selected>2026</option>
@@ -185,10 +209,10 @@ body.editing-mode #save-lock-btn{display:flex}
             </select>
         </div>
         <button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
-        <button class="btn btn-outline" onclick="window.print()">️ Imprimir</button>
+        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
         <button class="btn btn-success" onclick="guardarTodosLosDatos()">💾 Guardar</button>
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
-        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
+        <button class="btn btn-outline" onclick="document.getElementById('importFile').click()"> Importar</button>
         <button class="btn btn-danger" onclick="resetearDatosCompletos()">🔄 Reset</button>
     </div>
 </div>
@@ -201,21 +225,21 @@ body.editing-mode #save-lock-btn{display:flex}
                 <table class="values-table">
                     <thead><tr><th>Concepto</th><th>CANT</th><th>VALOR $</th><th>TOTAL $</th></tr></thead>
                     <tbody>
-                        <tr><td><strong> Elást. ORIG</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
+                        <tr><td><strong>🔧 Elást. ORIG</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
                         <tr><td><strong>🔧 Elást. FAB</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
                         <tr><td><strong>⚙️ Mazas N</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
                         <tr><td><strong>⚙️ Mazas R</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
                         <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
-                        <tr><td><strong> Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
+                        <tr><td><strong>🔩 Tuerca</strong></td><td id="cantTuerca">0</td><td><input type="text" id="precioTuerca" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalTuerca" readonly></td></tr>
                         <tr><td><strong>🛞 Neum. N</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
                         <tr><td><strong>🛞 Patín N</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
                         <tr><td><strong>🛞 Patín R</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
                         <tr><td><strong>⚙️ Leva</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
                         <tr><td><strong>💨 Pulmón N</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
                         <tr><td><strong>💨 Pulmón R</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
-                        <tr><td><strong> Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
+                        <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
                         <tr><td><strong>🔧 Amortiguador</strong></td><td id="cantAmortiguador">0</td><td><input type="text" id="precioAmortiguador" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalAmortiguador" readonly></td></tr>
-                        <tr><td><strong> Bogie</strong></td><td id="cantBogie">0</td><td><input type="text" id="precioBogie" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBogie" readonly></td></tr>
+                        <tr><td><strong>🚛 Bogie</strong></td><td id="cantBogie">0</td><td><input type="text" id="precioBogie" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBogie" readonly></td></tr>
                     </tbody>
                 </table>
             </div>
@@ -268,24 +292,24 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div class="selection-info" id="selectionInfo">💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar</div>
                 <div class="summary-grid">
                     <div class="stat-card" onclick="toggleCard('elasticosO',event)"><div class="stat-value" id="totalElasticosO">0</div><div class="stat-label">🔧 Elást. ORIG</div></div>
-                    <div class="stat-card" onclick="toggleCard('elasticosF',event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label"> Elást. FAB</div></div>
+                    <div class="stat-card" onclick="toggleCard('elasticosF',event)"><div class="stat-value" id="totalElasticosF">0</div><div class="stat-label">🔧 Elást. FAB</div></div>
                     <div class="stat-card" onclick="toggleCard('mazasN',event)"><div class="stat-value" id="totalMazasN">0</div><div class="stat-label">⚙️ Mazas N</div></div>
                     <div class="stat-card" onclick="toggleCard('mazasR',event)"><div class="stat-value" id="totalMazasR">0</div><div class="stat-label">⚙️ Mazas R</div></div>
                     <div class="stat-card" onclick="toggleCard('bulonTuerca',event)"><div class="stat-value" id="totalBulonTuerca">0</div><div class="stat-label">🔩 Bulón/Tuerca</div></div>
-                    <div class="stat-card" onclick="toggleCard('neumaticoNuevo',event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label">🛞 Neum. N</div></div>
-                    <div class="stat-card" onclick="toggleCard('neumaticoUsado',event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label">🛞 Neum. U</div></div>
-                    <div class="stat-card" onclick="toggleCard('patinFrenoNuevo',event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label">🛞 Patín N</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoNuevo',event)"><div class="stat-value" id="totalNeumaticoNuevo">0</div><div class="stat-label"> Neum. N</div></div>
+                    <div class="stat-card" onclick="toggleCard('neumaticoUsado',event)"><div class="stat-value" id="totalNeumaticoUsado">0</div><div class="stat-label"> Neum. U</div></div>
+                    <div class="stat-card" onclick="toggleCard('patinFrenoNuevo',event)"><div class="stat-value" id="totalPatinFrenoNuevo">0</div><div class="stat-label"> Patín N</div></div>
                     <div class="stat-card" onclick="toggleCard('patinFrenoReparado',event)"><div class="stat-value" id="totalPatinFrenoReparado">0</div><div class="stat-label">🛞 Patín R</div></div>
-                    <div class="stat-card" onclick="toggleCard('levaFreno',event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">⚙️ Leva</div></div>
-                    <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo',event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón N</div></div>
+                    <div class="stat-card" onclick="toggleCard('levaFreno',event)"><div class="stat-value" id="totalLevaFreno">0</div><div class="stat-label">️ Leva</div></div>
+                    <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo',event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label"> Pulmón N</div></div>
                     <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado',event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón R</div></div>
                     <div class="stat-card" onclick="toggleCard('llantas',event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
-                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label"> Amortiguador</div></div>
-                    <div class="stat-card" onclick="toggleCard('bogie',event)"><div class="stat-value" id="totalBogie">0</div><div class="stat-label">🚛 Bogie</div></div>
+                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label">🔧 Amortiguador</div></div>
+                    <div class="stat-card" onclick="toggleCard('bogie',event)"><div class="stat-value" id="totalBogie">0</div><div class="stat-label"> Bogie</div></div>
                 </div>
             </div>
             <div class="charts-section">
-                <div class="chart-card"><h4> Evolución Mensual</h4><div class="chart-container"><canvas id="chartLine"></canvas></div></div>
+                <div class="chart-card"><h4>📈 Evolución Mensual</h4><div class="chart-container"><canvas id="chartLine"></canvas></div></div>
                 <div class="chart-card"><h4>📊 Consumo por Equipo</h4><div class="chart-container"><canvas id="chartBar"></canvas></div></div>
                 <div class="chart-card"><h4>🎯 Distribución</h4><div class="chart-container"><canvas id="chartDoughnut"></canvas></div></div>
             </div>
@@ -296,7 +320,7 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
                 <div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>️ Mazas REPARADAS</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
                 <div id="accordionMazasR" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')"><span>🔩 Bulón y Tuerca</span><span>▼</span></div>
                 <div id="accordionBulonTuerca" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div></div>
@@ -306,9 +330,9 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div id="accordionNeumaticoUsado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaNeumaticoUsado"><thead id="theadNeumaticoUsado"></thead><tbody id="tbodyNeumaticoUsado"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoNuevo')"><span>🛞 Patín NUEVO</span><span>▼</span></div>
                 <div id="accordionPatinFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span>🛞 Patín REPARADO</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span> Patín REPARADO</span><span>▼</span></div>
                 <div id="accordionPatinFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>️ Leva de Freno</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
                 <div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span>💨 Pulmón NUEVO</span><span>▼</span></div>
                 <div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
@@ -316,7 +340,7 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div id="accordionPulmonFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoReparado"><thead id="theadPulmonFrenoReparado"></thead><tbody id="tbodyPulmonFrenoReparado"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionLlantas')"><span>⭕ Llantas Rotas</span><span>▼</span></div>
                 <div id="accordionLlantas" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLlantas"><thead id="theadLlantas"></thead><tbody id="tbodyLlantas"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionAmortiguador')"><span>🔧 Amortiguadores</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionAmortiguador')"><span> Amortiguadores</span><span>▼</span></div>
                 <div id="accordionAmortiguador" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaAmortiguador"><thead id="theadAmortiguador"></thead><tbody id="tbodyAmortiguador"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionBogie')"><span>🚛 Bogie</span><span>▼</span></div>
                 <div id="accordionBogie" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBogie"><thead id="theadBogie"></thead><tbody id="tbodyBogie"></tbody></table></div></div>
@@ -339,15 +363,8 @@ body.editing-mode #save-lock-btn{display:flex}
 </div>
 <div id="toast" class="toast">✅ Listo</div>
 <script>
-if (typeof ChartDataLabels === 'undefined') {
-    var ChartDataLabels = window['chartjs-plugin-datalabels'] || {};
-}
-const CONFIG = {
-    equipos: ["M442","M443","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"],
-    meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-    passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v26"
-};
+if (typeof ChartDataLabels === 'undefined') { var ChartDataLabels = window['chartjs-plugin-datalabels'] || {}; }
+const CONFIG = { equipos: ["M442","M443","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"], meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"], passwordAdmin: "abrir", storageKey: "minerar_repuestos_v27" };
 let añoActual = parseInt(localStorage.getItem('minerar_anio_seleccionado')) || 2026;
 let datosPorAnio = {};
 let charts = {};
@@ -355,672 +372,41 @@ let modoEdicionActivo = false;
 let categoriasSeleccionadas = new Set();
 let mesFiltrado = null;
 let preciosLocales = {};
-const CATEGORIAS = [
-    {id:'elasticosO',label:'Elasticos ORIG'},
-    {id:'elasticosF',label:'Elasticos FAB'},
-    {id:'mazasN',label:'Mazas N'},
-    {id:'mazasR',label:'Mazas R'},
-    {id:'bulonTuerca',label:'Bulon/Tuerca'},
-    {id:'neumaticoNuevo',label:'Neumatico N'},
-    {id:'neumaticoUsado',label:'Neumatico U'},
-    {id:'patinFrenoNuevo',label:'Patín N'},
-    {id:'patinFrenoReparado',label:'Patín R'},
-    {id:'levaFreno',label:'Leva'},
-    {id:'pulmonFrenoNuevo',label:'Pulmon N'},
-    {id:'pulmonFrenoReparado',label:'Pulmon R'},
-    {id:'llantas',label:'Llantas'},
-    {id:'amortiguador',label:'Amortiguador'},
-    {id:'bogie',label:'Bogie'}
-];
+const CATEGORIAS = [{id:'elasticosO',label:'Elasticos ORIG'},{id:'elasticosF',label:'Elasticos FAB'},{id:'mazasN',label:'Mazas N'},{id:'mazasR',label:'Mazas R'},{id:'bulonTuerca',label:'Bulon/Tuerca'},{id:'neumaticoNuevo',label:'Neumatico N'},{id:'neumaticoUsado',label:'Neumatico U'},{id:'patinFrenoNuevo',label:'Patín N'},{id:'patinFrenoReparado',label:'Patín R'},{id:'levaFreno',label:'Leva'},{id:'pulmonFrenoNuevo',label:'Pulmon N'},{id:'pulmonFrenoReparado',label:'Pulmon R'},{id:'llantas',label:'Llantas'},{id:'amortiguador',label:'Amortiguador'},{id:'bogie',label:'Bogie'}];
 const CATEGORIAS_IDS = CATEGORIAS.map(c=>c.id);
 function getLabel(catId){const found=CATEGORIAS.find(c=>c.id===catId);return found?found.label:catId;}
 function toggleDarkMode(){document.body.classList.toggle('dark-mode');document.querySelector('.btn-dark-mode').textContent=document.body.classList.contains('dark-mode')?'☀️':'🌙';actualizarGraficos();}
-function crearDatosVacios(){
-    const datos={};
-    CATEGORIAS_IDS.forEach(cat=>{
-        datos[cat]={};
-        CONFIG.equipos.forEach(eq=>{datos[cat][eq]=Array(12).fill(0);});
-    });
-    return datos;
-}
-function asegurarTodasLasCategorias(datos){
-    CATEGORIAS_IDS.forEach(cat=>{
-        if(!datos[cat]){datos[cat]={};CONFIG.equipos.forEach(eq=>{datos[cat][eq]=Array(12).fill(0);});}
-        else{CONFIG.equipos.forEach(eq=>{if(!datos[cat][eq]){datos[cat][eq]=Array(12).fill(0);}else if(datos[cat][eq].length<12){while(datos[cat][eq].length<12){datos[cat][eq].push(0);}}});}
-    });
-    return datos;
-}
-function init(){
-    console.log('🚀 Iniciando MINERAR - Año:', añoActual);
-    const sel = document.getElementById('selectorAnio');
-    if(sel) sel.value = añoActual;
-    try{
-        const saved = localStorage.getItem(CONFIG.storageKey);
-        if(saved){
-            const parsed = JSON.parse(saved);
-            if(parsed.datosPorAnio && parsed.datosPorAnio[añoActual]){
-                datosPorAnio[añoActual] = parsed.datosPorAnio[añoActual];
-                console.log('✅ Datos cargados de localStorage');
-            }
-            if(parsed.preciosLocales){
-                preciosLocales = parsed.preciosLocales;
-                console.log('✅ Precios locales cargados');
-            }
-        }
-    }catch(e){console.error('❌ Error localStorage:', e);}
-    if(!datosPorAnio[añoActual]){
-        console.log(' Creando datos vacíos para', añoActual);
-        datosPorAnio[añoActual] = crearDatosVacios();
-    }
-    datosPorAnio[añoActual] = asegurarTodasLasCategorias(datosPorAnio[añoActual]);
-    actualizarTodo();
-    restaurarPreciosLocales();
-    if(window.db){
-        console.log('🔥 Intentando Firebase...');
-        cargarDesdeFirebase();
-    }
-}
-function restaurarPreciosLocales(){
-    if(Object.keys(preciosLocales).length === 0) return;
-    const mapeoPrecios = {
-        'elasticosO': 'precioElasticoO','elasticosF': 'precioElasticoF',
-        'mazasN': 'precioMazaN','mazasR': 'precioMazaR',
-        'bulon': 'precioBulon','tuerca': 'precioTuerca',
-        'neumaticoNuevo': 'precioNeumaticoNuevo',
-        'patinFrenoNuevo': 'precioPatinFrenoNuevo',
-        'patinFrenoReparado': 'precioPatinFrenoReparado',
-        'levaFreno': 'precioLevaFreno',
-        'pulmonFrenoNuevo': 'precioPulmonFrenoNuevo',
-        'pulmonFrenoReparado': 'precioPulmonFrenoReparado',
-        'llantas': 'precioLlanta',
-        'amortiguador': 'precioAmortiguador',
-        'bogie': 'precioBogie'
-    };
-    Object.keys(mapeoPrecios).forEach(key => {
-        if(preciosLocales[key] !== undefined){
-            const input = document.getElementById(mapeoPrecios[key]);
-            if(input) input.value = preciosLocales[key];
-        }
-    });
-    console.log('✅ Precios restaurados en inputs');
-}
-async function cargarDesdeFirebase(){
-    if (!window.db) return;
-    try {
-        const doc = await window.db.collection("repuestos_minerar").doc("datos_" + añoActual).get();
-        if (doc.exists) {
-            const data = doc.data();
-            if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
-                const datosFirebase = asegurarTodasLasCategorias(data.datosPorAnio[añoActual]);
-                const tieneDatos = Object.values(datosFirebase).some(cat => Object.values(cat).some(eq => eq.some(v => v > 0)));
-                if (tieneDatos) {
-                    datosPorAnio[añoActual] = datosFirebase;
-                    console.log('✅ Cantidades cargadas desde Firebase');
-                    actualizarTodo();
-                    mostrarToast('✅ Datos sincronizados desde la nube');
-                }
-            }
-            console.log('⚠️ Precios NO se cargan desde Firebase (se mantienen locales)');
-        }
-    } catch(e) {
-        console.error("⚠️ Error Firebase:", e);
-    }
-}
-function obtenerDatosActual(){
-    if(!datosPorAnio[añoActual]){datosPorAnio[añoActual]=crearDatosVacios();}
-    return datosPorAnio[añoActual];
-}
-function obtenerCantidadPorMes(categoria){
-    const d = obtenerDatosActual();
-    const data = d[categoria];
-    if (!data) return 0;
-    let total = 0;
-    CONFIG.equipos.forEach(eq => {
-        if (data[eq]) {
-            if (mesFiltrado !== null) { total += data[eq][mesFiltrado] || 0; }
-            else { total += data[eq].reduce((a, b) => a + b, 0); }
-        }
-    });
-    return total;
-}
-function obtenerCantidadPorTarjetas(categoria){
-    if(categoriasSeleccionadas.size>0 && !categoriasSeleccionadas.has(categoria)){return 0;}
-    return obtenerCantidadPorMes(categoria);
-}
-function actualizarTodo(){
-    const d=obtenerDatosActual();
-    const theadIds=["theadElasticosO","theadElasticosF","theadMazasN","theadMazasR","theadBulonTuerca","theadNeumaticoNuevo","theadNeumaticoUsado","theadPatinFrenoNuevo","theadPatinFrenoReparado","theadLevaFreno","theadPulmonFrenoNuevo","theadPulmonFrenoReparado","theadLlantas","theadAmortiguador","theadBogie"];
-    theadIds.forEach(id=>{
-        const el=document.getElementById(id);
-        if(el){
-            let html="<tr><th>Equipo</th>";
-            CONFIG.meses.forEach(m=>html+="<th>"+m+"</th>");
-            html+="<th>TOTAL</th></tr>";
-            el.innerHTML=html;
-        }
-    });
-    CATEGORIAS_IDS.forEach(cat=>{
-        const tbodyId="tbody"+cat.charAt(0).toUpperCase()+cat.slice(1);
-        const tbody=document.getElementById(tbodyId);
-        if(!tbody)return;
-        tbody.innerHTML="";
-        const datos=d[cat]||{};
-        CONFIG.equipos.forEach(eq=>{
-            const data=datos[eq]||Array(12).fill(0);
-            let fila="<tr><td class='equipo-col'>"+eq+"</td>";
-            let suma=0;
-            for(let i=0;i<12;i++){
-                const val=data[i]||0;
-                suma+=val;
-                const readonly=!modoEdicionActivo?'readonly':'';
-                fila+="<td class='editable-cell'><input type='number' min='0' value='"+val+"' data-eq='"+eq+"' data-mes='"+i+"' data-tipo='"+cat+"' "+readonly+" style='width:60px;' onchange='guardarCambioCelda(this)'></td>";
-            }
-            fila+="<td class='total-row'><strong>"+suma+"</strong></td></tr>";
-            tbody.insertAdjacentHTML("beforeend",fila);
-        });
-        let totales=Array(12).fill(0);
-        CONFIG.equipos.forEach(eq=>{
-            const data=datos[eq]||Array(12).fill(0);
-            for(let i=0;i<12;i++){totales[i]+=data[i]||0;}
-        });
-        let totalGral=totales.reduce((a,b)=>a+b,0);
-        let row="<tr class='total-row'><td><strong>TOTAL</strong></td>";
-        totales.forEach(t=>row+="<td><strong>"+t+"</strong></td>");
-        row+="<td><strong>"+totalGral+"</strong></td></tr>";
-        tbody.insertAdjacentHTML("beforeend",row);
-    });
-    actualizarTarjetas();
-    actualizarGraficos();
-    calcularEconomico();
-}
-function guardarCambioCelda(input){
-    const eq = input.getAttribute('data-eq');
-    const mes = parseInt(input.getAttribute('data-mes'));
-    const tipo = input.getAttribute('data-tipo');
-    const valor = parseInt(input.value) || 0;
-    if(!datosPorAnio[añoActual]) datosPorAnio[añoActual] = crearDatosVacios();
-    if(!datosPorAnio[añoActual][tipo]) datosPorAnio[añoActual][tipo] = {};
-    if(!datosPorAnio[añoActual][tipo][eq]) datosPorAnio[añoActual][tipo][eq] = Array(12).fill(0);
-    datosPorAnio[añoActual][tipo][eq][mes] = valor;
-    actualizarTarjetas();
-    actualizarGraficos();
-    calcularEconomico();
-}
-function actualizarTarjetas(){
-    const mapa = {
-        'elasticosO': 'totalElasticosO','elasticosF': 'totalElasticosF',
-        'mazasN': 'totalMazasN','mazasR': 'totalMazasR',
-        'bulonTuerca': 'totalBulonTuerca',
-        'neumaticoNuevo': 'totalNeumaticoNuevo',
-        'neumaticoUsado': 'totalNeumaticoUsado',
-        'patinFrenoNuevo': 'totalPatinFrenoNuevo',
-        'patinFrenoReparado': 'totalPatinFrenoReparado',
-        'levaFreno': 'totalLevaFreno',
-        'pulmonFrenoNuevo': 'totalPulmonFrenoNuevo',
-        'pulmonFrenoReparado': 'totalPulmonFrenoReparado',
-        'llantas': 'totalLlantas',
-        'amortiguador': 'totalAmortiguador',
-        'bogie': 'totalBogie'
-    };
-    CATEGORIAS.forEach(cat => {
-        const elId = mapa[cat.id];
-        if (elId) {
-            const total = obtenerCantidadPorMes(cat.id);
-            const el = document.getElementById(elId);
-            if (el) el.textContent = total;
-        }
-    });
-}
-function calcularEconomico(){
-    const cant={};
-    CATEGORIAS_IDS.forEach(c=>{cant[c]=obtenerCantidadPorTarjetas(c);});
-    const cantMap={
-        'elasticosO':'cantElasticosO','elasticosF':'cantElasticosF',
-        'mazasN':'cantMazasN','mazasR':'cantMazasR',
-        'bulonTuerca':'cantBulon',
-        'neumaticoNuevo':'cantNeumaticoNuevo',
-        'patinFrenoNuevo':'cantPatinFrenoNuevo',
-        'patinFrenoReparado':'cantPatinFrenoReparado',
-        'levaFreno':'cantLevaFreno',
-        'pulmonFrenoNuevo':'cantPulmonFrenoNuevo',
-        'pulmonFrenoReparado':'cantPulmonFrenoReparado',
-        'llantas':'cantLlantas',
-        'amortiguador':'cantAmortiguador',
-        'bogie':'cantBogie'
-    };
-    Object.keys(cantMap).forEach(key=>{
-        const el=document.getElementById(cantMap[key]);
-        if(el)el.textContent=cant[key]||0;
-    });
-    const prec={
-        elastO:parseFloat(document.getElementById("precioElasticoO").value)||0,
-        elastF:parseFloat(document.getElementById("precioElasticoF").value)||0,
-        mazaN:parseFloat(document.getElementById("precioMazaN").value)||0,
-        mazaR:parseFloat(document.getElementById("precioMazaR").value)||0,
-        bulon:parseFloat(document.getElementById("precioBulon").value)||0,
-        tuerca:parseFloat(document.getElementById("precioTuerca").value)||0,
-        neumaticoNuevo:parseFloat(document.getElementById("precioNeumaticoNuevo").value)||0,
-        patinFrenoNuevo:parseFloat(document.getElementById("precioPatinFrenoNuevo").value)||0,
-        patinFrenoReparado:parseFloat(document.getElementById("precioPatinFrenoReparado").value)||0,
-        levaFreno:parseFloat(document.getElementById("precioLevaFreno").value)||0,
-        pulmonFrenoNuevo:parseFloat(document.getElementById("precioPulmonFrenoNuevo").value)||0,
-        pulmonFrenoReparado:parseFloat(document.getElementById("precioPulmonFrenoReparado").value)||0,
-        llanta:parseFloat(document.getElementById("precioLlanta").value)||0,
-        amortiguador:parseFloat(document.getElementById("precioAmortiguador").value)||0,
-        bogie:parseFloat(document.getElementById("precioBogie").value)||0
-    };
-    const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v?formatMoney(v):"";};
-    setVal("totalElasticoO",cant.elasticosO*prec.elastO);
-    setVal("totalElasticoF",cant.elasticosF*prec.elastF);
-    setVal("totalMazaN",cant.mazasN*prec.mazaN);
-    setVal("totalMazaR",cant.mazasR*prec.mazaR);
-    setVal("totalBulon",cant.bulonTuerca*prec.bulon);
-    setVal("totalTuerca",cant.bulonTuerca*prec.tuerca);
-    setVal("totalNeumaticoNuevo",cant.neumaticoNuevo*prec.neumaticoNuevo);
-    setVal("totalPatinFrenoNuevo",cant.patinFrenoNuevo*prec.patinFrenoNuevo);
-    setVal("totalPatinFrenoReparado",cant.patinFrenoReparado*prec.patinFrenoReparado);
-    setVal("totalLevaFreno",cant.levaFreno*prec.levaFreno);
-    setVal("totalPulmonFrenoNuevo",cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo);
-    setVal("totalPulmonFrenoReparado",cant.pulmonFrenoReparado*prec.pulmonFrenoReparado);
-    setVal("totalLlanta",cant.llantas*prec.llanta);
-    setVal("totalAmortiguador",cant.amortiguador*prec.amortiguador);
-    setVal("totalBogie",cant.bogie*prec.bogie);
-    const hPropio=(parseFloat(document.getElementById("horasPropio").value)||0)*(parseFloat(document.getElementById("valorHoraPropio").value)||0);
-    const hCoriaM=(parseFloat(document.getElementById("horasCoriaMecanico").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaMecanico").value)||0);
-    const hCoriaS=(parseFloat(document.getElementById("horasCoriaSoldador").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaSoldador").value)||0);
-    const hCarrizo=(parseFloat(document.getElementById("horasCarrizo").value)||0)*(parseFloat(document.getElementById("valorHoraCarrizo").value)||0);
-    const hPatino=(parseFloat(document.getElementById("horasPatino").value)||0)*(parseFloat(document.getElementById("valorHoraPatino").value)||0);
-    const totalMO=hPropio+hCoriaM+hCoriaS+hCarrizo+hPatino;
-    const totalRep=(cant.elasticosO*prec.elastO)+(cant.elasticosF*prec.elastF)+(cant.mazasN*prec.mazaN)+(cant.mazasR*prec.mazaR)+(cant.bulonTuerca*prec.bulon)+(cant.bulonTuerca*prec.tuerca)+(cant.neumaticoNuevo*prec.neumaticoNuevo)+(cant.patinFrenoNuevo*prec.patinFrenoNuevo)+(cant.patinFrenoReparado*prec.patinFrenoReparado)+(cant.levaFreno*prec.levaFreno)+(cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo)+(cant.pulmonFrenoReparado*prec.pulmonFrenoReparado)+(cant.llantas*prec.llanta)+(cant.amortiguador*prec.amortiguador)+(cant.bogie*prec.bogie);
-    setVal("totalPropio",hPropio);
-    setVal("totalCoriaMecanico",hCoriaM);
-    setVal("totalCoriaSoldador",hCoriaS);
-    setVal("totalCarrizo",hCarrizo);
-    setVal("totalPatino",hPatino);
-    setVal("totalManoObra",totalMO);
-    setVal("totalGeneral",totalRep+totalMO);
-    const filterIndicator=document.getElementById("filterIndicator");
-    if(filterIndicator){
-        if(categoriasSeleccionadas.size>0&&mesFiltrado!==null){filterIndicator.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+CONFIG.meses[mesFiltrado];}
-        else if(categoriasSeleccionadas.size>0){filterIndicator.textContent=" "+categoriasSeleccionadas.size+" seleccionadas (Año)";}
-        else if(mesFiltrado!==null){filterIndicator.textContent="📌 Mes: "+CONFIG.meses[mesFiltrado];}
-        else{filterIndicator.textContent="📌 Año completo";}
-    }
-}
+function crearDatosVacios(){const datos={};CATEGORIAS_IDS.forEach(cat=>{datos[cat]={};CONFIG.equipos.forEach(eq=>{datos[cat][eq]=Array(12).fill(0);});});return datos;}
+function asegurarTodasLasCategorias(datos){CATEGORIAS_IDS.forEach(cat=>{if(!datos[cat]){datos[cat]={};CONFIG.equipos.forEach(eq=>{datos[cat][eq]=Array(12).fill(0);});}else{CONFIG.equipos.forEach(eq=>{if(!datos[cat][eq]){datos[cat][eq]=Array(12).fill(0);}else if(datos[cat][eq].length<12){while(datos[cat][eq].length<12){datos[cat][eq].push(0);}}});}});return datos;}
+function init(){console.log('🚀 Iniciando MINERAR - Año:', añoActual);const sel=document.getElementById('selectorAnio');if(sel)sel.value=añoActual;try{const saved=localStorage.getItem(CONFIG.storageKey);if(saved){const parsed=JSON.parse(saved);if(parsed.datosPorAnio&&parsed.datosPorAnio[añoActual]){datosPorAnio[añoActual]=parsed.datosPorAnio[añoActual];console.log('✅ Datos cargados de localStorage');}if(parsed.preciosLocales){preciosLocales=parsed.preciosLocales;console.log('✅ Precios locales cargados');}}}catch(e){console.error('❌ Error localStorage:',e);}if(!datosPorAnio[añoActual]){console.log(' Creando datos vacíos para',añoActual);datosPorAnio[añoActual]=crearDatosVacios();}datosPorAnio[añoActual]=asegurarTodasLasCategorias(datosPorAnio[añoActual]);actualizarTodo();restaurarPreciosLocales();if(window.db){console.log('🔥 Intentando Firebase...');cargarDesdeFirebase();}}
+function restaurarPreciosLocales(){if(Object.keys(preciosLocales).length===0)return;const mapeoPrecios={'elasticosO':'precioElasticoO','elasticosF':'precioElasticoF','mazasN':'precioMazaN','mazasR':'precioMazaR','bulon':'precioBulon','tuerca':'precioTuerca','neumaticoNuevo':'precioNeumaticoNuevo','patinFrenoNuevo':'precioPatinFrenoNuevo','patinFrenoReparado':'precioPatinFrenoReparado','levaFreno':'precioLevaFreno','pulmonFrenoNuevo':'precioPulmonFrenoNuevo','pulmonFrenoReparado':'precioPulmonFrenoReparado','llantas':'precioLlanta','amortiguador':'precioAmortiguador','bogie':'precioBogie'};Object.keys(mapeoPrecios).forEach(key=>{if(preciosLocales[key]!==undefined){const input=document.getElementById(mapeoPrecios[key]);if(input)input.value=preciosLocales[key];}});console.log('✅ Precios restaurados en inputs');}
+async function cargarDesdeFirebase(){if(!window.db)return;try{const doc=await window.db.collection("repuestos_minerar").doc("datos_"+añoActual).get();if(doc.exists){const data=doc.data();if(data.datosPorAnio&&data.datosPorAnio[añoActual]){const datosFirebase=asegurarTodasLasCategorias(data.datosPorAnio[añoActual]);const tieneDatos=Object.values(datosFirebase).some(cat=>Object.values(cat).some(eq=>eq.some(v=>v>0)));if(tieneDatos){datosPorAnio[añoActual]=datosFirebase;console.log('✅ Cantidades cargadas desde Firebase');actualizarTodo();mostrarToast('✅ Datos sincronizados desde la nube');}}console.log('️ Precios NO se cargan desde Firebase (se mantienen locales)');}}catch(e){console.error("⚠️ Error Firebase:",e);}}
+function obtenerDatosActual(){if(!datosPorAnio[añoActual]){datosPorAnio[añoActual]=crearDatosVacios();}return datosPorAnio[añoActual];}
+function obtenerCantidadPorMes(categoria){const d=obtenerDatosActual();const data=d[categoria];if(!data)return 0;let total=0;CONFIG.equipos.forEach(eq=>{if(data[eq]){if(mesFiltrado!==null){total+=data[eq][mesFiltrado]||0;}else{total+=data[eq].reduce((a,b)=>a+b,0);}}});return total;}
+function obtenerCantidadPorTarjetas(categoria){if(categoriasSeleccionadas.size>0&&!categoriasSeleccionadas.has(categoria)){return 0;}return obtenerCantidadPorMes(categoria);}
+function actualizarTodo(){const d=obtenerDatosActual();const theadIds=["theadElasticosO","theadElasticosF","theadMazasN","theadMazasR","theadBulonTuerca","theadNeumaticoNuevo","theadNeumaticoUsado","theadPatinFrenoNuevo","theadPatinFrenoReparado","theadLevaFreno","theadPulmonFrenoNuevo","theadPulmonFrenoReparado","theadLlantas","theadAmortiguador","theadBogie"];theadIds.forEach(id=>{const el=document.getElementById(id);if(el){let html="<tr><th>Equipo</th>";CONFIG.meses.forEach(m=>html+="<th>"+m+"</th>");html+="<th>TOTAL</th></tr>";el.innerHTML=html;}});CATEGORIAS_IDS.forEach(cat=>{const tbodyId="tbody"+cat.charAt(0).toUpperCase()+cat.slice(1);const tbody=document.getElementById(tbodyId);if(!tbody)return;tbody.innerHTML="";const datos=d[cat]||{};CONFIG.equipos.forEach(eq=>{const data=datos[eq]||Array(12).fill(0);let fila="<tr><td class='equipo-col'>"+eq+"</td>";let suma=0;for(let i=0;i<12;i++){const val=data[i]||0;suma+=val;const readonly=!modoEdicionActivo?'readonly':'';fila+="<td class='editable-cell'><input type='number' min='0' value='"+val+"' data-eq='"+eq+"' data-mes='"+i+"' data-tipo='"+cat+"' "+readonly+" style='width:60px;' onchange='guardarCambioCelda(this)'></td>";}fila+="<td class='total-row'><strong>"+suma+"</strong></td></tr>";tbody.insertAdjacentHTML("beforeend",fila);});let totales=Array(12).fill(0);CONFIG.equipos.forEach(eq=>{const data=datos[eq]||Array(12).fill(0);for(let i=0;i<12;i++){totales[i]+=data[i]||0;}});let totalGral=totales.reduce((a,b)=>a+b,0);let row="<tr class='total-row'><td><strong>TOTAL</strong></td>";totales.forEach(t=>row+="<td><strong>"+t+"</strong></td>");row+="<td><strong>"+totalGral+"</strong></td></tr>";tbody.insertAdjacentHTML("beforeend",row);});actualizarTarjetas();actualizarGraficos();calcularEconomico();}
+function guardarCambioCelda(input){const eq=input.getAttribute('data-eq');const mes=parseInt(input.getAttribute('data-mes'));const tipo=input.getAttribute('data-tipo');const valor=parseInt(input.value)||0;if(!datosPorAnio[añoActual])datosPorAnio[añoActual]=crearDatosVacios();if(!datosPorAnio[añoActual][tipo])datosPorAnio[añoActual][tipo]={};if(!datosPorAnio[añoActual][tipo][eq])datosPorAnio[añoActual][tipo][eq]=Array(12).fill(0);datosPorAnio[añoActual][tipo][eq][mes]=valor;actualizarTarjetas();actualizarGraficos();calcularEconomico();}
+function actualizarTarjetas(){const mapa={'elasticosO':'totalElasticosO','elasticosF':'totalElasticosF','mazasN':'totalMazasN','mazasR':'totalMazasR','bulonTuerca':'totalBulonTuerca','neumaticoNuevo':'totalNeumaticoNuevo','neumaticoUsado':'totalNeumaticoUsado','patinFrenoNuevo':'totalPatinFrenoNuevo','patinFrenoReparado':'totalPatinFrenoReparado','levaFreno':'totalLevaFreno','pulmonFrenoNuevo':'totalPulmonFrenoNuevo','pulmonFrenoReparado':'totalPulmonFrenoReparado','llantas':'totalLlantas','amortiguador':'totalAmortiguador','bogie':'totalBogie'};CATEGORIAS.forEach(cat=>{const elId=mapa[cat.id];if(elId){const total=obtenerCantidadPorMes(cat.id);const el=document.getElementById(elId);if(el)el.textContent=total;}});}
+function calcularEconomico(){const cant={};CATEGORIAS_IDS.forEach(c=>{cant[c]=obtenerCantidadPorTarjetas(c);});const cantMap={'elasticosO':'cantElasticosO','elasticosF':'cantElasticosF','mazasN':'cantMazasN','mazasR':'cantMazasR','bulonTuerca':'cantBulon','neumaticoNuevo':'cantNeumaticoNuevo','patinFrenoNuevo':'cantPatinFrenoNuevo','patinFrenoReparado':'cantPatinFrenoReparado','levaFreno':'cantLevaFreno','pulmonFrenoNuevo':'cantPulmonFrenoNuevo','pulmonFrenoReparado':'cantPulmonFrenoReparado','llantas':'cantLlantas','amortiguador':'cantAmortiguador','bogie':'cantBogie'};Object.keys(cantMap).forEach(key=>{const el=document.getElementById(cantMap[key]);if(el)el.textContent=cant[key]||0;});const prec={elastO:parseFloat(document.getElementById("precioElasticoO").value)||0,elastF:parseFloat(document.getElementById("precioElasticoF").value)||0,mazaN:parseFloat(document.getElementById("precioMazaN").value)||0,mazaR:parseFloat(document.getElementById("precioMazaR").value)||0,bulon:parseFloat(document.getElementById("precioBulon").value)||0,tuerca:parseFloat(document.getElementById("precioTuerca").value)||0,neumaticoNuevo:parseFloat(document.getElementById("precioNeumaticoNuevo").value)||0,patinFrenoNuevo:parseFloat(document.getElementById("precioPatinFrenoNuevo").value)||0,patinFrenoReparado:parseFloat(document.getElementById("precioPatinFrenoReparado").value)||0,levaFreno:parseFloat(document.getElementById("precioLevaFreno").value)||0,pulmonFrenoNuevo:parseFloat(document.getElementById("precioPulmonFrenoNuevo").value)||0,pulmonFrenoReparado:parseFloat(document.getElementById("precioPulmonFrenoReparado").value)||0,llanta:parseFloat(document.getElementById("precioLlanta").value)||0,amortiguador:parseFloat(document.getElementById("precioAmortiguador").value)||0,bogie:parseFloat(document.getElementById("precioBogie").value)||0};const setVal=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v?formatMoney(v):"";};setVal("totalElasticoO",cant.elasticosO*prec.elastO);setVal("totalElasticoF",cant.elasticosF*prec.elastF);setVal("totalMazaN",cant.mazasN*prec.mazaN);setVal("totalMazaR",cant.mazasR*prec.mazaR);setVal("totalBulon",cant.bulonTuerca*prec.bulon);setVal("totalTuerca",cant.bulonTuerca*prec.tuerca);setVal("totalNeumaticoNuevo",cant.neumaticoNuevo*prec.neumaticoNuevo);setVal("totalPatinFrenoNuevo",cant.patinFrenoNuevo*prec.patinFrenoNuevo);setVal("totalPatinFrenoReparado",cant.patinFrenoReparado*prec.patinFrenoReparado);setVal("totalLevaFreno",cant.levaFreno*prec.levaFreno);setVal("totalPulmonFrenoNuevo",cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo);setVal("totalPulmonFrenoReparado",cant.pulmonFrenoReparado*prec.pulmonFrenoReparado);setVal("totalLlanta",cant.llantas*prec.llanta);setVal("totalAmortiguador",cant.amortiguador*prec.amortiguador);setVal("totalBogie",cant.bogie*prec.bogie);const hPropio=(parseFloat(document.getElementById("horasPropio").value)||0)*(parseFloat(document.getElementById("valorHoraPropio").value)||0);const hCoriaM=(parseFloat(document.getElementById("horasCoriaMecanico").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaMecanico").value)||0);const hCoriaS=(parseFloat(document.getElementById("horasCoriaSoldador").value)||0)*(parseFloat(document.getElementById("valorHoraCoriaSoldador").value)||0);const hCarrizo=(parseFloat(document.getElementById("horasCarrizo").value)||0)*(parseFloat(document.getElementById("valorHoraCarrizo").value)||0);const hPatino=(parseFloat(document.getElementById("horasPatino").value)||0)*(parseFloat(document.getElementById("valorHoraPatino").value)||0);const totalMO=hPropio+hCoriaM+hCoriaS+hCarrizo+hPatino;const totalRep=(cant.elasticosO*prec.elastO)+(cant.elasticosF*prec.elastF)+(cant.mazasN*prec.mazaN)+(cant.mazasR*prec.mazaR)+(cant.bulonTuerca*prec.bulon)+(cant.bulonTuerca*prec.tuerca)+(cant.neumaticoNuevo*prec.neumaticoNuevo)+(cant.patinFrenoNuevo*prec.patinFrenoNuevo)+(cant.patinFrenoReparado*prec.patinFrenoReparado)+(cant.levaFreno*prec.levaFreno)+(cant.pulmonFrenoNuevo*prec.pulmonFrenoNuevo)+(cant.pulmonFrenoReparado*prec.pulmonFrenoReparado)+(cant.llantas*prec.llanta)+(cant.amortiguador*prec.amortiguador)+(cant.bogie*prec.bogie);setVal("totalPropio",hPropio);setVal("totalCoriaMecanico",hCoriaM);setVal("totalCoriaSoldador",hCoriaS);setVal("totalCarrizo",hCarrizo);setVal("totalPatino",hPatino);setVal("totalManoObra",totalMO);setVal("totalGeneral",totalRep+totalMO);const filterIndicator=document.getElementById("filterIndicator");if(filterIndicator){if(categoriasSeleccionadas.size>0&&mesFiltrado!==null){filterIndicator.textContent=" "+categoriasSeleccionadas.size+" seleccionadas - "+CONFIG.meses[mesFiltrado];}else if(categoriasSeleccionadas.size>0){filterIndicator.textContent=" "+categoriasSeleccionadas.size+" seleccionadas (Año)";}else if(mesFiltrado!==null){filterIndicator.textContent="📌 Mes: "+CONFIG.meses[mesFiltrado];}else{filterIndicator.textContent="📌 Año completo";}}}
 function formatMoney(val){return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',minimumFractionDigits:0}).format(val);}
-function toggleCard(categoria,event){
-    event.preventDefault();event.stopPropagation();
-    const card=event.currentTarget;
-    const isCtrl=event.ctrlKey||event.metaKey;
-    const yaSeleccionada=categoriasSeleccionadas.has(categoria);
-    if(isCtrl){
-        if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}
-        else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}
-    }else{
-        if(yaSeleccionada&&categoriasSeleccionadas.size===1){categoriasSeleccionadas.clear();card.classList.remove('selected');}
-        else if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}
-        else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}
-    }
-    actualizarInfoSeleccion();actualizarGraficos();calcularEconomico();
-}
-function actualizarInfoSeleccion(){
-    const info=document.getElementById('selectionInfo');
-    if(!info)return;
-    if(categoriasSeleccionadas.size===0){info.textContent='💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar';}
-    else if(categoriasSeleccionadas.size===1){info.textContent=" Seleccionado: "+getLabel([...categoriasSeleccionadas][0])+" - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}
-    else{const nombres=[...categoriasSeleccionadas].map(c=>getLabel(c)).join(', ');info.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}
-}
-function actualizarGraficos(){
-    try{
-        const d=obtenerDatosActual();
-        if(typeof Chart==='undefined')return;
-        const isDark=document.body.classList.contains('dark-mode');
-        const textColor=isDark?'#b0d4e8':'#2c3e50';
-        const gridColor=isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.06)';
-        const canvasLine=document.getElementById('chartLine');
-        const canvasBar=document.getElementById('chartBar');
-        const canvasDoughnut=document.getElementById('chartDoughnut');
-        if(!canvasLine||!canvasBar||!canvasDoughnut)return;
-        if(charts.line){charts.line.destroy();charts.line=null;}
-        if(charts.bar){charts.bar.destroy();charts.bar=null;}
-        if(charts.doughnut){charts.doughnut.destroy();charts.doughnut=null;}
-        let lineData=[];
-        if(categoriasSeleccionadas.size>0){
-            const cats=[...categoriasSeleccionadas];
-            const palette=['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)'];
-            cats.forEach((cat,idx)=>{
-                if(!d[cat])return;
-                const datos=Array(12).fill(0);
-                CONFIG.equipos.forEach(eq=>{if(d[cat]&&d[cat][eq]){for(let i=0;i<12;i++){datos[i]+=d[cat][eq][i]||0;}}});
-                lineData.push({label:getLabel(cat),data:datos,borderColor:palette[idx%palette.length],backgroundColor:palette[idx%palette.length].replace('0.9','0.2'),tension:.4,fill:true,pointRadius:5,borderWidth:3});
-            });
-        }else{
-            const totales=Array(12).fill(0);
-            CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){CONFIG.equipos.forEach(eq=>{if(d[cat][eq]){for(let i=0;i<12;i++){totales[i]+=d[cat][eq][i]||0;}}});}});
-            lineData=[{label:'Total General',data:totales,borderColor:'rgba(54,162,235,0.9)',backgroundColor:'rgba(54,162,235,0.2)',tension:.4,fill:true,pointRadius:5,borderWidth:3}];
-        }
-        charts.line=new Chart(canvasLine,{type:'line',data:{labels:CONFIG.meses,datasets:lineData},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:' Evolución Mensual',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:11,weight:'bold'}}}}},plugins:[ChartDataLabels]});
-        let barData=[];
-        if(categoriasSeleccionadas.size>0){barData=CONFIG.equipos.map(eq=>{let total=0;categoriasSeleccionadas.forEach(cat=>{if(d[cat]&&d[cat][eq]){if(mesFiltrado!==null){total+=d[cat][eq][mesFiltrado]||0;}else{total+=d[cat][eq].reduce((a,b)=>a+b,0);}}});return total;});}
-        else if(mesFiltrado!==null){barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq][mesFiltrado]||0;});return total;});}
-        else{barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq].reduce((a,b)=>a+b,0);});return total;});}
-        const palette2=['rgba(54,162,235,0.8)','rgba(75,192,192,0.8)','rgba(255,99,132,0.8)','rgba(153,102,255,0.8)','rgba(255,159,64,0.8)'];
-        const barColors=CONFIG.equipos.map((_,i)=>palette2[i%palette2.length]);
-        charts.bar=new Chart(canvasBar,{type:'bar',data:{labels:CONFIG.equipos,datasets:[{label:'Consumo',data:barData,backgroundColor:barColors,borderWidth:2,borderRadius:8,borderColor:isDark?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.8)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:'📊 Consumo por Equipo',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'bold'}}}}},plugins:[ChartDataLabels]});
-        let doughnutLabels=[],doughnutData=[];
-        if(categoriasSeleccionadas.size>0){const cats=[...categoriasSeleccionadas];cats.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}
-        else{CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}
-        if(doughnutData.length===0){doughnutLabels=['Sin datos'];doughnutData=[1];}
-        charts.doughnut=new Chart(canvasDoughnut,{type:'doughnut',data:{labels:doughnutLabels,datasets:[{data:doughnutData,backgroundColor:['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)','rgba(46,204,113,0.9)','rgba(155,89,182,0.9)','rgba(52,152,219,0.9)','rgba(230,126,34,0.9)','rgba(231,76,60,0.9)','rgba(26,188,156,0.9)','rgba(241,196,15,0.9)','rgba(149,165,166,0.9)','rgba(46,204,113,0.9)','rgba(52,73,94,0.9)'],borderWidth:3,borderColor:isDark?'#0f1a2e':'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,color:textColor,font:{size:11,weight:'bold'}}},title:{display:true,text:'🎯 Distribución',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:'#fff',font:{size:10,weight:'bold'},textStrokeColor:'rgba(0,0,0,0.5)',textStrokeWidth:2,formatter:(v,ctx)=>{const total=ctx.dataset.data.reduce((a,b)=>a+b,0);return total>0&&v>0&&total>1?Math.round((v/total)*100)+'%':'';}}},cutout:'65%'},plugins:[ChartDataLabels]});
-    }catch(e){console.error('Error en gráficos:',e);}
-}
+function toggleCard(categoria,event){event.preventDefault();event.stopPropagation();const card=event.currentTarget;const isCtrl=event.ctrlKey||event.metaKey;const yaSeleccionada=categoriasSeleccionadas.has(categoria);if(isCtrl){if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}}else{if(yaSeleccionada&&categoriasSeleccionadas.size===1){categoriasSeleccionadas.clear();card.classList.remove('selected');}else if(yaSeleccionada){categoriasSeleccionadas.delete(categoria);card.classList.remove('selected');}else{categoriasSeleccionadas.add(categoria);card.classList.add('selected');}}actualizarInfoSeleccion();actualizarGraficos();calcularEconomico();}
+function actualizarInfoSeleccion(){const info=document.getElementById('selectionInfo');if(!info)return;if(categoriasSeleccionadas.size===0){info.textContent=' Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar';}else if(categoriasSeleccionadas.size===1){info.textContent="📌 Seleccionado: "+getLabel([...categoriasSeleccionadas][0])+" - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}else{const nombres=[...categoriasSeleccionadas].map(c=>getLabel(c)).join(', ');info.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}}
+function actualizarGraficos(){try{const d=obtenerDatosActual();if(typeof Chart==='undefined')return;const isDark=document.body.classList.contains('dark-mode');const textColor=isDark?'#b0d4e8':'#2c3e50';const gridColor=isDark?'rgba(255,255,255,0.1)':'rgba(0,0,0,0.06)';const canvasLine=document.getElementById('chartLine');const canvasBar=document.getElementById('chartBar');const canvasDoughnut=document.getElementById('chartDoughnut');if(!canvasLine||!canvasBar||!canvasDoughnut)return;if(charts.line){charts.line.destroy();charts.line=null;}if(charts.bar){charts.bar.destroy();charts.bar=null;}if(charts.doughnut){charts.doughnut.destroy();charts.doughnut=null;}let lineData=[];if(categoriasSeleccionadas.size>0){const cats=[...categoriasSeleccionadas];const palette=['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)'];cats.forEach((cat,idx)=>{if(!d[cat])return;const datos=Array(12).fill(0);CONFIG.equipos.forEach(eq=>{if(d[cat]&&d[cat][eq]){for(let i=0;i<12;i++){datos[i]+=d[cat][eq][i]||0;}}});lineData.push({label:getLabel(cat),data:datos,borderColor:palette[idx%palette.length],backgroundColor:palette[idx%palette.length].replace('0.9','0.2'),tension:.4,fill:true,pointRadius:5,borderWidth:3});});}else{const totales=Array(12).fill(0);CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){CONFIG.equipos.forEach(eq=>{if(d[cat][eq]){for(let i=0;i<12;i++){totales[i]+=d[cat][eq][i]||0;}}});}});lineData=[{label:'Total General',data:totales,borderColor:'rgba(54,162,235,0.9)',backgroundColor:'rgba(54,162,235,0.2)',tension:.4,fill:true,pointRadius:5,borderWidth:3}];}charts.line=new Chart(canvasLine,{type:'line',data:{labels:CONFIG.meses,datasets:lineData},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:'📈 Evolución Mensual',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:11,weight:'bold'}}}}},plugins:[ChartDataLabels]});let barData=[];if(categoriasSeleccionadas.size>0){barData=CONFIG.equipos.map(eq=>{let total=0;categoriasSeleccionadas.forEach(cat=>{if(d[cat]&&d[cat][eq]){if(mesFiltrado!==null){total+=d[cat][eq][mesFiltrado]||0;}else{total+=d[cat][eq].reduce((a,b)=>a+b,0);}}});return total;});}else if(mesFiltrado!==null){barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq][mesFiltrado]||0;});return total;});}else{barData=CONFIG.equipos.map(eq=>{let total=0;CATEGORIAS_IDS.forEach(cat=>{if(d[cat]&&d[cat][eq])total+=d[cat][eq].reduce((a,b)=>a+b,0);});return total;});}const palette2=['rgba(54,162,235,0.8)','rgba(75,192,192,0.8)','rgba(255,99,132,0.8)','rgba(153,102,255,0.8)','rgba(255,159,64,0.8)'];const barColors=CONFIG.equipos.map((_,i)=>palette2[i%palette2.length]);charts.bar=new Chart(canvasBar,{type:'bar',data:{labels:CONFIG.equipos,datasets:[{label:'Consumo',data:barData,backgroundColor:barColors,borderWidth:2,borderRadius:8,borderColor:isDark?'rgba(255,255,255,0.3)':'rgba(255,255,255,0.8)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:textColor,font:{size:12,weight:'bold'}}},title:{display:true,text:'📊 Consumo por Equipo',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}},scales:{y:{beginAtZero:true,grid:{color:gridColor},ticks:{color:textColor,font:{size:11,weight:'bold'}}},x:{grid:{display:false},ticks:{color:textColor,font:{size:10,weight:'bold'}}}}},plugins:[ChartDataLabels]});let doughnutLabels=[],doughnutData=[];if(categoriasSeleccionadas.size>0){const cats=[...categoriasSeleccionadas];cats.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}else{CATEGORIAS_IDS.forEach(cat=>{if(d[cat]){const total=Object.values(d[cat]).flat().reduce((a,b)=>a+b,0);if(total>0){doughnutLabels.push(getLabel(cat));doughnutData.push(total);}}});}if(doughnutData.length===0){doughnutLabels=['Sin datos'];doughnutData=[1];}charts.doughnut=new Chart(canvasDoughnut,{type:'doughnut',data:{labels:doughnutLabels,datasets:[{data:doughnutData,backgroundColor:['rgba(54,162,235,0.9)','rgba(75,192,192,0.9)','rgba(255,99,132,0.9)','rgba(153,102,255,0.9)','rgba(255,159,64,0.9)','rgba(46,204,113,0.9)','rgba(155,89,182,0.9)','rgba(52,152,219,0.9)','rgba(230,126,34,0.9)','rgba(231,76,60,0.9)','rgba(26,188,156,0.9)','rgba(241,196,15,0.9)','rgba(149,165,166,0.9)','rgba(46,204,113,0.9)','rgba(52,73,94,0.9)'],borderWidth:3,borderColor:isDark?'#0f1a2e':'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{boxWidth:12,color:textColor,font:{size:11,weight:'bold'}}},title:{display:true,text:'🎯 Distribución',color:textColor,font:{size:14,weight:'bold'}},datalabels:{display:true,color:'#fff',font:{size:10,weight:'bold'},textStrokeColor:'rgba(0,0,0,0.5)',textStrokeWidth:2,formatter:(v,ctx)=>{const total=ctx.dataset.data.reduce((a,b)=>a+b,0);return total>0&&v>0&&total>1?Math.round((v/total)*100)+'%':'';}}},cutout:'65%'},plugins:[ChartDataLabels]});}catch(e){console.error('Error en gráficos:',e);}}
 function cambiarMes(idx){mesFiltrado=idx;document.querySelectorAll('.mes-btn').forEach((b,i)=>{b.classList.toggle('active',i===idx);});document.querySelector('.btn-ver-todo').classList.remove('active');actualizarTarjetas();actualizarGraficos();calcularEconomico();actualizarInfoSeleccion();mostrarToast(" "+CONFIG.meses[idx]);}
 function limpiarFiltroMes(){mesFiltrado=null;document.querySelectorAll('.mes-btn').forEach(b=>b.classList.remove('active'));document.querySelector('.btn-ver-todo').classList.add('active');actualizarTarjetas();actualizarGraficos();calcularEconomico();actualizarInfoSeleccion();mostrarToast('📅 Año completo');}
-function cambiarAño(nuevoAnio){
-    nuevoAnio = parseInt(nuevoAnio);
-    if(nuevoAnio === añoActual) return;
-    console.log('📅 Cambiando de año:', añoActual, '→', nuevoAnio);
-    localStorage.setItem('minerar_anio_seleccionado', nuevoAnio);
-    añoActual = nuevoAnio;
-    datosPorAnio = {};
-    mostrarToast('🔄 Cargando año ' + nuevoAnio + '...');
-    try{
-        const saved = localStorage.getItem(CONFIG.storageKey);
-        if(saved){
-            const parsed = JSON.parse(saved);
-            if(parsed.datosPorAnio && parsed.datosPorAnio[añoActual]){
-                datosPorAnio[añoActual] = parsed.datosPorAnio[añoActual];
-                console.log('✅ Datos cargados para', añoActual);
-            }
-            if(parsed.preciosLocales){preciosLocales = parsed.preciosLocales;}
-        }
-    }catch(e){console.error(' Error localStorage:', e);}
-    if(!datosPorAnio[añoActual]){
-        console.log('📝 Creando datos vacíos para', añoActual);
-        datosPorAnio[añoActual] = crearDatosVacios();
-    }
-    datosPorAnio[añoActual] = asegurarTodasLasCategorias(datosPorAnio[añoActual]);
-    actualizarTodo();
-    restaurarPreciosLocales();
-    if(window.db){cargarDesdeFirebase();}
-    mostrarToast('✅ Año ' + nuevoAnio + ' cargado');
-}
+function cambiarAño(nuevoAnio){nuevoAnio=parseInt(nuevoAnio);if(nuevoAnio===añoActual)return;console.log(' Cambiando de año:',añoActual,'→',nuevoAnio);localStorage.setItem('minerar_anio_seleccionado',nuevoAnio);añoActual=nuevoAnio;datosPorAnio={};mostrarToast('🔄 Cargando año '+nuevoAnio+'...');try{const saved=localStorage.getItem(CONFIG.storageKey);if(saved){const parsed=JSON.parse(saved);if(parsed.datosPorAnio&&parsed.datosPorAnio[añoActual]){datosPorAnio[añoActual]=parsed.datosPorAnio[añoActual];console.log('✅ Datos cargados para',añoActual);}if(parsed.preciosLocales){preciosLocales=parsed.preciosLocales;}}}catch(e){console.error('❌ Error localStorage:',e);}if(!datosPorAnio[añoActual]){console.log(' Creando datos vacíos para',añoActual);datosPorAnio[añoActual]=crearDatosVacios();}datosPorAnio[añoActual]=asegurarTodasLasCategorias(datosPorAnio[añoActual]);actualizarTodo();restaurarPreciosLocales();if(window.db){cargarDesdeFirebase();}mostrarToast('✅ Año '+nuevoAnio+' cargado');}
 function toggleAccordion(id){const content=document.getElementById(id);if(content)content.classList.toggle('open');}
-function mostrarToast(msg,error){
-    error=error||false;
-    const t=document.getElementById("toast");
-    if(!t)return;
-    t.textContent=msg;
-    t.className='toast show'+(error?' error':'');
-    setTimeout(()=>t.className='toast',3000);
-}
+function mostrarToast(msg,error){error=error||false;const t=document.getElementById("toast");if(!t)return;t.textContent=msg;t.className='toast show'+(error?' error':'');setTimeout(()=>t.className='toast',3000);}
 function abrirModal(){document.getElementById('securityModal').classList.add('show');document.getElementById('passwordInput').value='';}
 function cerrarModal(){document.getElementById('securityModal').classList.remove('show');}
 function verificarPassword(){if(document.getElementById('passwordInput').value===CONFIG.passwordAdmin){cerrarModal();modoEdicionActivo=true;document.body.classList.remove('read-only-mode');document.body.classList.add('editing-mode');document.getElementById('lock-indicator').innerHTML='🔓 Modo edición';document.getElementById('lock-indicator').style.color='#27ae60';actualizarTodo();}}
-function guardarYBloquear(){guardarTodosLosDatos();modoEdicionActivo=false;document.body.classList.remove('editing-mode');document.body.classList.add('read-only-mode');document.getElementById('lock-indicator').innerHTML='🔒 Solo lectura';document.getElementById('lock-indicator').style.color='#e74c3c';}
-function guardarTodosLosDatos(){
-    preciosLocales = {
-        elasticosO: document.getElementById('precioElasticoO').value || 0,
-        elasticosF: document.getElementById('precioElasticoF').value || 0,
-        mazasN: document.getElementById('precioMazaN').value || 0,
-        mazasR: document.getElementById('precioMazaR').value || 0,
-        bulon: document.getElementById('precioBulon').value || 0,
-        tuerca: document.getElementById('precioTuerca').value || 0,
-        neumaticoNuevo: document.getElementById('precioNeumaticoNuevo').value || 0,
-        patinFrenoNuevo: document.getElementById('precioPatinFrenoNuevo').value || 0,
-        patinFrenoReparado: document.getElementById('precioPatinFrenoReparado').value || 0,
-        levaFreno: document.getElementById('precioLevaFreno').value || 0,
-        pulmonFrenoNuevo: document.getElementById('precioPulmonFrenoNuevo').value || 0,
-        pulmonFrenoReparado: document.getElementById('precioPulmonFrenoReparado').value || 0,
-        llantas: document.getElementById('precioLlanta').value || 0,
-        amortiguador: document.getElementById('precioAmortiguador').value || 0,
-        bogie: document.getElementById('precioBogie').value || 0
-    };
-    const horas = {};
-    ['horasPropio','valorHoraPropio','horasCoriaMecanico','valorHoraCoriaMecanico','horasCoriaSoldador','valorHoraCoriaSoldador','horasCarrizo','valorHoraCarrizo','horasPatino','valorHoraPatino'].forEach(id=>{
-        const el = document.getElementById(id);
-        if(el) horas[id] = el.value;
-    });
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify({
-        añoActual: añoActual,
-        datosPorAnio: datosPorAnio,
-        preciosLocales: preciosLocales,
-        horas: horas
-    }));
-    localStorage.setItem('minerar_anio_seleccionado', añoActual);
-    console.log('✅ Datos guardados en localStorage (con precios locales)');
-    if(window.db){guardarEnFirebase(horas);}
-    mostrarToast(" Guardado correctamente");
-}
-async function guardarEnFirebase(horas){
-    if(!window.db) return;
-    try {
-        await window.db.collection("repuestos_minerar").doc("datos_" + añoActual).set({
-            añoActual: añoActual,
-            datosPorAnio: datosPorAnio,
-            horas: horas,
-            timestamp: new Date().toISOString()
-        }, { merge: true });
-        console.log('✅ Guardado en Firebase (SOLO cantidades, NO precios)');
-    } catch(e) { console.error('⚠️ Error Firebase:', e); }
-}
-function exportarCSV(){
-    const d = obtenerDatosActual();
-    const precios = {
-        elasticosO: parseFloat(document.getElementById('precioElasticoO').value) || 0,
-        elasticosF: parseFloat(document.getElementById('precioElasticoF').value) || 0,
-        mazasN: parseFloat(document.getElementById('precioMazaN').value) || 0,
-        mazasR: parseFloat(document.getElementById('precioMazaR').value) || 0,
-        bulon: parseFloat(document.getElementById('precioBulon').value) || 0,
-        tuerca: parseFloat(document.getElementById('precioTuerca').value) || 0,
-        neumaticoNuevo: parseFloat(document.getElementById('precioNeumaticoNuevo').value) || 0,
-        patinFrenoNuevo: parseFloat(document.getElementById('precioPatinFrenoNuevo').value) || 0,
-        patinFrenoReparado: parseFloat(document.getElementById('precioPatinFrenoReparado').value) || 0,
-        levaFreno: parseFloat(document.getElementById('precioLevaFreno').value) || 0,
-        pulmonFrenoNuevo: parseFloat(document.getElementById('precioPulmonFrenoNuevo').value) || 0,
-        pulmonFrenoReparado: parseFloat(document.getElementById('precioPulmonFrenoReparado').value) || 0,
-        llantas: parseFloat(document.getElementById('precioLlanta').value) || 0
-    };
-    const horas = {
-        personal: {hs: document.getElementById('horasPropio').value || 0, valor: document.getElementById('valorHoraPropio').value || 0},
-        coriaMec: {hs: document.getElementById('horasCoriaMecanico').value || 0, valor: document.getElementById('valorHoraCoriaMecanico').value || 0},
-        coriaSold: {hs: document.getElementById('horasCoriaSoldador').value || 0, valor: document.getElementById('valorHoraCoriaSoldador').value || 0},
-        carrizo: {hs: document.getElementById('horasCarrizo').value || 0, valor: document.getElementById('valorHoraCarrizo').value || 0},
-        patino: {hs: document.getElementById('horasPatino').value || 0, valor: document.getElementById('valorHoraPatino').value || 0}
-    };
-    const formatMoney = (val) => { if (!val || val === 0) return '0'; return '$ ' + new Intl.NumberFormat('es-AR').format(val); };
-    const totalCat = (catId) => { if (!d[catId]) return 0; return Object.values(d[catId]).flat().reduce((a,b) => a+b, 0); };
-    const generarTabla = (catId, nombre) => {
-        let tabla = `═══════════════════════════════════════════════════════\n${nombre}\n═══════════════════════════════════════════════════════\nEquipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n`;
-        CONFIG.equipos.forEach(eq => {
-            const data = d[catId][eq] || Array(12).fill(0);
-            const total = data.reduce((a,b) => a+b, 0);
-            tabla += `${eq};${data.join(';')};${total}\n`;
-        });
-        return tabla;
-    };
-    let csv = `MINERAR - INFORME DE REPUESTOS CRÍTICOS ${añoActual}\nGenerado: ${new Date().toLocaleString('es-AR')}\n═══════════════════════════════════════════════════════\n\n`;
-    csv += generarTabla('elasticosO', '📦 PAQUETES ELÁSTICOS ORIGINALES') + '\n';
-    csv += generarTabla('elasticosF', '📦 PAQUETES ELÁSTICOS FABRICADOS') + '\n';
-    csv += generarTabla('mazasN', '⚙️ MAZAS NUEVAS') + '\n';
-    csv += generarTabla('mazasR', '⚙️ MAZAS REPARADAS') + '\n';
-    csv += generarTabla('bulonTuerca', ' BULÓN Y TUERCA SCANIA') + '\n';
-    csv += generarTabla('neumaticoNuevo', '🛞 NEUMÁTICO NUEVO') + '\n';
-    csv += generarTabla('neumaticoUsado', '🛞 NEUMÁTICO USADO (SOLO CONSUMO)') + '\n';
-    csv += generarTabla('patinFrenoNuevo', ' PATÍN DE FRENO NUEVO') + '\n';
-    csv += generarTabla('patinFrenoReparado', '🛞 PATÍN DE FRENO REPARADO') + '\n';
-    csv += generarTabla('levaFreno', '️ LEVA DE FRENO') + '\n';
-    csv += generarTabla('pulmonFrenoNuevo', '💨 PULMÓN DE FRENO NUEVO') + '\n';
-    csv += generarTabla('pulmonFrenoReparado', ' PULMÓN DE FRENO REPARADO') + '\n';
-    csv += generarTabla('llantas', '⭕ LLANTAS ROTAS') + '\n';
-    csv += `═══════════════════════════════════════════════════════\n💰 RESUMEN ECONÓMICO\n═══════════════════════════════════════════════════════\nConcepto;Cantidad;Valor Unitario;Total\n`;
-    const conceptos = [
-        {nombre: 'Elásticos Originales', cat: 'elasticosO', precio: precios.elasticosO},
-        {nombre: 'Elásticos Fabricados', cat: 'elasticosF', precio: precios.elasticosF},
-        {nombre: 'Mazas Nuevas', cat: 'mazasN', precio: precios.mazasN},
-        {nombre: 'Mazas Reparadas', cat: 'mazasR', precio: precios.mazasR},
-        {nombre: 'Bulón Scania', cat: 'bulonTuerca', precio: precios.bulon},
-        {nombre: 'Tuerca Scania', cat: 'bulonTuerca', precio: precios.tuerca},
-        {nombre: 'Neumático Nuevo', cat: 'neumaticoNuevo', precio: precios.neumaticoNuevo},
-        {nombre: 'Neumático Usado', cat: 'neumaticoUsado', precio: 0, sinValor: true},
-        {nombre: 'Patín Freno Nuevo', cat: 'patinFrenoNuevo', precio: precios.patinFrenoNuevo},
-        {nombre: 'Patín Freno Reparado', cat: 'patinFrenoReparado', precio: precios.patinFrenoReparado},
-        {nombre: 'Leva de Freno', cat: 'levaFreno', precio: precios.levaFreno},
-        {nombre: 'Pulmón Freno Nuevo', cat: 'pulmonFrenoNuevo', precio: precios.pulmonFrenoNuevo},
-        {nombre: 'Pulmón Freno Reparado', cat: 'pulmonFrenoReparado', precio: precios.pulmonFrenoReparado},
-        {nombre: 'Llantas Rotas', cat: 'llantas', precio: precios.llantas}
-    ];
-    let totalGeneral = 0;
-    conceptos.forEach(c => {
-        const cant = totalCat(c.cat);
-        const total = cant * c.precio;
-        totalGeneral += total;
-        if (c.sinValor) { csv += `${c.nombre};${cant};SIN VALOR;SIN VALOR\n`; }
-        else { csv += `${c.nombre};${cant};${c.precio};${formatMoney(total)}\n`; }
-    });
-    csv += `═══════════════════════════════════════════════════════\n👷 HORAS HOMBRE\n═══════════════════════════════════════════════════════\nConcepto;Horas;Valor/Hora;Total\n`;
-    const calcHoras = (h) => (parseFloat(h.hs) || 0) * (parseFloat(h.valor) || 0);
-    csv += `Personal Propio;${horas.personal.hs};${horas.personal.valor};${calcHoras(horas.personal)}\n`;
-    csv += `CORIA - Mecánico;${horas.coriaMec.hs};${horas.coriaMec.valor};${calcHoras(horas.coriaMec)}\n`;
-    csv += `CORIA - Soldador;${horas.coriaSold.hs};${horas.coriaSold.valor};${calcHoras(horas.coriaSold)}\n`;
-    csv += `CARRIZO - Mecánica;${horas.carrizo.hs};${horas.carrizo.valor};${calcHoras(horas.carrizo)}\n`;
-    csv += `PATIÑO - Soldador;${horas.patino.hs};${horas.patino.valor};${calcHoras(horas.patino)}\n`;
-    const totalMO = calcHoras(horas.personal) + calcHoras(horas.coriaMec) + calcHoras(horas.coriaSold) + calcHoras(horas.carrizo) + calcHoras(horas.patino);
-    const totalFinal = totalGeneral + totalMO;
-    csv += `TOTAL MANO DE OBRA;;;${totalMO}\nTOTAL GENERAL;;;${formatMoney(totalFinal)}\n`;
-    const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `Minerar_Completo_${añoActual}.csv`;
-    link.click();
-    mostrarToast("📊 CSV exportado con formato completo");
-}
-function importarCSV(event){
-    const file = event.target.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = function(e){
-        try{
-            const contenido = e.target.result;
-            const lineas = contenido.split('\n');
-            const datos = crearDatosVacios();
-            let seccionActual = null;
-            let enSeccionEconomica = false;
-            const mapeoSecciones = {
-                'PAQUETES ELÁSTICOS ORIGINALES': 'elasticosO',
-                'PAQUETES ELÁSTICOS FABRICADOS': 'elasticosF',
-                'MAZAS NUEVAS': 'mazasN',
-                'MAZAS REPARADAS': 'mazasR',
-                'BULÓN Y TUERCA SCANIA': 'bulonTuerca',
-                'NEUMÁTICO NUEVO': 'neumaticoNuevo',
-                'NEUMÁTICO USADO': 'neumaticoUsado',
-                'PATÍN DE FRENO NUEVO': 'patinFrenoNuevo',
-                'PATÍN DE FRENO REPARADO': 'patinFrenoReparado',
-                'LEVA DE FRENO': 'levaFreno',
-                'PULMÓN DE FRENO NUEVO': 'pulmonFrenoNuevo',
-                'PULMÓN DE FRENO REPARADO': 'pulmonFrenoReparado',
-                'LLANTAS ROTAS': 'llantas'
-            };
-            const mapeoEconomico = {
-                'Elásticos Originales': 'precioElasticoO',
-                'Elásticos Fabricados': 'precioElasticoF',
-                'Mazas Nuevas': 'precioMazaN',
-                'Mazas Reparadas': 'precioMazaR',
-                'Bulón Scania': 'precioBulon',
-                'Tuerca Scania': 'precioTuerca',
-                'Neumático Nuevo': 'precioNeumaticoNuevo',
-                'Patín Freno Nuevo': 'precioPatinFrenoNuevo',
-                'Patín Freno Reparado': 'precioPatinFrenoReparado',
-                'Leva de Freno': 'precioLevaFreno',
-                'Pulmón Freno Nuevo': 'precioPulmonFrenoNuevo',
-                'Pulmón Freno Reparado': 'precioPulmonFrenoReparado',
-                'Llantas Rotas': 'precioLlanta'
-            };
-            for(let i=0; i<lineas.length; i++){
-                const linea = lineas[i].trim();
-                if(linea.includes('RESUMEN ECONÓMICO')){enSeccionEconomica = true;continue;}
-                if(!enSeccionEconomica){
-                    for(const [nombre, cat] of Object.entries(mapeoSecciones)){
-                        if(linea.includes(nombre)){seccionActual = cat;break;}
-                    }
-                    if(seccionActual && linea.startsWith('M4')){
-                        const partes = linea.split(';');
-                        if(partes.length >= 14){
-                            const equipo = partes[0];
-                            if(CONFIG.equipos.includes(equipo)){
-                                const valores = [];
-                                for(let j=1; j<=12; j++){valores.push(parseInt(partes[j]) || 0);}
-                                datos[seccionActual][equipo] = valores;
-                            }
-                        }
-                    }
-                } else {
-                    if(linea.includes('Elásticos') || linea.includes('Mazas') || linea.includes('Bulón') || linea.includes('Tuerca') || linea.includes('Neumático') || linea.includes('Patín') || linea.includes('Leva') || linea.includes('Pulmón') || linea.includes('Llantas')){
-                        const partes = linea.split(';');
-                        if(partes.length >= 3){
-                            const concepto = partes[0].trim();
-                            const valorUnitario = partes[2].trim();
-                            for(const [key, inputId] of Object.entries(mapeoEconomico)){
-                                if(concepto.includes(key)){
-                                    let valorLimpio = valorUnitario.replace(/\$/g, '').replace(/\./g, '').replace(/\s/g, '').replace(/\u00A0/g, '').trim();
-                                    if(valorLimpio && valorLimpio !== 'SINVALOR' && !isNaN(valorLimpio)){
-                                        const input = document.getElementById(inputId);
-                                        if(input){
-                                            input.value = valorLimpio;
-                                            const clave = Object.keys(mapeoEconomico).find(k => mapeoEconomico[k] === inputId);
-                                            if(clave) preciosLocales[clave] = valorLimpio;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            datosPorAnio[añoActual] = asegurarTodasLasCategorias(datos);
-            actualizarTodo();
-            calcularEconomico();
-            const horas = {};
-            ['horasPropio','valorHoraPropio','horasCoriaMecanico','valorHoraCoriaMecanico','horasCoriaSoldador','valorHoraCoriaSoldador','horasCarrizo','valorHoraCarrizo','horasPatino','valorHoraPatino'].forEach(id=>{
-                const el = document.getElementById(id);
-                if(el) horas[id] = el.value;
-            });
-            localStorage.setItem(CONFIG.storageKey, JSON.stringify({
-                añoActual: añoActual,
-                datosPorAnio: datosPorAnio,
-                preciosLocales: preciosLocales,
-                horas: horas
-            }));
-            localStorage.setItem('minerar_anio_seleccionado', añoActual);
-            console.log('✅ Datos y precios guardados automáticamente');
-            if(window.db){guardarEnFirebase(horas);}
-            mostrarToast('✅ CSV importado y guardado automáticamente');
-        }catch(err){
-            console.error('Error importando CSV:', err);
-            mostrarToast('❌ Error al importar CSV', true);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = '';
-}
-function resetearDatosCompletos(){
-    if(!confirm("️ ¿Resetear TODO? Se perderán todos los datos."))return;
-    const pass=prompt("Contraseña de administrador:");
-    if(pass==="NOTOCAR"){
-        localStorage.removeItem(CONFIG.storageKey);
-        localStorage.removeItem('minerar_anio_seleccionado');
-        if(window.db){
-            window.db.collection("repuestos_minerar").doc("datos_" + añoActual).delete()
-                .then(()=>{console.log('Firebase eliminado');location.reload();})
-                .catch(e=>{console.error(e);location.reload();});
-        } else { location.reload(); }
-    } else if(pass){ mostrarToast('❌ Contraseña incorrecta', true); }
-}
-if (!window._initEjecutado) {
-    window._initEjecutado = true;
-    document.addEventListener('DOMContentLoaded', init);
-}
+function guardarYBloquear(){guardarTodosLosDatos();modoEdicionActivo=false;document.body.classList.remove('editing-mode');document.body.classList.add('read-only-mode');document.getElementById('lock-indicator').innerHTML=' Solo lectura';document.getElementById('lock-indicator').style.color='#e74c3c';}
+function guardarTodosLosDatos(){preciosLocales={elasticosO:document.getElementById('precioElasticoO').value||0,elasticosF:document.getElementById('precioElasticoF').value||0,mazasN:document.getElementById('precioMazaN').value||0,mazasR:document.getElementById('precioMazaR').value||0,bulon:document.getElementById('precioBulon').value||0,tuerca:document.getElementById('precioTuerca').value||0,neumaticoNuevo:document.getElementById('precioNeumaticoNuevo').value||0,patinFrenoNuevo:document.getElementById('precioPatinFrenoNuevo').value||0,patinFrenoReparado:document.getElementById('precioPatinFrenoReparado').value||0,levaFreno:document.getElementById('precioLevaFreno').value||0,pulmonFrenoNuevo:document.getElementById('precioPulmonFrenoNuevo').value||0,pulmonFrenoReparado:document.getElementById('precioPulmonFrenoReparado').value||0,llantas:document.getElementById('precioLlanta').value||0,amortiguador:document.getElementById('precioAmortiguador').value||0,bogie:document.getElementById('precioBogie').value||0};const horas={};['horasPropio','valorHoraPropio','horasCoriaMecanico','valorHoraCoriaMecanico','horasCoriaSoldador','valorHoraCoriaSoldador','horasCarrizo','valorHoraCarrizo','horasPatino','valorHoraPatino'].forEach(id=>{const el=document.getElementById(id);if(el)horas[id]=el.value;});localStorage.setItem(CONFIG.storageKey,JSON.stringify({añoActual:añoActual,datosPorAnio:datosPorAnio,preciosLocales:preciosLocales,horas:horas}));localStorage.setItem('minerar_anio_seleccionado',añoActual);console.log('✅ Datos guardados en localStorage (con precios locales)');if(window.db){guardarEnFirebase(horas);}mostrarToast("💾 Guardado correctamente");}
+async function guardarEnFirebase(horas){if(!window.db)return;try{await window.db.collection("repuestos_minerar").doc("datos_"+añoActual).set({añoActual:añoActual,datosPorAnio:datosPorAnio,horas:horas,timestamp:new Date().toISOString()},{merge:true});console.log('✅ Guardado en Firebase (SOLO cantidades, NO precios)');}catch(e){console.error('⚠️ Error Firebase:',e);}}
+function exportarCSV(){const d=obtenerDatosActual();const precios={elasticosO:parseFloat(document.getElementById('precioElasticoO').value)||0,elasticosF:parseFloat(document.getElementById('precioElasticoF').value)||0,mazasN:parseFloat(document.getElementById('precioMazaN').value)||0,mazasR:parseFloat(document.getElementById('precioMazaR').value)||0,bulon:parseFloat(document.getElementById('precioBulon').value)||0,tuerca:parseFloat(document.getElementById('precioTuerca').value)||0,neumaticoNuevo:parseFloat(document.getElementById('precioNeumaticoNuevo').value)||0,patinFrenoNuevo:parseFloat(document.getElementById('precioPatinFrenoNuevo').value)||0,patinFrenoReparado:parseFloat(document.getElementById('precioPatinFrenoReparado').value)||0,levaFreno:parseFloat(document.getElementById('precioLevaFreno').value)||0,pulmonFrenoNuevo:parseFloat(document.getElementById('precioPulmonFrenoNuevo').value)||0,pulmonFrenoReparado:parseFloat(document.getElementById('precioPulmonFrenoReparado').value)||0,llantas:parseFloat(document.getElementById('precioLlanta').value)||0};const horas={personal:{hs:document.getElementById('horasPropio').value||0,valor:document.getElementById('valorHoraPropio').value||0},coriaMec:{hs:document.getElementById('horasCoriaMecanico').value||0,valor:document.getElementById('valorHoraCoriaMecanico').value||0},coriaSold:{hs:document.getElementById('horasCoriaSoldador').value||0,valor:document.getElementById('valorHoraCoriaSoldador').value||0},carrizo:{hs:document.getElementById('horasCarrizo').value||0,valor:document.getElementById('valorHoraCarrizo').value||0},patino:{hs:document.getElementById('horasPatino').value||0,valor:document.getElementById('valorHoraPatino').value||0}};const formatMoney=(val)=>{if(!val||val===0)return'0';return'$ '+new Intl.NumberFormat('es-AR').format(val);};const totalCat=(catId)=>{if(!d[catId])return 0;return Object.values(d[catId]).flat().reduce((a,b)=>a+b,0);};const generarTabla=(catId,nombre)=>{let tabla=`═══════════════════════════════════════════════════════\n${nombre}\n═══════════════════════════════════════════════════════\nEquipo;Ene;Feb;Mar;Abr;May;Jun;Jul;Ago;Sep;Oct;Nov;Dic;TOTAL\n`;CONFIG.equipos.forEach(eq=>{const data=d[catId][eq]||Array(12).fill(0);const total=data.reduce((a,b)=>a+b,0);tabla+=`${eq};${data.join(';')};${total}\n`;});return tabla;};let csv=`MINERAR - INFORME DE REPUESTOS CRÍTICOS ${añoActual}\nGenerado: ${new Date().toLocaleString('es-AR')}\n═══════════════════════════════════════════════════════\n\n`;csv+=generarTabla('elasticosO',' PAQUETES ELÁSTICOS ORIGINALES')+'\n';csv+=generarTabla('elasticosF','📦 PAQUETES ELÁSTICOS FABRICADOS')+'\n';csv+=generarTabla('mazasN','⚙️ MAZAS NUEVAS')+'\n';csv+=generarTabla('mazasR','⚙️ MAZAS REPARADAS')+'\n';csv+=generarTabla('bulonTuerca','🔩 BULÓN Y TUERCA SCANIA')+'\n';csv+=generarTabla('neumaticoNuevo',' NEUMÁTICO NUEVO')+'\n';csv+=generarTabla('neumaticoUsado',' NEUMÁTICO USADO (SOLO CONSUMO)')+'\n';csv+=generarTabla('patinFrenoNuevo','🛞 PATÍN DE FRENO NUEVO')+'\n';csv+=generarTabla('patinFrenoReparado',' PATÍN DE FRENO REPARADO')+'\n';csv+=generarTabla('levaFreno','⚙️ LEVA DE FRENO')+'\n';csv+=generarTabla('pulmonFrenoNuevo','💨 PULMÓN DE FRENO NUEVO')+'\n';csv+=generarTabla('pulmonFrenoReparado','💨 PULMÓN DE FRENO REPARADO')+'\n';csv+=generarTabla('llantas',' LLANTAS ROTAS')+'\n';csv+=`═══════════════════════════════════════════════════════\n💰 RESUMEN ECONÓMICO\n═══════════════════════════════════════════════════════\nConcepto;Cantidad;Valor Unitario;Total\n`;const conceptos=[{nombre:'Elásticos Originales',cat:'elasticosO',precio:precios.elasticosO},{nombre:'Elásticos Fabricados',cat:'elasticosF',precio:precios.elasticosF},{nombre:'Mazas Nuevas',cat:'mazasN',precio:precios.mazasN},{nombre:'Mazas Reparadas',cat:'mazasR',precio:precios.mazasR},{nombre:'Bulón Scania',cat:'bulonTuerca',precio:precios.bulon},{nombre:'Tuerca Scania',cat:'bulonTuerca',precio:precios.tuerca},{nombre:'Neumático Nuevo',cat:'neumaticoNuevo',precio:precios.neumaticoNuevo},{nombre:'Neumático Usado',cat:'neumaticoUsado',precio:0,sinValor:true},{nombre:'Patín Freno Nuevo',cat:'patinFrenoNuevo',precio:precios.patinFrenoNuevo},{nombre:'Patín Freno Reparado',cat:'patinFrenoReparado',precio:precios.patinFrenoReparado},{nombre:'Leva de Freno',cat:'levaFreno',precio:precios.levaFreno},{nombre:'Pulmón Freno Nuevo',cat:'pulmonFrenoNuevo',precio:precios.pulmonFrenoNuevo},{nombre:'Pulmón Freno Reparado',cat:'pulmonFrenoReparado',precio:precios.pulmonFrenoReparado},{nombre:'Llantas Rotas',cat:'llantas',precio:precios.llantas}];let totalGeneral=0;conceptos.forEach(c=>{const cant=totalCat(c.cat);const total=cant*c.precio;totalGeneral+=total;if(c.sinValor){csv+=`${c.nombre};${cant};SIN VALOR;SIN VALOR\n`;}else{csv+=`${c.nombre};${cant};${c.precio};${formatMoney(total)}\n`;}});csv+=`═══════════════════════════════════════════════════════\n👷 HORAS HOMBRE\n═══════════════════════════════════════════════════════\nConcepto;Horas;Valor/Hora;Total\n`;const calcHoras=(h)=>(parseFloat(h.hs)||0)*(parseFloat(h.valor)||0);csv+=`Personal Propio;${horas.personal.hs};${horas.personal.valor};${calcHoras(horas.personal)}\n`;csv+=`CORIA - Mecánico;${horas.coriaMec.hs};${horas.coriaMec.valor};${calcHoras(horas.coriaMec)}\n`;csv+=`CORIA - Soldador;${horas.coriaSold.hs};${horas.coriaSold.valor};${calcHoras(horas.coriaSold)}\n`;csv+=`CARRIZO - Mecánica;${horas.carrizo.hs};${horas.carrizo.valor};${calcHoras(horas.carrizo)}\n`;csv+=`PATIÑO - Soldador;${horas.patino.hs};${horas.patino.valor};${calcHoras(horas.patino)}\n`;const totalMO=calcHoras(horas.personal)+calcHoras(horas.coriaMec)+calcHoras(horas.coriaSold)+calcHoras(horas.carrizo)+calcHoras(horas.patino);const totalFinal=totalGeneral+totalMO;csv+=`TOTAL MANO DE OBRA;;;${totalMO}\nTOTAL GENERAL;;;${formatMoney(totalFinal)}\n`;const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download=`Minerar_Completo_${añoActual}.csv`;link.click();mostrarToast("📊 CSV exportado con formato completo");}
+function importarCSV(event){const file=event.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){try{const contenido=e.target.result;const lineas=contenido.split('\n');const datos=crearDatosVacios();let seccionActual=null;let enSeccionEconomica=false;const mapeoSecciones={'PAQUETES ELÁSTICOS ORIGINALES':'elasticosO','PAQUETES ELÁSTICOS FABRICADOS':'elasticosF','MAZAS NUEVAS':'mazasN','MAZAS REPARADAS':'mazasR','BULÓN Y TUERCA SCANIA':'bulonTuerca','NEUMÁTICO NUEVO':'neumaticoNuevo','NEUMÁTICO USADO':'neumaticoUsado','PATÍN DE FRENO NUEVO':'patinFrenoNuevo','PATÍN DE FRENO REPARADO':'patinFrenoReparado','LEVA DE FRENO':'levaFreno','PULMÓN DE FRENO NUEVO':'pulmonFrenoNuevo','PULMÓN DE FRENO REPARADO':'pulmonFrenoReparado','LLANTAS ROTAS':'llantas'};const mapeoEconomico={'Elásticos Originales':'precioElasticoO','Elásticos Fabricados':'precioElasticoF','Mazas Nuevas':'precioMazaN','Mazas Reparadas':'precioMazaR','Bulón Scania':'precioBulon','Tuerca Scania':'precioTuerca','Neumático Nuevo':'precioNeumaticoNuevo','Patín Freno Nuevo':'precioPatinFrenoNuevo','Patín Freno Reparado':'precioPatinFrenoReparado','Leva de Freno':'precioLevaFreno','Pulmón Freno Nuevo':'precioPulmonFrenoNuevo','Pulmón Freno Reparado':'precioPulmonFrenoReparado','Llantas Rotas':'precioLlanta'};for(let i=0;i<lineas.length;i++){const linea=lineas[i].trim();if(linea.includes('RESUMEN ECONÓMICO')){enSeccionEconomica=true;continue;}if(!enSeccionEconomica){for(const[nombre,cat]of Object.entries(mapeoSecciones)){if(linea.includes(nombre)){seccionActual=cat;break;}}if(seccionActual&&linea.startsWith('M4')){const partes=linea.split(';');if(partes.length>=14){const equipo=partes[0];if(CONFIG.equipos.includes(equipo)){const valores=[];for(let j=1;j<=12;j++){valores.push(parseInt(partes[j])||0);}datos[seccionActual][equipo]=valores;}}}}else{if(linea.includes('Elásticos')||linea.includes('Mazas')||linea.includes('Bulón')||linea.includes('Tuerca')||linea.includes('Neumático')||linea.includes('Patín')||linea.includes('Leva')||linea.includes('Pulmón')||linea.includes('Llantas')){const partes=linea.split(';');if(partes.length>=3){const concepto=partes[0].trim();const valorUnitario=partes[2].trim();for(const[key,inputId]of Object.entries(mapeoEconomico)){if(concepto.includes(key)){let valorLimpio=valorUnitario.replace(/\$/g,'').replace(/\./g,'').replace(/\s/g,'').replace(/\u00A0/g,'').trim();if(valorLimpio&&valorLimpio!=='SINVALOR'&&!isNaN(valorLimpio)){const input=document.getElementById(inputId);if(input){input.value=valorLimpio;const clave=Object.keys(mapeoEconomico).find(k=>mapeoEconomico[k]===inputId);if(clave)preciosLocales[clave]=valorLimpio;}}break;}}}}}}datosPorAnio[añoActual]=asegurarTodasLasCategorias(datos);actualizarTodo();calcularEconomico();const horas={};['horasPropio','valorHoraPropio','horasCoriaMecanico','valorHoraCoriaMecanico','horasCoriaSoldador','valorHoraCoriaSoldador','horasCarrizo','valorHoraCarrizo','horasPatino','valorHoraPatino'].forEach(id=>{const el=document.getElementById(id);if(el)horas[id]=el.value;});localStorage.setItem(CONFIG.storageKey,JSON.stringify({añoActual:añoActual,datosPorAnio:datosPorAnio,preciosLocales:preciosLocales,horas:horas}));localStorage.setItem('minerar_anio_seleccionado',añoActual);console.log('✅ Datos y precios guardados automáticamente');if(window.db){guardarEnFirebase(horas);}mostrarToast('✅ CSV importado y guardado automáticamente');}catch(err){console.error('Error importando CSV:',err);mostrarToast('❌ Error al importar CSV',true);}};reader.readAsText(file);event.target.value='';}
+function resetearDatosCompletos(){if(!confirm("⚠️ ¿Resetear TODO? Se perderán todos los datos."))return;const pass=prompt("Contraseña de administrador:");if(pass==="NOTOCAR"){localStorage.removeItem(CONFIG.storageKey);localStorage.removeItem('minerar_anio_seleccionado');if(window.db){window.db.collection("repuestos_minerar").doc("datos_"+añoActual).delete().then(()=>{console.log('Firebase eliminado');location.reload();}).catch(e=>{console.error(e);location.reload();});}else{location.reload();}}else if(pass){mostrarToast(' Contraseña incorrecta',true);}}
+if(!window._initEjecutado){window._initEjecutado=true;document.addEventListener('DOMContentLoaded',init);}
 </script>
 </body>
 </html>
