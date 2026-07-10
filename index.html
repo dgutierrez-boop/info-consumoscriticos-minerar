@@ -59,7 +59,7 @@ function inicializarFirebase() {
             window.db = null;
         }
     } catch (e) {
-        console.warn('⚠️ Error inicializando Firebase:', e);
+        console.warn('️ Error inicializando Firebase:', e);
         window.db = null;
     }
     
@@ -251,7 +251,7 @@ body.editing-mode #save-lock-btn{display:flex}
     </div>
     <div class="controls">
         <button class="btn btn-dark-mode" onclick="toggleDarkMode()">🌙</button>
-        <button class="btn btn-outline" onclick="window.print()">🖨️ Imprimir</button>
+        <button class="btn btn-outline" onclick="window.print()">️ Imprimir</button>
         <button class="btn btn-success" onclick="guardarTodosLosDatos()">💾 Guardar</button>
         <button class="btn btn-warning" onclick="exportarCSV()">📊 Exportar Excel</button>
         <button class="btn btn-outline" onclick="document.getElementById('importFile').click()">📥 Importar</button>
@@ -268,7 +268,7 @@ body.editing-mode #save-lock-btn{display:flex}
                     <thead><tr><th>Concepto</th><th>Cant</th><th>Valor $</th><th>Total $</th></tr></thead>
                     <tbody>
                         <tr><td><strong>🔧 Elást. ORIG</strong></td><td id="cantElasticosO">0</td><td><input type="text" id="precioElasticoO" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoO" readonly></td></tr>
-                        <tr><td><strong>🔧 Elást. FAB</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
+                        <tr><td><strong> Elást. FAB</strong></td><td id="cantElasticosF">0</td><td><input type="text" id="precioElasticoF" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalElasticoF" readonly></td></tr>
                         <tr><td><strong>⚙️ Mazas N</strong></td><td id="cantMazasN">0</td><td><input type="text" id="precioMazaN" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaN" readonly></td></tr>
                         <tr><td><strong>⚙️ Mazas R</strong></td><td id="cantMazasR">0</td><td><input type="text" id="precioMazaR" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalMazaR" readonly></td></tr>
                         <tr><td><strong>🔩 Bulón</strong></td><td id="cantBulon">0</td><td><input type="text" id="precioBulon" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalBulon" readonly></td></tr>
@@ -276,7 +276,7 @@ body.editing-mode #save-lock-btn{display:flex}
                         <tr><td><strong>🛞 Neum. N</strong></td><td id="cantNeumaticoNuevo">0</td><td><input type="text" id="precioNeumaticoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalNeumaticoNuevo" readonly></td></tr>
                         <tr><td><strong>🛞 Patín N</strong></td><td id="cantPatinFrenoNuevo">0</td><td><input type="text" id="precioPatinFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoNuevo" readonly></td></tr>
                         <tr><td><strong>🛞 Patín R</strong></td><td id="cantPatinFrenoReparado">0</td><td><input type="text" id="precioPatinFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPatinFrenoReparado" readonly></td></tr>
-                        <tr><td><strong>⚙️ Leva</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
+                        <tr><td><strong>️ Leva</strong></td><td id="cantLevaFreno">0</td><td><input type="text" id="precioLevaFreno" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLevaFreno" readonly></td></tr>
                         <tr><td><strong>💨 Pulmón N</strong></td><td id="cantPulmonFrenoNuevo">0</td><td><input type="text" id="precioPulmonFrenoNuevo" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoNuevo" readonly></td></tr>
                         <tr><td><strong>💨 Pulmón R</strong></td><td id="cantPulmonFrenoReparado">0</td><td><input type="text" id="precioPulmonFrenoReparado" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalPulmonFrenoReparado" readonly></td></tr>
                         <tr><td><strong>⭕ Llantas</strong></td><td id="cantLlantas">0</td><td><input type="text" id="precioLlanta" placeholder="0" oninput="calcularEconomico()"></td><td><input type="text" id="totalLlanta" readonly></td></tr>
@@ -346,12 +346,12 @@ body.editing-mode #save-lock-btn{display:flex}
                     <div class="stat-card" onclick="toggleCard('pulmonFrenoNuevo',event)"><div class="stat-value" id="totalPulmonFrenoNuevo">0</div><div class="stat-label">💨 Pulmón N</div></div>
                     <div class="stat-card" onclick="toggleCard('pulmonFrenoReparado',event)"><div class="stat-value" id="totalPulmonFrenoReparado">0</div><div class="stat-label">💨 Pulmón R</div></div>
                     <div class="stat-card" onclick="toggleCard('llantas',event)"><div class="stat-value" id="totalLlantas">0</div><div class="stat-label">⭕ Llantas</div></div>
-                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label">🔧 Amortiguador</div></div>
+                    <div class="stat-card" onclick="toggleCard('amortiguador',event)"><div class="stat-value" id="totalAmortiguador">0</div><div class="stat-label"> Amortiguador</div></div>
                     <div class="stat-card" onclick="toggleCard('bogie',event)"><div class="stat-value" id="totalBogie">0</div><div class="stat-label">🚛 Bogie</div></div>
                 </div>
             </div>
             <div class="charts-section">
-                <div class="chart-card"><h4>📈 Evolución Mensual</h4><div class="chart-container"><canvas id="chartLine"></canvas></div></div>
+                <div class="chart-card"><h4> Evolución Mensual</h4><div class="chart-container"><canvas id="chartLine"></canvas></div></div>
                 <div class="chart-card"><h4>📊 Consumo por Equipo</h4><div class="chart-container"><canvas id="chartBar"></canvas></div></div>
                 <div class="chart-card"><h4>🎯 Distribución</h4><div class="chart-container"><canvas id="chartDoughnut"></canvas></div></div>
             </div>
@@ -362,7 +362,7 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div id="accordionElasticosF" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaElasticosF"><thead id="theadElasticosF"></thead><tbody id="tbodyElasticosF"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionMazasN')"><span>⚙️ Mazas NUEVAS</span><span>▼</span></div>
                 <div id="accordionMazasN" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasN"><thead id="theadMazasN"></thead><tbody id="tbodyMazasN"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>⚙️ Mazas REPARADAS</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionMazasR')"><span>️ Mazas REPARADAS</span><span>▼</span></div>
                 <div id="accordionMazasR" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaMazasR"><thead id="theadMazasR"></thead><tbody id="tbodyMazasR"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionBulonTuerca')"><span>🔩 Bulón y Tuerca</span><span>▼</span></div>
                 <div id="accordionBulonTuerca" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaBulonTuerca"><thead id="theadBulonTuerca"></thead><tbody id="tbodyBulonTuerca"></tbody></table></div></div>
@@ -374,7 +374,7 @@ body.editing-mode #save-lock-btn{display:flex}
                 <div id="accordionPatinFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoNuevo"><thead id="theadPatinFrenoNuevo"></thead><tbody id="tbodyPatinFrenoNuevo"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionPatinFrenoReparado')"><span>🛞 Patín REPARADO</span><span>▼</span></div>
                 <div id="accordionPatinFrenoReparado" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPatinFrenoReparado"><thead id="theadPatinFrenoReparado"></thead><tbody id="tbodyPatinFrenoReparado"></tbody></table></div></div>
-                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>⚙️ Leva de Freno</span><span>▼</span></div>
+                <div class="accordion-header" onclick="toggleAccordion('accordionLevaFreno')"><span>️ Leva de Freno</span><span>▼</span></div>
                 <div id="accordionLevaFreno" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaLevaFreno"><thead id="theadLevaFreno"></thead><tbody id="tbodyLevaFreno"></tbody></table></div></div>
                 <div class="accordion-header" onclick="toggleAccordion('accordionPulmonFrenoNuevo')"><span>💨 Pulmón NUEVO</span><span>▼</span></div>
                 <div id="accordionPulmonFrenoNuevo" class="accordion-content"><div style="overflow-x:auto;"><table id="tablaPulmonFrenoNuevo"><thead id="theadPulmonFrenoNuevo"></thead><tbody id="tbodyPulmonFrenoNuevo"></tbody></table></div></div>
@@ -414,7 +414,7 @@ const CONFIG = {
     equipos: ["M442","M443","M444","M445","M446","M447","M448","M450","M451","M452","M453","M454","M455","M456"],
     meses: ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
     passwordAdmin: "abrir",
-    storageKey: "minerar_repuestos_v23"
+    storageKey: "minerar_repuestos_v24"
 };
 
 let añoActual = 2026;
@@ -482,6 +482,7 @@ function asegurarTodasLasCategorias(datos){
 function init(){
     console.log('🚀 Iniciando aplicación...');
     
+    // Cargar SIEMPRE desde localStorage primero
     try{
         const saved=localStorage.getItem(CONFIG.storageKey);
         if(saved){
@@ -496,15 +497,17 @@ function init(){
     }
     
     if(!datosPorAnio[añoActual]){
-        console.log('📝 Creando datos vacíos...');
+        console.log(' Creando datos vacíos...');
         datosPorAnio[añoActual]=crearDatosVacios();
     }
     datosPorAnio[añoActual]=asegurarTodasLasCategorias(datosPorAnio[añoActual]);
     
+    // Actualizar UI con datos locales PRIMERO
     actualizarTodo();
     
+    // Luego intentar cargar desde Firebase (sin sobrescribir si falla)
     if(window.db){
-        console.log('🔥 Cargando desde Firebase...');
+        console.log('🔥 Intentando cargar desde Firebase...');
         cargarDesdeFirebase();
     }
 }
@@ -523,34 +526,30 @@ async function cargarDesdeFirebase(){
             const data = doc.data();
             console.log('📦 Datos recibidos de Firebase');
             
+            // Solo usar datos de Firebase si existen y son válidos
             if (data.datosPorAnio && data.datosPorAnio[añoActual]) {
-                datosPorAnio[añoActual] = asegurarTodasLasCategorias(data.datosPorAnio[añoActual]);
-                console.log('✅ Datos cargados desde Firebase');
+                const datosFirebase = asegurarTodasLasCategorias(data.datosPorAnio[añoActual]);
+                
+                // Verificar que los datos de Firebase no estén vacíos
+                const tieneDatos = Object.values(datosFirebase).some(cat => 
+                    Object.values(cat).some(eq => eq.some(v => v > 0))
+                );
+                
+                if (tieneDatos) {
+                    datosPorAnio[añoActual] = datosFirebase;
+                    console.log('✅ Datos cargados desde Firebase');
+                    actualizarTodo();
+                    mostrarToast('✅ Datos sincronizados desde la nube');
+                } else {
+                    console.log('⚠️ Firebase tiene datos vacíos, usando localStorage');
+                }
             }
-            
-            if (data.precios) {
-                Object.keys(data.precios).forEach(key => {
-                    let elId = 'precio' + key.charAt(0).toUpperCase() + key.slice(1);
-                    if(key === 'llanta') elId = 'precioLlanta';
-                    if(key === 'amortiguador') elId = 'precioAmortiguador';
-                    if(key === 'bogie') elId = 'precioBogie';
-                    let el = document.getElementById(elId);
-                    if (el) el.value = data.precios[key];
-                });
-            }
-            
-            if (data.horas) {
-                Object.keys(data.horas).forEach(key => {
-                    let el = document.getElementById(key);
-                    if (el) el.value = data.horas[key];
-                });
-            }
-            
-            actualizarTodo();
-            mostrarToast('✅ Datos sincronizados');
+        } else {
+            console.log(' No existe documento en Firebase');
         }
     } catch(e) {
         console.error("⚠️ Error cargando Firebase:", e);
+        console.log('⚠️ Usando datos de localStorage');
     }
 }
 
@@ -752,8 +751,8 @@ function calcularEconomico(){
     const filterIndicator=document.getElementById("filterIndicator");
     if(categoriasSeleccionadas.size>0&&mesFiltrado!==null){filterIndicator.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+CONFIG.meses[mesFiltrado];}
     else if(categoriasSeleccionadas.size>0){filterIndicator.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas (Año)";}
-    else if(mesFiltrado!==null){filterIndicator.textContent="📌 Mes: "+CONFIG.meses[mesFiltrado];}
-    else{filterIndicator.textContent="📌 Año completo";}
+    else if(mesFiltrado!==null){filterIndicator.textContent=" Mes: "+CONFIG.meses[mesFiltrado];}
+    else{filterIndicator.textContent=" Año completo";}
 }
 
 function formatMoney(val){return new Intl.NumberFormat('es-AR',{style:'currency',currency:'ARS',minimumFractionDigits:0}).format(val);}
@@ -778,7 +777,7 @@ function actualizarInfoSeleccion(){
     const info=document.getElementById('selectionInfo');
     if(categoriasSeleccionadas.size===0){info.textContent='💡 Click: Seleccionar | Ctrl+Click: Múltiple | Click en seleccionada: Quitar';}
     else if(categoriasSeleccionadas.size===1){info.textContent="📌 Seleccionado: "+getLabel([...categoriasSeleccionadas][0])+" - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}
-    else{const nombres=[...categoriasSeleccionadas].map(c=>getLabel(c)).join(', ');info.textContent="📌 "+categoriasSeleccionadas.size+" seleccionadas - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}
+    else{const nombres=[...categoriasSeleccionadas].map(c=>getLabel(c)).join(', ');info.textContent=" "+categoriasSeleccionadas.size+" seleccionadas - "+(mesFiltrado!==null?CONFIG.meses[mesFiltrado]:'Año completo');}
 }
 
 function actualizarGraficos(){
@@ -798,7 +797,6 @@ function actualizarGraficos(){
         if(charts.bar){charts.bar.destroy();charts.bar=null;}
         if(charts.doughnut){charts.doughnut.destroy();charts.doughnut=null;}
         
-        // LINE CHART
         let lineData=[];
         if(categoriasSeleccionadas.size>0){
             const cats=[...categoriasSeleccionadas];
@@ -840,7 +838,7 @@ function actualizarGraficos(){
                 responsive:true,maintainAspectRatio:false,
                 plugins:{
                     legend:{position:'top',labels:{color:textColor,font:{size:12,weight:'bold'}}},
-                    title:{display:true,text:'📈 Evolución Mensual',color:textColor,font:{size:14,weight:'bold'}},
+                    title:{display:true,text:' Evolución Mensual',color:textColor,font:{size:14,weight:'bold'}},
                     datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}
                 },
                 scales:{
@@ -851,7 +849,6 @@ function actualizarGraficos(){
             plugins:[ChartDataLabels]
         });
         
-        // BAR CHART
         let barData=[];
         if(categoriasSeleccionadas.size>0){
             barData=CONFIG.equipos.map(eq=>{
@@ -892,7 +889,7 @@ function actualizarGraficos(){
                 responsive:true,maintainAspectRatio:false,
                 plugins:{
                     legend:{labels:{color:textColor,font:{size:12,weight:'bold'}}},
-                    title:{display:true,text:'📊 Consumo por Equipo',color:textColor,font:{size:14,weight:'bold'}},
+                    title:{display:true,text:' Consumo por Equipo',color:textColor,font:{size:14,weight:'bold'}},
                     datalabels:{display:true,color:textColor,font:{size:9,weight:'bold'},formatter:v=>v>0?v:'',anchor:'end',align:'top',offset:4}
                 },
                 scales:{
@@ -903,7 +900,6 @@ function actualizarGraficos(){
             plugins:[ChartDataLabels]
         });
         
-        // DOUGHNUT CHART
         let doughnutLabels=[],doughnutData=[];
         if(categoriasSeleccionadas.size>0){
             const cats=[...categoriasSeleccionadas];
@@ -954,10 +950,9 @@ function mostrarToast(msg,error){error=error||false;const t=document.getElementB
 function abrirModal(){document.getElementById('securityModal').classList.add('show');document.getElementById('passwordInput').value='';}
 function cerrarModal(){document.getElementById('securityModal').classList.remove('show');}
 function verificarPassword(){if(document.getElementById('passwordInput').value===CONFIG.passwordAdmin){cerrarModal();modoEdicionActivo=true;document.body.classList.remove('read-only-mode');document.body.classList.add('editing-mode');document.getElementById('lock-indicator').innerHTML='🔓 Modo edición';document.getElementById('lock-indicator').style.color='#27ae60';actualizarTodo();}}
-function guardarYBloquear(){guardarTodosLosDatos();modoEdicionActivo=false;document.body.classList.remove('editing-mode');document.body.classList.add('read-only-mode');document.getElementById('lock-indicator').innerHTML='🔒 Solo lectura';document.getElementById('lock-indicator').style.color='#e74c3c';}
+function guardarYBloquear(){guardarTodosLosDatos();modoEdicionActivo=false;document.body.classList.remove('editing-mode');document.body.classList.add('read-only-mode');document.getElementById('lock-indicator').innerHTML=' Solo lectura';document.getElementById('lock-indicator').style.color='#e74c3c';}
 
 function guardarTodosLosDatos(){
-    // Guardar precios y horas
     const precios = {};
     ['precioElasticoO','precioElasticoF','precioMazaN','precioMazaR','precioBulon','precioTuerca','precioNeumaticoNuevo','precioPatinFrenoNuevo','precioPatinFrenoReparado','precioLevaFreno','precioPulmonFrenoNuevo','precioPulmonFrenoReparado','precioLlanta','precioAmortiguador','precioBogie'].forEach(id=>{
         const el = document.getElementById(id);
@@ -998,6 +993,7 @@ async function guardarEnFirebase(precios, horas){
         console.log('✅ Guardado en Firebase');
     } catch(e) {
         console.error('⚠️ Error Firebase:', e);
+        mostrarToast('⚠️ Error al guardar en nube', true);
     }
 }
 
