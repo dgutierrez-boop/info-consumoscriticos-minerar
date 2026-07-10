@@ -398,7 +398,7 @@ actualizarTarjetas();actualizarGraficos();calcularEconomico();}
 // ===== FUNCIÓN CORREGIDA - TARJETAS CON TODOS LOS DATOS =====
 // ============================================================
 function actualizarTarjetas(){
-    // Mapa de categoría -> ID de la tarjeta
+    // Primero actualizar todas con el mapa
     const mapa = {
         'elasticosO':'totalElasticosO',
         'elasticosF':'totalElasticosF',
@@ -417,7 +417,6 @@ function actualizarTarjetas(){
         'bogie':'totalBogie'
     };
     
-    // Actualizar todas las tarjetas con el mapa
     CATEGORIAS_IDS.forEach(cat => {
         const elId = mapa[cat];
         if (elId) {
@@ -430,7 +429,6 @@ function actualizarTarjetas(){
     });
     
     // ===== FORZAR ACTUALIZACIÓN DIRECTA DE TODAS LAS TARJETAS =====
-    // Esto asegura que aunque el mapa falle, las tarjetas se actualicen
     document.getElementById('totalElasticosO').textContent = obtenerCantidadPorMes('elasticosO');
     document.getElementById('totalElasticosF').textContent = obtenerCantidadPorMes('elasticosF');
     document.getElementById('totalMazasN').textContent = obtenerCantidadPorMes('mazasN');
