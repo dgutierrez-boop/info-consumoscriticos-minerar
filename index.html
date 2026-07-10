@@ -514,12 +514,12 @@ function init(){
 
 async function cargarDesdeFirebase(){
     if (!window.db) {
-        console.log('⚠️ Firebase no disponible');
+        console.log('️ Firebase no disponible');
         return;
     }
     
     try {
-        console.log('📡 Consultando Firebase para año', añoActual);
+        console.log(' Consultando Firebase para año', añoActual);
         const doc = await window.db.collection("repuestos_minerar").doc("datos_" + añoActual).get();
         
         if (doc.exists) {
@@ -537,22 +537,54 @@ async function cargarDesdeFirebase(){
                 
                 if (tieneDatos) {
                     datosPorAnio[añoActual] = datosFirebase;
-                    console.log('✅ Datos cargados desde Firebase');
-                    actualizarTodo();
-                    mostrarToast('✅ Datos sincronizados desde la nube');
+                    console.log('✅ Datos de cantidades cargados desde Firebase');
                 } else {
                     console.log('⚠️ Firebase tiene datos vacíos, usando localStorage');
                 }
             }
+            
+            // ⚠️ IMPORTANTE: NO cargar precios desde Firebase si ya tenemos precios locales
+            // Solo cargar precios de Firebase si NO tenemos precios locales
+            const tienePreciosLocales = Object.keys(data.precios || {}).some(key => {
+                const el = document.getElementById(key);
+                return el && el.value && parseFloat(el.value) > 0;
+            });
+            
+            if (!tienePreciosLocales && data.precios) {
+                console.log('💰 Cargando precios desde Firebase (no hay locales)');
+                Object.keys(data.precios).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el && data.precios[key]) {
+                        el.value = data.precios[key];
+                    }
+                });
+            } else {
+                console.log('✅ Manteniendo precios locales (no sobrescribir con Firebase)');
+            }
+            
+            // Cargar horas solo si no tenemos horas locales
+            const tieneHorasLocales = ['horasPropio','valorHoraPropio','horasCoriaMecanico'].some(id => {
+                const el = document.getElementById(id);
+                return el && el.value && parseFloat(el.value) > 0;
+            });
+            
+            if (!tieneHorasLocales && data.horas) {
+                Object.keys(data.horas).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) el.value = data.horas[key];
+                });
+            }
+            
+            actualizarTodo();
+            mostrarToast('✅ Datos sincronizados desde la nube');
         } else {
-            console.log(' No existe documento en Firebase');
+            console.log('📄 No existe documento en Firebase');
         }
     } catch(e) {
         console.error("⚠️ Error cargando Firebase:", e);
         console.log('⚠️ Usando datos de localStorage');
     }
 }
-
 function obtenerDatosActual(){
     if(!datosPorAnio[añoActual]){datosPorAnio[añoActual]=crearDatosVacios();}
     return datosPorAnio[añoActual];
